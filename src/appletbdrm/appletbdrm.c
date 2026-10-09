@@ -1398,6 +1398,18 @@ static int appletbdrm_probe(struct usb_interface *intf,
 
 	if (adev->mac_type == MAC_TYPE_T1) {
 		/*
+		 * T1 can enumerate with its bulk pipes halted or holding a
+		 * stale transfer from USB configuration 1.  Without clearing
+		 * both pipes here the first async URB (or any subsequent sync
+		 * bulk transfer) fails with -EAGAIN/-EIO and the DRM card
+		 * never appears.  usb_clear_halt sends a CLEAR_FEATURE(ENDPOINT)
+		 * control transfer to reset the halt condition; this is safe
+		 * to do before submitting any URB on the endpoint.
+		 */
+		usb_clear_halt(adev->udev, usb_rcvbulkpipe(adev->udev, adev->in_ep));
+		usb_clear_halt(adev->udev, usb_sndbulkpipe(adev->udev, adev->out_ep));
+
+		/*
 		 * T1: Use async URB to wait for device STATS packet
 		 * which triggers deferred initialization.
 		 */
