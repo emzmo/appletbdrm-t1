@@ -16,3 +16,13 @@ target/
 *.swp
 *.swo
 *~
+
+# External repos (not part of this project)
+.opencode/
+src/mbp-t1-touchbar/
+src/not-quite-tiny-dfr/
+src/tiny-dfr/
+src/tiny-dfr-mbp142/
+src/omarchy-touchbar/
+src/kernel-hid-t1-0.2/
+src/REPORT.md
