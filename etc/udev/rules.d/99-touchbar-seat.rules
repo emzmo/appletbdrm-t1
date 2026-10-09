@@ -1,0 +1,13 @@
+# Assign the Touch Bar DRM card and digitizer to their own seat so
+# the compositor (Hyprland/aquamarine) does not grab /dev/dri/card0.
+# The daemon (tiny-dfr / not-quite-tiny-dfr) opens devices on
+# seat-touchbar exclusively.
+#
+# Match by USB VID:PID 05ac:8600 (T1 iBridge) so this survives
+# USB bus renumbering across boots.
+
+# Touch Bar DRM display (appletbdrm binds interface 2.3, class 0x10)
+SUBSYSTEM=="drm", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8600", ENV{ID_SEAT}="touchbar"
+
+# Touch Bar multitouch digitizer (hid-multitouch binds interface 2.2)
+SUBSYSTEM=="input", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8600", ENV{ID_SEAT}="touchbar"
