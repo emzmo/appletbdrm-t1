@@ -1,0 +1,11 @@
+=== STEP 5 prep — observe idle-dark behavior (testability caveat check) ===
+T0: 2026-09-27T11:45:25+01:00 — bar lit at curve level, observing decay
+T+15s (2026-09-27T11:45:40+01:00): appletb_backlight=54
+T+30s (2026-09-27T11:45:55+01:00): appletb_backlight=1
+T+45s (2026-09-27T11:46:10+01:00): appletb_backlight=1
+T+60s (2026-09-27T11:46:25+01:00): appletb_backlight=0
+T+75s (2026-09-27T11:46:40+01:00): appletb_backlight=0
+T+90s (2026-09-27T11:46:55+01:00): appletb_backlight=0
+
+--- NOTE: if bar stayed lit, active-session pointer activity is resetting last_active (testability caveat) ---
+--- operator: please STOP all mouse/keyboard activity on seat0 now for the decay window if you want idle-dark ---

@@ -1,0 +1,85 @@
+# 9.4.2 — FN key press-and-hold / double-press timing notes
+# Date: 2026-08-25
+# Machine: MacBookPro14,2, macOS 13.7.8 (22H730)
+#
+# Source 1: defaults read com.apple.touchbar.agent
+# -----------------------------------------------
+# {
+#     PresentationModeFnModes =     {
+#         app = functionKeys;
+#     };
+#     PresentationModeGlobal = appWithControlStrip;
+# }
+#
+# Source 2: defaults read com.apple.keyboard
+# ------------------------------------------
+# Domain com.apple.keyboard does not exist
+# (no keyboard-specific defaults domain on this macOS 13.7.8 install)
+#
+# Source 3: defaults read com.apple.controlstrip
+# ----------------------------------------------
+# {
+#     FullCustomized =     (
+#         "com.apple.system.group.brightness",
+#         "com.apple.system.mission-control",
+#         "com.apple.system.launchpad",
+#         "com.apple.system.group.keyboard-brightness",
+#         "com.apple.system.group.media",
+#         "com.apple.system.group.volume"
+#     );
+#     "last-analytics-stamp" =     ( "809367080.055195" );
+# }
+#
+# Source 4: defaults read -g (global domain) grep for fn/touchbar/controlstrip
+# ---------------------------------------------------------------------------
+# (no matching keys in the global domain)
+#
+# --- Keys found and their meaning ---
+#
+# com.apple.touchbar.agent:
+#   PresentationModeGlobal = appWithControlStrip
+#     The default Touch Bar mode: show app-specific items + the system Control
+#     Strip on the right. Other documented values (per Apple docs):
+#       - "fullControlStrip"      (system Control Strip only)
+#       - "appWithControlStrip"   (app + Control Strip)  ← current
+#       - "functionKeys"          (F1-F12 row)
+#       - "app"                  (app items only, no Control Strip)
+#   PresentationModeFnModes = { app = functionKeys; }
+#     [NEW KEY — not in the checklist's known set of 9.4.3 keys]
+#     Defines what the FN key does *per presentation mode*. The "app" subkey
+#     with value "functionKeys" means: when the Touch Bar is in app mode,
+#     pressing FN switches it to function keys (momentary). This is the
+#     press-and-hold FN behavior — it's *per-mode configurable*.
+#     This key is undocumented in the checklist's 9.4.3 known-keys list.
+#
+# --- Timing observations ---
+#
+# The defaults contain NO explicit timing values (no millisecond thresholds,
+# no double-press intervals). This means:
+#   - FN press-and-hold timing is HARDCODED in the TouchBarServer / ControlStrip
+#     binaries, not in defaults.
+#   - FN double-press timing (if it exists) is also hardcoded.
+#   - The only user-visible FN timing config is the "Press fn key to" dropdown
+#     in System Settings → Keyboard (which sets PresentationModeGlobal or a
+#     related key), not a slider.
+#
+# --- MANUAL OBSERVATION PENDING ---
+#
+# The checklist asks me to observe System Settings → Keyboard → "Press fn key to"
+# dropdown options + any timing slider. I CANNOT open the GUI from this shell
+# session. The user needs to do this manually:
+#
+#   1. Open System Settings
+#   2. Go to Keyboard pane
+#   3. Find the "Press fn key to" dropdown (or "Press Fn key to" / similar)
+#   4. Note ALL dropdown options (e.g. "Show Control Strip", "Show F1-F12 keys",
+#      "Show app controls", "Do nothing")
+#   5. Note whether there is ANY timing slider (press-and-hold duration,
+#      double-press speed) — there is none on macOS 13.x to my knowledge
+#   6. Paste the options + slider observation here
+#
+# Until the user provides manual observation, this file documents the
+# defaults-side findings only. The hardcoded timing values would require
+# disassembly of /usr/libexec/TouchBarServer or
+# /System/Library/CoreServices/ControlStrip.app/Contents/MacOS/ControlStrip
+# to extract — which is beyond the scope of this evidence collection.

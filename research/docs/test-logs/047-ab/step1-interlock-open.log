@@ -1,0 +1,50 @@
+# 047 STEP 1 — Interlock open (move-aside + mask oracle)
+# Captured: 2026-09-27 02:25 WEST
+
+## Pre-move sha256 (must == P1 5310c917...)
+5310c917bd8d4cf5f429ae3419ac3339edf9efa7095df16ec1938ac2acc5b047  /etc/systemd/system/tiny-dfr-mbp142.service  (MATCH)
+
+## Backup
+sudo cp -a /etc/systemd/system/tiny-dfr-mbp142.service{,.bak}
+backup sha256: 5310c917bd8d4cf5f429ae3419ac3339edf9efa7095df16ec1938ac2acc5b047  (== pre-session, byte-identical backup confirmed)
+
+## Move-aside + mask
+sudo rm /etc/systemd/system/tiny-dfr-mbp142.service
+sudo ln -s /dev/null /etc/systemd/system/tiny-dfr-mbp142.service  (symlink -> /dev/null = the mask)
+sudo systemctl daemon-reload
+sudo systemctl stop tiny-dfr-mbp142.service
+
+## Verify masked + inactive
+is-enabled: masked
+is-active:  inactive (dead) since 02:25:51
+Main PID 427511 (code=killed, signal=TERM)
+
+## +60s no-restart watch
+T0  (02:25:54): is-active=inactive
+T+60 (02:26:54): is-active=inactive
+is-enabled at T+60: masked  (HELD — no auto-restart)
+tbard.service: still inactive
+No actual tbard/tiny-dfr daemon PID (pgrep matches were shell wrapper strings only).
+
+## debugfs dri/2 clients — oracle row GONE (card empty of oracle)
+(empty table — no master, no client)
+
+## debugfs dri/2 state — scanout DISARMED
+plane[35]: plane-0
+	crtc=(null)        <-- no CRTC bound
+	fb=0               <-- no framebuffer
+crtc[37]: crtc-0
+	enable=1, active=1 (CRTC stays enabled, no plane -> black scanout)
+	plane_mask=0       <-- no plane attached
+connector[39]: USB-1
+	crtc=crtc-0
+
+## debugfs dri/2 framebuffer
+(empty — fb 41 released)
+
+## touchbar backlight
+brightness: 54, bl_power: 0 (ON at sysfs; no content to display)
+
+## STEP 1 VERDICT: INTERLOCK OPEN
+Oracle masked, inactive, no-restart for +60s, card2 has no master, scanout disarmed.
+Safe to proceed to STEP 2 preflight.

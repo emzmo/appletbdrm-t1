@@ -1,0 +1,36 @@
+============================================================
+Host state — session 027 (start and end)
+============================================================
+Bench: Arch Linux, MacBookPro14,2. Oracle (tiny-dfr-mbp142) UNTOUCHED
+and lit throughout; NO service lifecycle actions; NO /etc writes.
+
+-- START (before any QA work) --
+debugfs dri/2/clients (oracle sole master):
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142 87113   2   y    y 65534          0                                                          <unset>                 1652
+
+-- END (after all QA work: gates + ordering-test live run + preflight + adversarial) --
+debugfs dri/2/clients (oracle STILL sole master — row unchanged:
+tgid 87113, uid 65534, master=y):
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142 87113   2   y    y 65534          0                                                          <unset>                 1652
+
+-- /dev/input event nodes (no new input devices) --
+START count: 18 (per session 025/026 baseline)
+END count:   18  (ls /dev/input/event* | wc -l)
+
+-- service state (oracle + tbard) --
+oracle (tiny-dfr-mbp142.service):  active  / static   (unchanged)
+tbard.service:                     inactive / disabled (unchanged)
+
+-- /etc changes --
+$ ls -la /etc/passwd /etc/group
+-rw-r--r-- 1 root root  945 Sep 26 12:37 /etc/group
+-rw-r--r-- 1 root root 1536 Sep 26 10:47 /etc/passwd
+(no mtime drift during this session — no /etc writes.)
+
+============================================================
+VERDICT: host state clean. Oracle sole master at start and end;
+no new input devices; no /etc changes; tbard inactive+disabled
+throughout. HOST SAFETY RULES honored.
+============================================================

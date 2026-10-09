@@ -1,0 +1,71 @@
+# 9.3.4 — 782-byte Config 2 HID descriptor (macOS fallback)
+# Date: 2026-08-25
+# Source: ioreg IOService plane — AppleUserHIDDevice nodes for interfaces 2 & 6
+# Machine: MacBookPro14,2, macOS 13.7.8 (22H730)
+#
+# STATUS: PARTIAL — the 782-byte claim cannot be directly verified from macOS
+#         ioreg. ioreg exposes the HID *Report Descriptor* (the parsed HID
+#         report descriptor bytes), NOT the USB HID descriptor header byte
+#         count. The "782-byte HID descriptor" claim from the Linux side
+#         (docs/09 §9.3.4) refers to the wDescriptorLength field of the USB
+#         HID class descriptor. ioreg does not surface that field directly.
+#
+# What ioreg DOES expose (and what this file contains):
+#
+# Interface 2 (Touch Bar digitizer/pointer):
+#   bInterfaceClass=3 (HID), bInterfaceNumber=2, bNumEndpoints=1
+#   AppleUserHIDDevice (com.apple.driverkit.AppleUserHIDDrivers):
+#     MaxInputReportSize = 52
+#     MaxOutputReportSize = 0
+#     MaxFeatureReportSize = 0
+#     PrimaryUsagePage = 13 (0x0d, Digitizer)
+#     PrimaryUsage = 5 (Touch Pad)
+#     DeviceUsagePairs = {13,5}, {65280,35}, {65280,22}
+#     ReportDescriptor = <050d0905a101050d0922a102...c00600ff0923a1000611ff09019501754081020902752095018102c00600ff0916a101c0c0>
+#       (full hex blob from ioreg; this is the HID Report Descriptor, NOT the
+#        USB HID class descriptor — different thing)
+#     ReportInterval = 2000 (µs? — likely 2ms)
+#     InputReportElements: ReportID=0, Size=416 bits (52 bytes) ← matches MaxInputReportSize
+#
+# Interface 6 (ALS + other sensors):
+#   bInterfaceClass=3 (HID), bInterfaceNumber=6, bNumEndpoints=1
+#   AppleUserHIDDevice:
+#     MaxInputReportSize = 10
+#     MaxOutputReportSize = 1
+#     MaxFeatureReportSize = 116
+#     PrimaryUsagePage = 32 (0x20, Sensor)
+#     PrimaryUsage = 65 (0x41, Ambient Light)
+#     DeviceUsagePairs = {32,65}, {65298,1}
+#     ReportDescriptor = <05200941a101850105200a16...c00612ff0901a101850409101501...>
+#     ReportInterval = 8000 (µs? — likely 8ms)
+#     InputReportElements: Reports 1-6, sizes 48,8,8,8,8,80 bits
+#     DebugState: InputReportCount=12, SetReportCount=3, GetReportCount=6
+#     Child service: AppleUSBALSService (com.apple.driver.AppleHIDALSService)
+#
+# Interface 7 (SEP) — NOT a HID interface (class 0xff, not 0x03), so no HID
+#   descriptor applies. Owned by KernelRelayHost, not IOHIDFamily.
+#
+# --- Verification of the 782-byte claim ---
+# The "782-byte HID descriptor" claim from the Linux side refers to the USB
+# HID class descriptor (bInterfaceClass=3 devices have a class-specific
+# descriptor with wDescriptorLength). ioreg does not expose
+# wDescriptorLength directly — it exposes the parsed ReportDescriptor blob
+# (the actual report descriptor bytes, which is what wDescriptorLength counts).
+#
+# Counting the ReportDescriptor hex bytes for interface 2:
+#   <050d0905a101050d0922a102050d093875049501810209331500250175019501810209321500250175019501810275029501810105010930150026ff7f75109501810209311500257f750895018102c0050d0922a102050d093875049501810209331500250175019501810209321500250175019501810275029501810105010930150026ff7f75109501810209311500257f750895018102c0...c00600ff0923a1000611ff09019501754081020902752095018102c00600ff0916a101c0c0>
+# The full blob is 782 bytes? Let me count more carefully:
+#   Each pair of hex digits = 1 byte. The blob above (truncated in ioreg output)
+#   appears to be the multi-touch / digitizer report descriptor.
+#
+# CONCLUSION: Cannot [CONFIRM] or [REFUTE] the 782-byte claim from macOS ioreg
+#   alone — ioreg exposes the ReportDescriptor *content* but not the
+#   wDescriptorLength *header field*. The Linux-side `usbhid-dump` is the
+#   authoritative source for the 782-byte figure. This macOS capture provides
+#   the report descriptor bytes for cross-checking once Linux confirms the
+#   length. The Linux-side dynamic_debug session (per docs/09 §9.3.4) remains
+#   the primary path; this macOS fallback is supplementary.
+#
+# Promotion: NO CHANGE — 9.3.4 stays [UNKNOWN/pending Linux verification].
+#   This file provides the report descriptor bytes for interfaces 2 and 6 for
+#   cross-checking once Linux usbhid-dump confirms the 782-byte length.

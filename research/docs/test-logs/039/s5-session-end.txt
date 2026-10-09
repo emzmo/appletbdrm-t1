@@ -1,0 +1,24 @@
+
+--- S5 post-auto-dim re-restore (22:30:21) ---
+NOTE: brightness had auto-dimmed to 0 (kernel-side, the S2 behavior)
+between the first restore (22:28:31) and the final check (~22:30).
+Re-wrote 54 to leave the bar in the restored/lit state.
+AFTER re-restore: brightness=54 actual=54 mtime=2026-09-26 22:30:21.046642913 +0100 bl_power=0
+Human checkpoint (verbatim): 'Yes, lit (F-row visible)'
+
+FINAL STATE (22:30:21 +01:00):
+  - brightness: 54/255 (restored; read-back confirmed; mtime 22:30:21).
+  - bl_power: 0 (NEVER written this session).
+  - oracle: active (static) — tiny-dfr-mbp142.service.
+  - tbard: disabled + inactive (FREEZE on src/ intact).
+  - Bar LIT per human: 'Yes, lit (F-row visible)'.
+
+SAFETY BOUND HONORED (FINAL):
+  - ONLY writes this session: brightness values to
+    /sys/class/backlight/appletb_backlight/brightness, within [1..255].
+  - Values written: 54, 2, 54, 128, 128, 128, 54, 54. NEVER 0.
+  - Restored to 54 at end (confirmed; human confirmed lit).
+  - bl_power NEVER written (read-only probe only).
+  - Oracle stayed RUNNING and lit throughout.
+  - tbard remained disabled+inactive (FREEZE on src/ intact).
+  - NO /etc writes, NO service lifecycle actions on the oracle.

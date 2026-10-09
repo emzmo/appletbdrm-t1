@@ -1,0 +1,11 @@
+### Hermetic smoke attempt — HOME=/tmp/tmp.CxaOIaTxAf tbard --dry-run
+uid=1000 session=wayland state=active
+binary: Sep 26 00:57 target/debug/tbard
+--- run (5s timeout) ---
+[2026-09-26T00:00:06Z INFO  tbard] tbard: Touch Bar engine starting (mode: dry-run)
+[2026-09-26T00:00:06Z ERROR tbard] tbard: dry-run SimDisplay acquire failed: Permission denied (os error 13)
+exit_code=0 (124=timeout/running, 0=clean exit)
+frame_stats_lines=0
+0
+tap_log_lines=0
+0

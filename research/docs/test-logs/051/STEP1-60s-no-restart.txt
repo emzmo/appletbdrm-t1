@@ -1,0 +1,13 @@
+=== STEP 1 — +60s no-restart assertion (ADR-049) ===
+T0: 2026-09-27T11:43:10+01:00
+T+60: 2026-09-27T11:44:10+01:00
+--- oracle is-active (MUST still be inactive) ---
+inactive
+--- oracle is-enabled (MUST still be masked) ---
+masked
+
+--- debugfs touchbar card (dri/2) — MUST be EMPTY (no master holder) ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+
+--- bar state (expected: dark — oracle released master) ---
+54

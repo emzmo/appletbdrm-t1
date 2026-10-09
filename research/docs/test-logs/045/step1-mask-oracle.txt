@@ -1,0 +1,41 @@
+=== STEP 1 (move-aside + mask) — 2026-09-27T01:48:06+01:00 ===
+--- 1. back up the real /etc unit file ---
+'/etc/systemd/system/tiny-dfr-mbp142.service' -> '/etc/systemd/system/tiny-dfr-mbp142.service.pre-045'
+--- verify backup is byte-identical ---
+backup OK (identical)
+5310c917bd8d4cf5f429ae3419ac3339edf9efa7095df16ec1938ac2acc5b047  /etc/systemd/system/tiny-dfr-mbp142.service
+5310c917bd8d4cf5f429ae3419ac3339edf9efa7095df16ec1938ac2acc5b047  /etc/systemd/system/tiny-dfr-mbp142.service.pre-045
+--- 2. remove the real file ---
+removed '/etc/systemd/system/tiny-dfr-mbp142.service'
+--- 3. create the mask symlink → /dev/null ---
+'/etc/systemd/system/tiny-dfr-mbp142.service' -> '/dev/null'
+--- 4. daemon-reload ---
+--- 5. stop the current activation ---
+--- 6. verify is-active / is-enabled ---
+is-active: inactive
+is-enabled: masked
+--- /etc symlink target ---
+lrwxrwxrwx 1 root root 9 Sep 27 01:48 /etc/systemd/system/tiny-dfr-mbp142.service -> /dev/null
+--- systemd cat (masked → should report the symlink to /dev/null) ---
+# Unit tiny-dfr-mbp142.service is masked.
+=== STEP 1 — ADR-049 +60s no-restart assertion ===
+T0: 2026-09-27T01:48:11+01:00
+is-active at T0: inactive
+is-enabled at T0: masked
+--- debugfs at T0 (expect EMPTY — no master row) ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+--- bar state at T0 ---
+appletb_backlight brightness=54
+--- sleeping 60s (ADR-049 assertion: mask blocks Restart=always + any activation source) ---
+T+60: 2026-09-27T01:49:11+01:00
+is-active at T+60: inactive
+is-enabled at T+60: masked
+--- debugfs at T+60 (expect EMPTY — no master row, no oracle restart) ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+--- bar state at T+60 ---
+appletb_backlight brightness=54
+--- oracle journal in the window (any restart attempts?) ---
+Sep 27 01:48:06 phobos systemd[1]: Stopping tiny-dfr-mbp142.service...
+Sep 27 01:48:06 phobos systemd[1]: tiny-dfr-mbp142.service: Deactivated successfully.
+Sep 27 01:48:06 phobos systemd[1]: Stopped tiny-dfr-mbp142.service.
+Sep 27 01:48:06 phobos systemd[1]: tiny-dfr-mbp142.service: Consumed 19.604s CPU time over 1h 10min 1.364s wall clock time, 8.4M memory peak.

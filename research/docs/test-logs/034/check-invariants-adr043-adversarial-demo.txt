@@ -1,0 +1,24 @@
+=== ADR 043 check-invariants guard #8 — adversarial demo ===
+Date: 2026-09-26 (session 034, sim/sandbox)
+
+BASELINE (unmodified src/main.rs):
+547:    if let Err(e) = backlight.enable() {
+check-invariants: PASS
+guard exit: 0
+
+ADVERSARIAL: plant a removal of the backlight.enable() call on the render path
+  (sed replaced 'if let Err(e) = backlight.enable() {' with a no-op 'if false { ... }')
+  grep for the call-site syntax after planting:
+  (no match — call removed)
+
+GUARD OUTPUT against the planted copy:
+FAIL: ADR 043 src/main.rs render path missing the backlight.enable() call — the deterministic enable-write at scanout-begin was removed (session-033 regression: panel dark because no enable-write reached the held fd). The call must be present on a CODE line (statement context: backlight.enable() followed by an open-brace or semicolon), not just a doc comment or string literal.
+check-invariants: FAIL
+guard exit: 1
+
+RESTORE + re-verify:
+547:    if let Err(e) = backlight.enable() {
+check-invariants: PASS
+guard exit: 0
+
+VERDICT: the guard is non-vacuous — removing the enable-write call FAILS the gate (exit 1); restoring it PASSES (exit 0). The exact session-033 regression (removing the render-path enable-write) is now caught.

@@ -1,0 +1,20 @@
+=== QA v5 session 011 — INVARIANT GUARD AUDIT (Audit D) ===
+Date: 2026-09-26
+
+--- D.1 Throwaway copy: remove #![deny(clippy::indexing_slicing)] from src/main.rs ---
+$ tmpdir=$(mktemp -d /tmp/opencode/invguard.XXXXXX)
+$ cp -r src scripts "$tmpdir"/
+$ sed -i '/#!\[deny(clippy::indexing_slicing)\]/d' "$tmpdir/src/main.rs"
+$ grep -c 'deny(clippy::indexing_slicing)' "$tmpdir/src/main.rs"
+0
+$ cd "$tmpdir" && bash scripts/check-invariants.sh
+FAIL: ADR 017 src/main.rs missing #![deny(clippy::indexing_slicing)] (removing the deny makes clippy PASS silently — guard the guard).
+check-invariants: FAIL
+CHECK_INVARIANTS_EXIT=1
+$ rm -rf "$tmpdir"
+
+VERDICT D.1: PASS — removing the deny line makes check-invariants.sh
+  FAIL (exit 1). The ADR-017 guard is non-vacuous: it actually catches the
+  removal. (The throwaway copy also emitted udev-rule FAILs because the
+  packaging/ dir was not copied — those are incidental to the throwaway
+  setup; the ADR-017 guard fired correctly.)

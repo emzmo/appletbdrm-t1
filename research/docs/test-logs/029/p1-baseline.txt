@@ -1,0 +1,73 @@
+SESSION 029 — Stage-3 RE-RUN — PRE-FLIGHT P1 baseline (verbatim)
+================================================================
+Timestamp: captured live at session start
+
+git state
+--------
+$ git log -1 --format='%H %d %s'
+a7a461b06593af446a0cd6cb0afa746b6cb7bf16  (HEAD -> master, tag: v0.2.2) docs: session 028 — post-tag gates + binary reinstall + preflight + regression evidence (v0.2.2)
+
+$ git tag --points-at HEAD
+v0.2.2
+
+$ git status --short
+(empty — clean tree)
+
+HEAD == a7a461b == v0.2.2  CONFIRMED
+
+installed binary
+----------------
+$ sha256sum /usr/bin/tbard
+9a58dea729a1897c7a327605ab50434500339873a62c1a3023754a0b31a9077e  /usr/bin/tbard
+(matches session-028 verified hash)
+
+card mapping (driver resolution)
+--------------------------------
+$ ls -l /sys/class/drm/card*/device/driver
+card0 -> faux_driver        (not touchbar)
+card1 -> i915               (not touchbar)
+card2 -> appletbdrm         (TOUCHBAR CARD — appletbdrm driver)
+
+touchbar card resolved: card2 / DRI minor 2 (via /sys/kernel/debug/dri/2/clients)
+Note: minor directory naming also appears as "1-3:2.3" symlink in debugfs; canonical
+numeric minor = 2. Identified by DRIVER (appletbdrm), not cardN alone.
+
+debugfs touchbar card (DRI minor 2) — clients
+---------------------------------------------
+$ sudo cat /sys/kernel/debug/dri/2/clients
+             command  tgid dev master a   uid      magic   name            id
+     tiny-dfr-mbp142 87113   2   y    y 65534          0   <unset>        1652
+
+ORACLE SOLE MASTER: name=tiny-dfr-mbp142, uid=65534 (nobody), master=y, single row.
+(tgid 87113 noted but NOT used as identity per protocol — changes across restarts.)
+
+/dev/input nodes
+----------------
+$ ls -l /dev/input/event* | wc -l
+18
+
+$ ls -l /dev/input/event*
+event0..event17  (18 nodes, crw-rw---- root input)
+NOTE: event14 mtime 15:09, event7 mtime 13:16 — most recent; others 09:32/09:33.
+Baseline count = 18 for delta comparison in STEP 4d.
+
+backlight sysfs baseline
+------------------------
+$ cat /sys/class/backlight/acpi_video0/{brightness,max_brightness}
+brightness=90  max_brightness=90   (eDP — not touchbar)
+
+$ cat /sys/class/backlight/appletb_backlight/{brightness,max_brightness}
+brightness=54  max_brightness=255   (TOUCHBAR BACKLIGHT — baseline=54)
+
+service state
+-------------
+$ systemctl is-active tiny-dfr-mbp142.service tbard.service
+tiny-dfr-mbp142 = active
+tbard           = inactive
+
+$ systemctl is-enabled tiny-dfr-mbp142.service tbard.service
+tiny-dfr-mbp142 = static
+tbard           = disabled
+
+STATE CONFIRMED: oracle active+static, sole master on touchbar card (uid 65534);
+tbard inactive+disabled. Matches protocol CONTEXT exactly.

@@ -1,0 +1,61 @@
+Sep 27 02:27:24 phobos systemd[1]: Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)
+Sep 27 02:27:25 phobos tbard[442684]: [2026-09-27T01:27:25Z WARN  tbard] tbard: --service config load failed, using built-in default: no pages configured: config has zero pages (set /etc/touchbar/config.yaml or run with --dry-run / --service)
+Sep 27 02:30:44 phobos tbard[442684]: [2026-09-27T01:30:44Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:44 phobos tbard[442684]: [2026-09-27T01:30:44Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:44 phobos tbard[442684]: [2026-09-27T01:30:44Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:44 phobos tbard[442684]: [2026-09-27T01:30:44Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:45 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+Sep 27 02:30:46 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:46 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:46 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: tap page=primary logical=(1,1068) hit=None
+Sep 27 02:30:46 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:46 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:30:46 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+Sep 27 02:31:50 phobos tbard[442684]: [2026-09-27T01:31:50Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:51 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:51 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: tap page=primary logical=(14,1068) hit=None
+Sep 27 02:31:51 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:51 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:51 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: tap page=primary logical=(14,1068) hit=None
+Sep 27 02:31:51 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:51 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:51 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: tap page=primary logical=(14,1068) hit=None
+Sep 27 02:31:52 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:52 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:52 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: tap page=primary logical=(14,1068) hit=None
+Sep 27 02:31:52 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:52 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:52 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: tap page=primary logical=(14,1068) hit=None
+Sep 27 02:31:53 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:53 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:53 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: tap page=primary logical=(13,1068) hit=None
+Sep 27 02:31:53 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:53 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+Sep 27 02:31:53 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: tap page=primary logical=(13,1068) hit=None

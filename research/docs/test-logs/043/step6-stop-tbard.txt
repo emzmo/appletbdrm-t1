@@ -1,0 +1,100 @@
+# STEP 6 — SIGTERM from the running loop (stop tbard)
+# Session 043
+
+## stop command
+sudo systemctl stop tbard.service   @ 2026-09-27T00:38:58,906780089+01:00
+stop exit = 0
+
+## tbard exit journal (verbatim)
+Sep 27 00:38:58.936819 phobos systemd[1]: Stopping Touch Bar daemon (tbard) ... ...
+Sep 27 00:38:58.938962 phobos tbard[338190]: [INFO tbard] tbard: shutdown signal received, exiting
+Sep 27 00:38:59.013168 phobos systemd[1]: tbard.service: Deactivated successfully.
+Sep 27 00:38:59.013474 phobos systemd[1]: Stopped Touch Bar daemon (tbard) ...
+Sep 27 00:38:59.013898 phobos systemd[1]: tbard.service: Consumed 8.617s CPU time over 54min 44.055s wall clock time, 6M memory peak.
+
+exit status = 0  (Deactivated successfully) — clean SIGTERM, success-path release.
+tbard ran for 54min 44s (started 23:44:14, stopped 00:38:59), 8.6s CPU, 6M peak.
+
+## post-stop state
+systemctl is-active tbard.service  = inactive
+systemctl is-enabled tbard.service = disabled  (unchanged — validation, NOT migration)
+
+debugfs dri/2 (touchbar) AFTER tbard stop:
+             command  tgid dev master a   uid      magic  name  id
+     tiny-dfr-mbp142 365566   2   y    y 65534          0    <unset>  2979
+
+tbard row: ABSENT. Success-path release CONFIRMED — tbard released the card
+cleanly on SIGTERM exit 0. (×1 for this run; the card passed to the waiting
+oracle, not back to tbard.)
+
+ps: no tbard process (pid 338190 gone). tiny-dfr-mbp142 (pid 365566) present.
+
+## INTERLOCK DISCOVERY — oracle auto-restarted DURING the tbard run
+While tbard was running (before STEP 6), the oracle (tiny-dfr-mbp142.service,
+is-enabled=static) self-restarted and panicked on the busy card, then entered
+systemd's restart loop. Timeline (from tiny-dfr-mbp142 journal):
+
+  Sep 27 00:38:03.547  tiny-dfr-mbp142[364955]: waiting for touchbar card (30/30)
+  Sep 27 00:38:05.547  thread 'main' (364955) panicked at src/main.rs:839:21:
+                       touchbar card never appeared: No touchbar device found,
+                       attempted: [/dev/dri/card2: Device or resource busy (os 16),
+                                   /dev/dri/card0: busy, /dev/dri/card1: busy]
+  Sep 27 00:38:05.549  Main process exited, code=exited, status=101/n/a
+  Sep 27 00:38:05.549  Failed with result 'exit-code'.
+  Sep 27 00:38:05.725  Scheduled restart job, restart counter is at 4.
+  Sep 27 00:38:05.726  Started Touch Bar daemon for MacBookPro14,2 ...
+  Sep 27 00:38:23.775  waiting for touchbar card (10/30)
+  Sep 27 00:38:43.778  waiting for touchbar card (20/30)
+  [acquired the card at ~00:38:59 when tbard released it]
+
+This means the oracle was NOT actually stopped for the full duration of the
+tbard run (STEP 1 → STEP 6). It was stopped at STEP 1 (23:43:28), but at some
+point between then and 00:38:05 it was restarted (likely by a systemd trigger —
+the unit is static + has a Restart= policy; possibly a socket/dependency or a
+manual restart). It then spun in its 30s retry loop panicking on the busy card
+(card2 held by tbard) until tbard released it.
+
+IMPACT ON THIS RUN:
+  - tbard was UNAFFECTED — it held master (uid 65534, sole) for the entire run
+    until STEP 6. The oracle's panic+restart did not disturb tbard's mastership.
+  - The HC2 observation (item 4, first pixels) is VALID — tbard was sole master
+    when the human observed the rendering.
+  - The +1s/+10s/+30s/+60s value probes are VALID — tbard held master.
+  - The input diagnostic (evtest) is VALID — tbard held master.
+  - The STEP 6 release is VALID — tbard released cleanly, exit 0.
+
+NEW INTERLOCK FINDING (FREEZE — ADR proposal):
+  The oracle (static + Restart=) does NOT stay stopped when `systemctl stop` is
+  issued. It self-restarts and spins in a panic-retry loop against the busy
+  card. This is a RACE in the interlock: the oracle's restart policy can fire
+  while tbard is running, producing repeated panics (exit 101) in the oracle's
+  journal and potentially tripping systemd's StartLimit if sustained. For
+  Stage-3 validation this was benign (tbard held master throughout), but for a
+  MIGRATION run it would be a problem — the oracle must be MASKED or have its
+  Restart suppressed during tbard's run, not just stopped. See ADR proposal
+  below.
+
+  Also note: the oracle panicked at src/main.rs:839:21 with "touchbar card
+  never appeared" — this is the oracle's OWN code (backup_old/tiny-dfr-mbp142/),
+  not tbard's. The 30s retry (30/30) then panic is the oracle's busy-card
+  behavior. Worth documenting for the migration plan.
+
+## brightness after settle
+54 (oracle's adaptive display_to_touchbar(90,128)=54 — same curve as tbard;
+display backlight acpi_video0 is at 90/90).
+
+## verdict
+STEP 6 PASS — tbard SIGTERM exit 0, success-path release confirmed (tbard row
+absent from debugfs after stop), card passed to the waiting oracle. tbard ran
+54min44s stable as sole master. NEW interlock finding: the oracle self-restarts
+(static + Restart=) and spins in a panic-retry loop during tbard's run — benign
+for validation (tbard held master), but a migration-planning concern.
+
+## ADR proposal (interlock finding)
+- ADR-049 (proposed): oracle masking during tbard validation/migration runs.
+  `systemctl stop` is insufficient — the oracle's Restart= policy (static unit)
+  self-restarts it, producing panic-retry loops against the busy card. For
+  validation: use `systemctl mask` or `systemctl stop` + verify no auto-restart
+  within +60s before starting tbard. For migration: the oracle's unit must be
+  masked/disabled-by-policy before tbard takes over, or the Restart= policy
+  must be removed. Coordinate with the interlock design (ADR-019).

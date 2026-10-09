@@ -1,0 +1,14 @@
+HC2 (first pixels — acceptance item 4)
+Question asked verbatim:
+  "Does the Touch Bar show tbard's rendering — something different from the
+   oracle's classic F-row? Describe what you see in one sentence."
+Human answer (verbatim): "Dark / no pixels"
+Verdict: item 4 FAILS this run — NO first pixels. Panel dark.
+Context provided to human (verbatim, in the question prompt):
+  "STEP 4b shows backlight sysfs value=0, mtime unchanged since boot — the
+   ADR-043 enable-write did not land — so I expect dark, but I need YOUR
+   verbatim observation as the item-4 evidence."
+This is the runbook's anticipated "STEP 4b sysfs not written + panel dark"
+branch — a DISTINCT, NEW defect class from attempt #3's framing. Root cause:
+ADR-043 enable-write dead-code via trait-default dispatch (see DEFECT ANALYSIS
+in step3-5-start-live-state-hc2.txt). Do NOT conflate with attempt #3.

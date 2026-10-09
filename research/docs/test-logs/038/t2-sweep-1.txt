@@ -1,0 +1,8 @@
+=== T2 downward sweep: write 1 (MINIMUM permitted value; NEVER 0) ===
+timestamp: 2026-09-26T21:36:57+01:00
+--- BEFORE ---
+  value=2 mtime=2026-09-26 21:36:50.101772230 +0100
+--- WRITE 1 ---
+1
+--- AFTER ---
+  value=1 mtime=2026-09-26 21:36:57.455911870 +0100

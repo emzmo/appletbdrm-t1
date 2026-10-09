@@ -1,0 +1,205 @@
+=== Session 045 — findings (read-only derivations; NO fixes on the air) ===
+Date: 2026-09-27
+Stage: 4 hardware validation (input + backlight coordination)
+Result: ABORTED at STEP 5 (no glow under tbard, both runs) — partial
+acceptance: ADR-047 wake-wiring PROVEN on hardware; the rest of the Stage-4
+input chain (HC2 wake-from-dark visible, HC3 tap log, HC4 maintenance)
+could NOT be evaluated because the bar produced no light under tbard.
+
+--------------------------------------------------------------------
+F-045-1 (HEADLINE) — Bar dark under tbard, lit under the oracle:
+        a backlight-activation differential (NOT a render issue).
+--------------------------------------------------------------------
+
+OBSERVATION (verbatim, human):
+- Run #1 (01:49:27–02:01:00, tbard sole master, render-only page): "no
+  image displayed even brightness set as 54" → then "no glow, no changes
+  between 54, 1, 0 or even 255 (I changed it with brightnessctl)". The bar
+  produced NO visible light at ANY sysfs brightness value (0, 1, 54, 200,
+  255), despite bl_power=0, dpms=On, connector enabled, mode 60x2170,
+  edid present, appletbdrm bound (2.3 + 2.6), USB Config 2.
+- Run #2 / rerun (02:01:15–02:02:02, clean tbard restart, +1s probe PASS
+  at 54): "Still no glow — ABORT confirmed". The no-glow persisted across a
+  clean tbard SIGTERM+restart cycle.
+- STEP 8 restore (02:02:15, oracle started): "F-row visible + Esc works".
+  The bar lit up IMMEDIATELY when the oracle (tiny-dfr-mbp142) took master.
+  Glow + F-row + Esc all working under the oracle.
+
+DIFFERENTIAL:
+  - SAME sysfs path (/sys/class/backlight/appletb_backlight/brightness)
+  - SAME driver (appletbdrm, bound to 1-3:2.6)
+  - SAME card (card2, USB-1, connected/enabled/dpms-On)
+  - SAME bl_power=0, same max_brightness=255
+  - tbard writes 54 (enable-tick INFO line confirms; +1s probe reads 54
+    back) → NO GLOW.
+  - oracle writes 54 (its own adaptive curve, identical display_to_touchbar)
+    → GLOW + F-row visible.
+  - The sysfs value is accepted in both cases (writes read back correctly);
+    the DIFFERENCE is whether the hardware actually emits light.
+
+WHAT THIS IS NOT:
+- NOT a render-pipeline issue: rendering would not affect whether the
+  backlight emits light; the human saw no glow even at brightness 255 (a
+  pure backlight value, no rendering involved).
+- NOT a tbard backlight-sysfs-write issue: the enable-tick INFO line fired,
+  the +1s probe read 54 (the curve output), the value sticks. tbard IS
+  writing to the backlight sysfs successfully.
+- NOT a DRM master issue: tbard held master (debugfs uid 65534, master=y,
+  sole) on both runs; the oracle held master after restore.
+- NOT a config-fallback issue: the render-only page loaded (no config-
+  fallback WARN), unlike s043 which fell back to the built-in default.
+- NOT a persistent hardware fault: the oracle lit the bar at STEP 8, so the
+  hardware is CAPABLE of glowing; the issue is specific to tbard's tenure
+  as master.
+
+WHAT THIS MIGHT BE (hypotheses for ADR/issue work, NOT fixed on the air):
+- (H1) tbard's DRM scanout/atomic-commit path leaves the panel's backlight
+  enable in a state the appletbdrm driver's brightness sysfs cannot drive.
+  The oracle may issue a DRM operation tbard does not (e.g. an explicit
+  DPMS-on, a connector set_property, a framebuffer dirty-rect with a
+  different damage pattern, or a page-flip that arms the backlight). tbard's
+  flush() reports Ok (no flush error), but "Ok" may mean the atomic commit
+  succeeded WITHOUT turning the panel's backlight on (the commit may not
+  include the backlight property, or may set it to off).
+- (H2) The appletbdrm driver's backlight is gated on a specific DRM
+  property/commit sequence that the oracle performs and tbard does not. The
+  oracle's code (backup_old/tiny-dfr-mbp142/src/main.rs) may issue a
+  connector DPMS-on or a set_property that tbard's DrmProvider::flush does
+  not. A read-only diff of the oracle's DRM setup vs tbard's
+  (src/providers/drm.rs) is the next step (between sessions).
+- (H3) A T1/USB state that the oracle's startup sequence clears (e.g. the
+  oracle writes a specific USB control message or touches a sysfs attr tbard
+  does not). The oracle's binary is /usr/bin/tiny-dfr-mbp142 (not from a
+  package; locally built); its startup may do a one-time panel init that
+  tbard omits.
+- (H4) Less likely: a timing/race where tbard's first flush happens before
+  the backlight enable, and the driver's backlight requires a flush AFTER
+  the enable. The oracle's ordering may differ.
+
+EVIDENCE:
+- docs/test-logs/045/step5-backlight-hw-investigation.txt — sysfs state +
+  brightnessctl 200 sticking + no glow.
+- docs/test-logs/045/step5-hw-health.txt — USB Config 2, appletbdrm bound,
+  connector connected/enabled/dpms-On, edid present.
+- docs/test-logs/045/step5-render-check.txt — NO frame stats lines (but
+  s043 also had none across 54min, so this is not the signal).
+- docs/test-logs/045/abort-final-capture.txt — rerun journal (clean, enable-
+  tick 54, no errors) + human "Still no glow".
+- docs/test-logs/045/step8-verify-restore.txt — oracle re-acquired master.
+- docs/test-logs/045/hc3-restore.txt — "F-row visible + Esc works" under
+  the oracle.
+- docs/test-logs/045/step4-ab-master-and-probe.txt — tbard master + +1s
+  probe=54 under tbard (the value writes, the light does not).
+
+NEXT STEPS (between sessions, out of this session's scope):
+- Read-only diff: oracle's DRM init/flush path (backup_old/tiny-dfr-mbp142/
+  src/main.rs + any drm/display module) vs tbard's (src/providers/drm.rs +
+  src/main.rs render loop). Look for a DPMS-on, a connector property set,
+  or a page-flip flag the oracle issues and tbard does not.
+- ADR-050 candidate: "backlight activation requires a DRM-side panel-enable
+  the sysfs write alone does not perform." Track as a finding; do NOT fix
+  on the air.
+- A follow-up Stage-4 session can re-run once the differential is resolved.
+
+--------------------------------------------------------------------
+F-045-2 — ADR-047 wake-wiring PROVEN on hardware (partial acceptance).
+--------------------------------------------------------------------
+
+OBSERVATION: at 01:50:40 (run #1, ~73s after tbard start), a burst of 14
+`tbard: touch wake → backlight.notify_activity()` INFO lines fired in the
+journal, all at the same second. The human confirmed they touched the bar
+at that moment. This is the FIRST on-hardware evidence that ADR-047's
+wake wiring (touch → backlight.notify_activity(), pre-gate) fires on a real
+touch event.
+
+The wake's INTENDED visible effect (the bar lighting up from dark) could NOT
+be confirmed because of F-045-1 (the bar produces no light under tbard
+regardless of the sysfs value). So:
+- The WAKE PATH (InputEvent::Touch → backlight.notify_activity() →
+  last_active reset → update() computes a non-zero level → sysfs write) is
+  PROVEN to fire on hardware (the journal lines + the human's touch).
+- The wake's VISIBLE RESULT (bar lights up) is NOT confirmable on this
+  bench under tbard until F-045-1 is resolved.
+
+This is a partial acceptance of ADR-047: the wiring fires, but the
+downstream hardware response is blocked by F-045-1. The F-044-2 "ordering
+proof" (pre-gate wake would light the bar, post-gate would not) cannot be
+completed because the bar does not light under tbard at all.
+
+NOTE: the 14 wake lines in one second is a burst (one per contact in a
+multi-touch frame, or one per InputEvent::Touch emitted in the poll batch).
+This is consistent with a single physical touch producing multiple
+InputEvent::Touch events (the poll batches contacts). Not a defect — just
+the dispatch granularity. The HC2 protocol's "NO tap log line for the
+waking touch" (gate consumed) could not be evaluated because HC2/HC3 were
+not reached.
+
+--------------------------------------------------------------------
+F-045-3 — STEP 1 mask-blocker: oracle's deployed unit lives at /etc, not /usr/lib.
+--------------------------------------------------------------------
+
+`systemctl mask --now tiny-dfr-mbp142.service` FAILED with `Failed to mask
+unit: File '/etc/systemd/system/tiny-dfr-mbp142.service' already exists`.
+The oracle's deployed unit is a REAL FILE at /etc/systemd/system/ (not a
+symlink, not at /usr/lib/systemd/system/ as ADR-049's text assumed). It is
+byte-identical to the repo's backup_old/systemd/tiny-dfr-mbp142.service
+reference (sha256 5310c917..., diff empty). `systemctl mask` cannot
+overwrite a real file, so the ADR-049 runbook commands fail on this
+deployment shape. The session operator authorized a move-aside mask (back
+up the real file, replace with /dev/null symlink, daemon-reload, stop;
+reverse at STEP 8). This is an ADR-049 runbook amendment candidate: document
+the move-aside for /etc-deployed units, OR redeploy the oracle's unit to
+/usr/lib (out of scope). The restore was verified byte-identical (sha256
+match) and the backup was removed — /etc is back to pre-session state.
+
+--------------------------------------------------------------------
+F-045-4 — Display backlight selection: our code == the oracle (no finding).
+--------------------------------------------------------------------
+
+Derivation (docs/test-logs/045/display-backlight-selection-derivation.txt):
+both our code (src/providers/mod.rs:360-369 discover_display_backlight_path)
+and the oracle (backup_old/tiny-dfr-mbp142/src/backlight.rs:46-62
+find_display_backlight) scan /sys/class/backlight/ for the first name
+containing any of {apple-panel-bl, gmux_backlight, intel_backlight,
+acpi_video0} (substring match, readdir order). On this bench both resolve
+to acpi_video0 (i915, brightness 90, max 90). The curve's denominator 509
+is hardcoded in both. The tiny_dfr_mbp142_display_backlight udev alias is a
+systemd device-unit alias (not a runtime path the oracle opens); claimed by
+acpi_video0 on this bench. No divergence → no ADR-050 finding on selection
+grounds. Recomputed expected +1s curve value: display_to_touchbar(90, 128)
+= int(sqrt(90/509)*128)+1 = 54 (matches P1 baseline + the +1s probe in both
+runs).
+
+--------------------------------------------------------------------
+ACCEPTANCE BOARD (Stage 4) — as of session 045 ABORT
+--------------------------------------------------------------------
+
+1. Wake-on-touch from dark (HC2 + F-044-2 ordering proof):
+   PARTIAL — the wake PATH fires (F-045-2: 14 wake INFO lines on a real
+   touch) but the VISIBLE wake (bar lighting from dark) could not be
+   confirmed (F-045-1: no glow under tbard). NOT PASS, NOT FAIL — BLOCKED
+   on F-045-1.
+2. Waking touch consumed (no tap log, gate intact):
+   NOT EVALUATED — HC2/HC3 not reached.
+3. Second-touch tap log with widget id + logical coords:
+   NOT EVALUATED — HC3 not reached.
+4. Curve-maintained brightness (+1s probe + HC4):
+   +1s probe PASS (54==54 on both runs); HC4 NOT EVALUATED (no glow to
+   maintain visibly). The sysfs value is correct; the hardware does not
+   emit light (F-045-1).
+5. Zero injection (render-only page, /dev/input unchanged):
+   PASS — /dev/input count 25==25 across both runs; no uinput device
+   created; render-only page loaded (no config-fallback WARN).
+6. Mask interlock held (STEP 4f):
+   PASS — no oracle row in debugfs at STEP 4f (run #1) and at STEP 7
+   (rerun); oracle masked+inactive throughout; +60s no-restart assertion
+   held (STEP 1).
+7. Lifecycle contract re-verified (exit 0, release, rerun):
+   PASS — both runs: SIGTERM → exit 0 (Deactivated successfully), debugfs
+   release verified (tbard row gone), rerun started clean. STEP 6 PASS on
+   run #1; abort-stop PASS on run #2.
+
+Headline: the input chain's WAKE wiring is proven to fire on hardware
+(F-045-2), but the Stage-4 acceptance is BLOCKED on F-045-1 (bar dark under
+tbard, lit under the oracle) — a backlight-activation differential that
+must be resolved before HC2/HC3/HC4 can run.

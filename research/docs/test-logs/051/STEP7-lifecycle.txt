@@ -1,0 +1,41 @@
+=== STEP 7 — Lifecycle (stop → release; rerun → +1s probe → stop → release) ===
+Timestamp: 2026-09-27T11:52:43+01:00
+
+--- stop tbard (SIGTERM from running loop) ---
+stop rc=0
+--- status ---
+inactive
+success
+0
+0
+
+--- debugfs dri/2/clients after stop (MUST be empty — RAII release) ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+
+--- dri/2 framebuffer + state after stop (fb MUST be freed, plane detached) ---
+plane[35]: plane-0
+	fb=0
+crtc[37]: crtc-0
+	crtc=crtc-0
+
+--- rerun: start tbard again ---
+active
+
+--- +1s probe (expected 54) ---
+appletb_backlight = 54/255
+
+--- debugfs after rerun (tbard sole master again) ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+               tbard 35383   2   y    y 65534          0                                                          <unset>                  235
+
+--- stop again ---
+stop rc=0
+success
+0
+0
+
+--- debugfs after second stop (release verified x2) ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+
+--- /dev/input count (must be 18, unchanged) ---
+17

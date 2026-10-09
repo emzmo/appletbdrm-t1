@@ -1,0 +1,44 @@
+=== STEP 9 — Final state (MUST == P1 baseline) ===
+Timestamp: 2026-09-27T11:53:19+01:00
+
+--- git HEAD (must be 07813f4 == v0.2.7) ---
+07813f479116bedad17ab86c7e9e594ac58df3e7
+v0.2.7
+?? docs/test-logs/051/
+
+--- src/ freeze (must be 0 diff vs v0.2.7) ---
+0
+
+--- touchbar card by driver (card2/appletbdrm) ---
+lrwxrwxrwx 1 root root 0 Sep 27 11:40 /sys/class/drm/card2/device/driver -> ../../../../../../bus/usb/drivers/appletbdrm
+
+--- debugfs master (oracle sole master, name+uid) ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142 35563   2   y    y 65534          0                                                          <unset>                  236
+
+--- /etc/touchbar state (must be: only config.yaml.example, no live config) ---
+total 12
+drwxr-xr-x  2 root root 4096 Sep 27 11:52 .
+drwxr-xr-x 86 root root 4096 Sep 27 11:11 ..
+-rw-r--r--  1 root root 2279 Sep 26 13:16 config.yaml.example
+
+--- oracle unit sha256 (must match pre-session 5310c917…) ---
+5310c917bd8d4cf5f429ae3419ac3339edf9efa7095df16ec1938ac2acc5b047  /etc/systemd/system/tiny-dfr-mbp142.service
+
+--- services status (oracle active+static, tbard inactive+disabled) ---
+active
+static
+---
+inactive
+disabled
+
+--- /dev/input count (baseline was 18) ---
+18
+
+--- backlights (baseline: acpi_video0 90/90, appletb_backlight 54/255) ---
+/sys/class/backlight/acpi_video0: 90/90
+/sys/class/backlight/appletb_backlight: 54/255
+
+--- reset-failed tbard (clean any failed state) ---
+Failed to reset failed state of unit tbard.service: Unit tbard.service not loaded.
+(benign — no failed state)

@@ -1,0 +1,18 @@
+=== Oracle binary identity attempt ===
+Toolchain: rustc 1.98.1 (48a229cea 2026-09-01) (Arch Linux rust 1:1.98.1-1)
+Source: backup_old/tiny-dfr-mbp142 Cargo.toml version 0.3.7
+Build: CARGO_TARGET_DIR=/tmp/tb-oracle-build cargo build --release (isolated)
+
+Deployed binary:  /usr/bin/tiny-dfr-mbp142
+  sha256: 7d25cf8d364d69c83804ee6b309504c066e82c17246187d153c39edf3db92877
+  size:   2353336 bytes  (Sep 14 19:15, root:root)
+
+Rebuilt binary:    /tmp/tb-oracle-build/release/tiny-dfr-mbp142
+  sha256: ca5059c3d60c697f1fcf5aeaf6dfdef54189f77985ec6f38da53b7b297d2ef3e
+  size:   2353720 bytes
+
+Verdict: NOT byte-identical (builds not reproducible — embedded build
+paths/timestamps differ). Source provenance is confirmed: the deployed
+binary's source is backup_old/tiny-dfr-mbp142 v0.3.7 (Cargo.toml:3).
+No git tag in the tree (the backup is tracked in the touchbar repo
+without its own history).

@@ -1,0 +1,23 @@
+[2026-09-26T12:00:33Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+[2026-09-26T12:00:33Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+[2026-09-26T12:00:33Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+[2026-09-26T12:00:33Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+[2026-09-26T12:00:33Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+[2026-09-26T12:00:35Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+[2026-09-26T12:00:35Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+[2026-09-26T12:00:35Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+[2026-09-26T12:00:35Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+[2026-09-26T12:00:37Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+[2026-09-26T12:00:37Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+[2026-09-26T12:00:37Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+[2026-09-26T12:00:37Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+[2026-09-26T12:00:39Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+[2026-09-26T12:00:39Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+[2026-09-26T12:00:39Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+[2026-09-26T12:00:39Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+[2026-09-26T12:00:41Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+[2026-09-26T12:00:41Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+[2026-09-26T12:00:41Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+[2026-09-26T12:00:41Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+[2026-09-26T12:00:43Z INFO  tbard::providers::drm_backend] tbard: shutdown during DRM card-open retry; aborting
+[2026-09-26T12:00:43Z INFO  tbard] tbard: shutdown during card-open retry; exiting

@@ -1,0 +1,8 @@
+=== P1 BASELINE 2026-09-27T16:05:12+01:00 ===
+git: 8b5cd78 == v0.2.8
+binary: 5ba9b195d4a699065dcf2c01506382cf5511f66c97f0bbc929f6f76ccc1cb973
+oracle sha: 5310c917bd8d4cf5f429ae3419ac3339edf9efa7095df16ec1938ac2acc5b047
+services: oracle=active tbard=inactive
+backlight: appletb=54/255 display=90/90
+/dev/input: 25
+/etc/touchbar: config.yaml.example

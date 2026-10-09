@@ -1,0 +1,40 @@
+=== P1 BASELINE — Stage-3 attempt #3 (session 033) ===
+Captured: 2026-09-26T17:47:30Z (all read-only)
+
+--- git state ---
+HEAD      = 9ce94afe8883ca054b5b5c86e30715eb6f5210ba
+tag       = v0.2.3  (HEAD == tag == 9ce94af, exact match)
+branch    = master (clean except untracked docs/test-logs/032/tag-identity-proof.txt from prior session — NOT touched)
+src/      = FREEZE (docs/test-log commits only this session)
+
+--- card mapping (ls -l /sys/class/drm/card*/device/driver) ---
+card0 -> ../../../bus/faux/drivers/faux_driver          (faux, ignore)
+card1 -> ../../../../../../bus/pci/drivers/i915        (eDP / Intel iGPU, desktop)
+card2 -> ../../../../../../bus/usb/drivers/appletbdrm  (TOUCHBAR card)
+dri/0 -> vkms        (symlink)
+dri/1 -> 0000:00:02.0 (i915 eDP, symlink)
+dri/2 -> 1-3:2.3     (appletbdrm touchbar, symlink)  <-- touchbar card N = 2
+
+--- debugfs dri/2/clients (oracle baseline) ---
+             command  tgid dev master a   uid      magic name      id
+     tiny-dfr-mbp142 105638   2   y    y 65534          0 <unset>  1853
+IDENTITY: tiny-dfr-mbp142 + uid 65534 (NOT by tgid 105638 — tgid volatile across restarts)
+STATE:    sole master on touchbar card (card2/dri-2), master=y, a=y
+NOTE:     dri/ dir shape here is dri/<N>/{clients,internal_clients,...}; no per-card
+          "clients" glob earlier because top-level also has client-* entries.
+          Oracle row read explicitly from /sys/kernel/debug/dri/2/clients.
+
+--- /dev/input event node count ---
+count = 18  (matches expected 18)
+nodes: event0..event17 (root:input, crw-rw----)
+NOTE: event7 mtime 13:16, event14 mtime 15:53 — recent; recorded, not interpreted.
+
+--- backlight sysfs baseline ---
+acpi_video0:        brightness 90  / max_brightness 90   (eDP backlight — desktop)
+appletb_backlight:  brightness 54  / max_brightness 255  (TOUCHBAR backlight — held by oracle)
+
+--- services ---
+tiny-dfr-mbp142.service: active  / static   (oracle — sole master, as expected)
+tbard.service:            inactive / disabled  (validation target, NOT enabled — correct for Stage-3)
+
+=== END P1 BASELINE ===

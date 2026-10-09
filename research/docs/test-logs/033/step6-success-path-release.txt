@@ -1,0 +1,32 @@
+=== STEP 6 — SIGTERM from running loop + success-path RAII release — Stage-3 attempt #3, session 033 ===
+Time stop issued : 2026-09-26T17:56:10Z
+Command          : sudo systemctl stop tbard.service
+stop rc          : 0
++2s is-active    : inactive
+systemd show     : Result=success  NRestarts=0  ExecMainPID=0  ExecMainCode=0  ExecMainStatus=0
+                   --> ADR-025 EXIT CONTRACT VERIFIED from the RUNNING loop (success path).
+                   --> Contrast: s025/s029 exits were failure-path (status=1); this is
+                       the first success-path exit recorded on hardware.
+
+--- journal exit lines (2026-09-26 18:56:00 onward) ---
+Sep 26 18:56:10.841125 phobos systemd[1]: Stopping Touch Bar daemon (tbard) ...
+Sep 26 18:56:10.937867 phobos systemd[1]: tbard.service: Deactivated successfully.
+Sep 26 18:56:10.938180 phobos systemd[1]: Stopped Touch Bar daemon (tbard) ...
+Sep 26 18:56:10.938492 phobos systemd[1]: tbard.service: Consumed 1.039s CPU time
+                   over 4min 42.744s wall clock time, 6M memory peak.
+
+--- RAII release verification (success path — the key contrast with 6× failure-path releases) ---
+debugfs /sys/kernel/debug/dri/2/clients (17:56:16Z):
+             command  tgid dev master a   uid magic name id
+             (empty — header only, no rows)  --> MASTER RELEASED
+debugfs /sys/kernel/debug/dri/2/framebuffer:  (empty)      --> fb[41] FREED
+debugfs /sys/kernel/debug/dri/2/state:
+  plane[35]: plane-0  crtc=(null)  fb=0  crtc-pos=60x2170+0+0
+              --> PLANE DETACHED, CRTC DISABLED
+pgrep -a tbard: (no tbard process — clean exit)
+
+ACCEPTANCE 6 (success-path release): VERIFIED. RAII drops master + GEM + plane
+on the SUCCESS path, not only on the failure path. This is the new evidence this
+run owes (s025/s029 only showed failure-path release).
+
+=== END STEP 6 ===

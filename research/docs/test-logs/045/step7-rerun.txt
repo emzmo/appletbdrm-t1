@@ -1,0 +1,32 @@
+=== STEP 7 — IMMEDIATE RERUN (2026-09-27T02:01:15+01:00) ===
+--- pre-start state ---
+tbard is-active: inactive
+oracle is-active: inactive  is-enabled: masked
+             command  tgid dev master a   uid      magic                                                             name                   id
+--- read curve input right before start ---
+display_bl=90 → expected curve value=54
+--- start ---
+start issued at 2026-09-27T02:01:15+01:00
+--- +1s VALUE PROBE ---
+T-probe: 2026-09-27T02:01:16+01:00
+appletb_backlight brightness=54 (expected 54)
+PROBE: PASS (curve value matches)
+--- enable-tick journal line ---
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)
+--- master + privdrop ---
+    PID   UID     ELAPSED CMD
+ 426784 65534       00:01 /usr/bin/tbard --service
+             command  tgid dev master a   uid      magic                                                             name                   id
+               tbard 426784   2   y    y 65534          0                                                          <unset>                 3277
+--- /dev/input unchanged? ---
+count: 25 (P1=25)
+--- ADR-049 mid-run oracle check ---
+NO oracle row (mask held)
+--- waiting ~15s for the human to observe whether the bar glows ---
+T+15s: 2026-09-27T02:01:31+01:00
+appletb_backlight brightness=54
+--- any wake lines in this rerun? ---
+0
+--- any errors? ---

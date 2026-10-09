@@ -1,0 +1,80 @@
+============================================================
+Gates verbatim — session 027 re-verification
+============================================================
+Bench: Arch Linux, MacBookPro14,2. Working tree clean on
+fix/privdrop-portability-adr-039-040 @ 085dc01.
+Source == v0.2.1 f3edeb7 (master f636f1a = one docs commit on top;
+git diff f3edeb7 f636f1a -- src/ = 0 lines).
+
+-- 1. cargo fmt --check --
+$ cargo fmt --check
+EXIT=0
+(no output — clean)
+
+-- 2. cargo build --bin tbard --
+$ cargo build --bin tbard
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.34s
+EXIT=0
+
+-- 3. cargo clippy --all-targets -- -D warnings --
+$ cargo clippy --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.27s
+EXIT=0
+(no warnings)
+
+-- 4. cargo test (expect 62 unit + 4 integration = 66) --
+$ cargo test 2>&1 | grep "test result:"
+test result: ok. 62 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+EXIT=0
+
+Reconciliation: 62 (unit, src/main.rs) + 1 (exit_code) + 1
+(privdrop_target_ordering) + 1 (service_root_guard) + 1
+(sigterm_master_release) = 66 total. Matches the claim (62 unit +
+4 integration = 66). CONFIRMED.
+
+-- 5. scripts/check-invariants.sh (ADR 009) --
+$ bash scripts/check-invariants.sh
+check-invariants: PASS
+EXIT=0
+
+-- 6. scripts/ci-gate.sh --
+$ bash scripts/ci-gate.sh
+==> cargo fmt --check
+==> cargo build --bin tbard
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+==> cargo clippy --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.16s
+==> scripts/check-invariants.sh (ADR 009: zero name-string matching)
+check-invariants: PASS
+CI gate: PASS
+EXIT=0
+
+-- 7. bash -n packaging/PKGBUILD --
+$ bash -n packaging/PKGBUILD
+EXIT=0
+(no output — syntax clean)
+
+============================================================
+Commit hygiene (ADR-before-code; per Claim 5)
+============================================================
+$ git log --oneline f636f1a..085dc01
+085dc01 docs: session 026 — devlog + CHANGELOG + self-assessment-9 + test-logs
+f008e9d ADR-040: preflight environment inventory (catch the class, not the instance)
+e8b83f0 ADR-039: privdrop target resolution — Arch nogroup portability
+c02af7c docs: session 025 — Stage-3 first start ABORTED at privdrop (Arch nogroup absent)
+
+Order: c02af7c (s025 docs) → e8b83f0 (ADR-039 doc + impl, single
+commit) → f008e9d (ADR-040 doc + impl) → 085dc01 (s026 docs).
+ADR-before-code holds: each ADR doc lands in the SAME commit as its
+implementation (the ADR is the first thing in the commit), and the
+s025 docs commit precedes both ADR commits. No code-before-ADR.
+CONFIRMED.
+
+============================================================
+VERDICT: all gates green; test count reconciled to 66; commit
+hygiene clean. CONFIRMED.
+============================================================

@@ -1,0 +1,68 @@
+=== ADVERSARIAL REPRODUCTIONS — v14 re-verification (2026-09-27) ===
+Reviewer: opencode QA agent (independent of the implementer).
+Branch: fix/transposed-dims-adr-054-056 off master 325ee31 (v0.2.7 source).
+Each reproduction used a throwaway working-tree edit, ran the test, then restored
+from a pre-edit backup; `diff` confirmed clean restoration after every step.
+
+--- ADV-1 (ADR-054): plant pre-fix transposed mapping in damage_clip_rect ---
+Planted form (drm_backend.rs:491-493):
+    pub(crate) fn damage_clip_rect(c: DamageRect) -> ClipRect {
+        // ADV-1 planted pre-fix transposed form
+        ClipRect::new(c.y, c.x, c.h, c.w)
+    }
+Command: cargo test --bin tbard adr054_fullscreen
+Result: FAILED
+  thread 'providers::drm_backend::tests::test_adr054_fullscreen_damage_clip_covers_the_framebuffer' panicked at src/providers/drm_backend.rs:829:9:
+  assertion `left == right` failed
+    left: (0, 0, 2170, 60)
+   right: (0, 0, 60, 2170)
+  test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 95 filtered out
+Restored; re-run:
+  test providers::drm_backend::tests::test_adr054_fullscreen_damage_clip_covers_the_framebuffer ... ok
+  test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+diff vs backup: clean.
+
+--- ADV-2 (ADR-055): TRUE pre-fix implementation (master) + new tests ---
+Method: `git show master:src/config/manager.rs` (file-inode watch, no IN_IGNORED
+handler, no watch_name) → spliced in the two ADR-055 test fns
+(test_adr055_watch_survives_atomic_replace,
+test_adr055_name_filter_ignores_other_files) from the branch's manager.rs by
+inserting them before the tests-mod closing brace.
+Pre-fix arm_watch in spliced file (manager.rs:94-106): add_watch(path, ...) on
+the file inode directly; no IN_IGNORED handling; no watch_name field.
+Command: cargo test --bin tbard adr055_watch_survives
+Result: FAILED
+  thread 'config::manager::tests::test_adr055_watch_survives_atomic_replace' panicked at src/config/manager.rs:384:14:
+  ADR-055: replace #2 must ALSO reload after an atomic replace
+  test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 95 filtered out
+Restored branch version; re-run (both ADR-055 tests):
+  test config::manager::tests::test_adr055_name_filter_ignores_other_files ... ok
+  test config::manager::tests::test_adr055_watch_survives_atomic_replace ... ok
+  test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 94 filtered out
+diff vs backup: clean.
+NOTE: the faithful demo requires the TRUE pre-fix code (no IN_IGNORED handler).
+A naive revert (file-watch + the new IN_IGNORED handler) may PASS — this is the
+"considered alternative" documented in ADR-055 (IN_IGNORED-rearm alone viable).
+
+--- ADV-3 (ADR-056): plant pre-fix portrait dims in input_scale_dims ---
+Planted form (main.rs:1152-1158):
+    fn input_scale_dims(info: &providers::DisplayInfo) -> (u16, u16) {
+        let g = geometry::Geometry::from_framebuffer(geometry::FramebufferDims::new(
+            info.width,
+            info.height,
+        ));
+        (info.width, info.height)   // <-- planted pre-fix portrait dims
+    }
+Command: cargo test --bin tbard adr056
+Result: FAILED
+  thread 'tests::test_adr056_input_scale_dims_are_logical' panicked at src/main.rs:1957:9:
+  assertion `left == right` failed: ADR-056: scale targets must be LOGICAL dims
+    left: (60, 2170)
+   right: (2170, 60)
+  test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 95 filtered out
+Restored; re-run:
+  test tests::test_adr056_input_scale_dims_are_logical ... ok
+  test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 95 filtered out
+diff vs backup: clean.
+
+=== All three adversarial reproductions confirmed FAIL-then-PASS. ===

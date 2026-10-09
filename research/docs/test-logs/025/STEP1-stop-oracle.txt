@@ -1,0 +1,46 @@
+================================================================
+STEP 1 — STOP THE ORACLE
+================================================================
+Timestamp: 2026-09-26T15:08:12,759375036+01:00
+
+$ sudo systemctl stop tiny-dfr-mbp142.service
+$ sleep 2; systemctl is-active tiny-dfr-mbp142.service
+inactive
+$ sleep 5; systemctl is-active tiny-dfr-mbp142.service   (Restart=always must NOT fight explicit stop)
+inactive
+(exit code 3 from is-active = inactive — expected)
+
+→ Oracle STOPPED and STAYS stopped. Restart=always does not fight an
+  explicit stop. The bar goes dark (expected); the human's Esc fallback
+  (HC1 confirmed) is now the only Esc.
+
+-- debugfs: touchbar card master RELEASED --
+=== /sys/kernel/debug/dri/2 === (touchbar card, appletbdrm)
+             command  tgid dev master a   uid      magic   name   id
+(NO ROWS — empty. Master released.)
+
+=== /sys/kernel/debug/dri/1-3:2.3 === (touchbar connector)
+             command  tgid dev master a   uid      magic   name   id
+(NO ROWS — empty.)
+
+→ tiny-dfr-mbp142 no longer holds master on the touchbar card. Acceptance
+  precondition for STEP 2 met.
+
+-- i915/eDP card UNAFFECTED (must remain so throughout) --
+=== /sys/kernel/debug/dri/0 ===
+      systemd-logind   476   0   y    y     0          0  <unset>  43
+            Hyprland  1678   0   y    y  1000          0  <unset>  51
+            Hyprland  1678   0   n    n  1000          0  <unset>  57
+(desktop stack intact; Hyprland + logind still masters on eDP)
+
+-- backlight sysfs (after oracle stop) --
+brightness = 54  (unchanged from baseline; oracle's last write persists;
+                  bar is DARK — expected, no master = no rendering)
+
+-- /dev/input node count --
+18 -> 17  (oracle's uinput device removed on stop — expected delta)
+
+-- tbard service (must remain inactive+disabled) --
+is-active = inactive
+is-enabled = disabled
+================================================================

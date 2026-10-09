@@ -1,0 +1,25 @@
+tbard.service: Command /usr/bin/tbard is not executable: No such file or directory
+--- end systemd-analyze verify output ---
+exit=0
+
+NOTE: the "/usr/bin/tbard is not executable" message is EXPECTED — the
+binary is NOT installed on this machine (no service lifecycle actions
+per HOST SAFETY RULES). The unit passes `systemd-analyze verify` with
+no syntax errors. The binary will be present after `make install` /
+PKGBUILD install on the target machine.
+
+> **CORRECTION (NF-A3, ADR-033 docs companion, 2026-09-26).** The
+> "exit=0" claim above is **WRONG**. The actual `systemd-analyze
+> verify` exit code is **1** (re-verified in QA v6
+> `docs/test-logs/016/systemd-analyze-verify.log` and again in session
+> 017 `docs/test-logs/017/systemd-analyze-verify.log`). The message
+> "Command /usr/bin/tbard is not executable: No such file or directory"
+> is emitted as a DIAGNOSTIC, and `systemd-analyze verify` returns exit
+> 1 when any diagnostic is emitted — including the expected
+> binary-not-installed message. The unit PASSES syntax verification
+> (no syntax errors), but the tool's exit code is non-zero because of
+> the missing binary. The original entry is preserved verbatim above
+> for historical accuracy; this correction annotates it. See the
+> devlog session 017 entry for the process rule: self-assessments are
+> claims; only live audits are verdicts (evidence: three consecutive
+> cycles — v5 exit codes, v6 fast-fail, v6 systemd-analyze).

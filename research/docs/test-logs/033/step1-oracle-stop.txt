@@ -1,0 +1,15 @@
+=== STEP 1 — Stop the oracle — Stage-3 attempt #3, session 033 ===
+Timestamp stop issued : 2026-09-26T17:50:13Z
+Command               : sudo systemctl stop tiny-dfr-mbp142.service
+stop rc               : 0
++10s is-active        : inactive
++10s is-enabled       : static   (static = can be started; NOT auto-restart on its own; explicit stop holds)
+                        Confirms: explicit stop beats Restart=always (oracle has Restart=always).
+                        Bar is DARK — expected. Human fallback Esc is now the only Esc (HC1 confirmed).
+
+--- debugfs /sys/kernel/debug/dri/2/clients after stop (2026-09-26T17:50:29Z) ---
+             command  tgid dev master a   uid      magic name id
+             (empty — header only, no rows)
+STATE: touchbar card (card2/dri-2) has NO master-holder. Clean for tbard acquire.
+
+=== END STEP 1 ===

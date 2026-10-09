@@ -1,0 +1,56 @@
+=== config parse: does the render-only page parse to a valid layout? ===
+--- the yaml loader: what widget types are supported? ---
+184:      - type: button
+187:      - type: button
+210:            WidgetDef::slider { label, value, .. } => {
+227:      - type: spacer
+240:      - type: time
+249:            WidgetDef::time {
+291:                    WidgetDef::button { action, .. } => {
+303:                    WidgetDef::time { action, .. } => {
+318:                    WidgetDef::battery { action, .. } => {
+327:                    WidgetDef::spacer { .. }
+328:                    | WidgetDef::slider { .. }
+329:                    | WidgetDef::dial { .. } => {
+--- time widget + spacer widget: are they handled in the renderer? ---
+src/widgets/button.rs:115:/// A spacer widget that occupies space but renders nothing.
+src/widgets/button.rs:116:pub struct SpacerWidget {
+src/widgets/button.rs:120:impl fmt::Debug for SpacerWidget {
+src/widgets/button.rs:122:        f.debug_struct("SpacerWidget").finish()
+src/widgets/button.rs:126:impl Widget for SpacerWidget {
+--- ls src/widgets/ ---
+button.rs
+mod.rs
+page.rs
+slider.rs
+--- the render call: what does the engine render per frame? ---
+4://! via libinput, renders widgets, and exposes an IPC API for runtime control.
+17:// render loop / page path. Use `.get()` + typed error propagation. Tests
+559:    // `display.flush` (the first page-flip the user could see) happens
+560:    // inside the render loop below (`src/main.rs:702`). This call lights
+604:            "no pages to render after build_pages (config has zero pages); \
+611:    // paint matrix (applied each redraw) maps logical → device.
+626:    let mut needs_redraw = true;
+627:    let mut flush_stalls: u32 = 0;
+630:    let mut dirty_flushes: u64 = 0;
+631:    // ADR 023: last flush result string for the periodic stats log. The
+633:    // 100 flush writes); `#[allow]` suppresses the dead-assignment lint.
+635:    let mut last_flush_result: String = String::new();
+658:                        needs_redraw = true;
+669:        // We re-borrow `pages` per block (redraw, then input handling) so
+679:        // Redraw if needed.
+683:        if needs_redraw || pages[active_page].is_dirty() {
+703:            pages[active_page].render(&ctx, None);
+715:            let flush_start = Instant::now();
+716:            match display.flush(&data, &clips) {
+718:                    warn!("tbard: display flush error: {}", e);
+719:                    last_flush_result = format!("Err({})", e);
+722:                    dirty_flushes = dirty_flushes.saturating_add(1);
+723:                    last_flush_result = "Ok".to_string();
+724:                    let elapsed = flush_start.elapsed().as_millis() as u64;
+725:                    // Inline T1 flush-stall backoff (was DrmProvider::record_flush_duration).
+733:                            * (1u64 << flush_stalls.min(FLUSH_STALL_MAX_DOUBLINGS));
+735:                        flush_stalls = flush_stalls.saturating_add(1);
+737:                            "tbard: flush stalled ({} ms), cooldown {} ms (stall #{})",
+738:                            elapsed, cooldown_ms, flush_stalls
+742:                        flush_stalls = 0;

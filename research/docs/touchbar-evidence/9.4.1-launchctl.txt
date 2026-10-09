@@ -1,0 +1,3 @@
+-	0	com.apple.accessibility.dfrhud
+-	0	com.apple.SpacesTouchBarAgent.app
+468	0	com.apple.controlstrip

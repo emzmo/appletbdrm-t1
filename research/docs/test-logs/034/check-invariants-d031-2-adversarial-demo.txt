@@ -1,0 +1,28 @@
+=== D-031-2 ride-along: check-invariants guard #7a scoped to code lines — adversarial demo ===
+Date: 2026-09-26 (session 034, sim/sandbox)
+
+BASELINE (unmodified src/providers/input.rs):
+113:        // (geometry::is_touchbar_digitizer). ADR 036: reuse the held
+130:        crate::geometry::is_touchbar_digitizer(&candidate)
+194:                if crate::geometry::is_touchbar_digitizer(&candidate) {
+230:    /// `geometry::is_touchbar_digitizer` — the same predicate function.
+280:                let verdict = crate::geometry::is_touchbar_digitizer(&candidate);
+534:    // call `geometry::is_touchbar_digitizer`; the equivalence (same
+guard exit: 0
+
+ADVERSARIAL: comment out all 3 real calls (lines 130, 194, 280), leaving only comment/doc mentions (113, 230, 534).
+Remaining mentions after planting (all comments/doc — no code calls):
+113:        // (geometry::is_touchbar_digitizer). ADR 036: reuse the held
+130:        // geometry::is_touchbar_digitizer removed (ADVERSARIAL)
+230:    /// `geometry::is_touchbar_digitizer` — the same predicate function.
+534:    // call `geometry::is_touchbar_digitizer`; the equivalence (same
+
+GUARD OUTPUT against the comment-only copy:
+FAIL: ADR 041 src/providers/input.rs does not call geometry::is_touchbar_digitizer on a CODE line — the runtime/probe paths must invoke the SINGLE structural predicate (preflight GO ⇒ runtime GO). A comment-only mention does not satisfy the guard (D-031-2).
+check-invariants: FAIL
+guard exit: 1
+
+RESTORE + re-verify:
+guard exit: 0
+
+VERDICT: the D-031-2 ride-along makes guard #7a non-vacuous — a comment-only mention (no real code calls) FAILS the gate (exit 1); restoring the code calls PASSES (exit 0). The prior 'grep -q' would have passed on the comment-only copy (vacuous — the D-031-1 lesson: comments are not code).

@@ -1,0 +1,86 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.54s
+     Running unittests src/main.rs (target/debug/deps/tbard-024090071b748d61)
+
+running 54 tests
+test config::manager::tests::test_empty_config_file_is_typed_error ... ok
+test config::manager::tests::test_production_config_paths_are_etc_touchbar ... ok
+test config::manager::tests::test_zero_pages_is_typed_error_not_panic ... ok
+test config::manager::tests::test_with_paths_first_existing_wins ... ok
+test config::manager::tests::test_with_paths_falls_through_to_second ... ok
+test config::yaml::tests::test_parse_minimal_config ... ok
+test config::yaml::tests::test_parse_settings ... ok
+test config::yaml::tests::test_parse_time_and_battery ... ok
+test config::yaml::tests::test_parse_slider ... ok
+test config::yaml::tests::test_reject_invalid_yaml ... ok
+test geometry::tests::test_geometry_swaps_framebuffer_to_logical ... ok
+test geometry::tests::test_geometry_already_landscape_stays ... ok
+test geometry::tests::test_pixel_probe_paint_matrix_in_bounds ... ok
+test ipc::protocol::tests::test_roundtrip_error_response ... ok
+test ipc::protocol::tests::test_roundtrip_update_widget ... ok
+test ipc::protocol::tests::test_roundtrip_set_pages ... ok
+test lifecycle::tests::test_shutdown_flag_round_trip ... ok
+test lifecycle::tests::test_panic_hook_logs_backtrace_and_runs_cleanup ... ok
+test lifecycle::tests::test_signal_handler_sets_flag ... ok
+test providers::backlight::tests::test_failsafe_brightness_on_write_failure ... ok
+test config::manager::tests::test_one_write_one_reload ... ok
+test providers::error::tests::test_hwerror_display_contains_context ... ok
+test providers::error::tests::test_hwerror_propagates_through_anyhow ... ok
+test providers::input::tests::test_geometry_matches_touchbar_rotated ... ok
+test providers::input::tests::test_geometry_rejects_no_absmt ... ok
+test providers::input::tests::test_geometry_rejects_trackpad ... ok
+test providers::input::tests::test_geometry_tolerance ... ok
+test providers::sim_display::tests::test_sim_display_acquires_vkms ... ok
+test providers::drm_backend::tests::test_retry_aborts_on_shutdown ... ok
+test providers::drm_backend::tests::test_retry_partial_alloc_releases_master_on_failure ... ok
+test providers::tests::test_aspect_ratio_gate ... ok
+test providers::tests::test_scan_never_promotes_vkms_decoy ... ok
+test providers::tests::test_select_touchbar_backlight_bails_on_no_match ... ok
+test providers::tests::test_select_touchbar_backlight_ignores_intel ... ok
+test service::tests::test_post_drop_self_check_all_present ... ok
+test service::tests::test_post_drop_self_check_bad_fd ... ok
+test service::tests::test_post_drop_self_check_missing_fd ... ok
+test service::tests::test_service_error_display ... ok
+test service::tests::test_service_requires_root_display ... ok
+test tests::test_default_config_yields_pages ... ok
+test tests::test_dev_mode_no_pages_is_typed_error ... ok
+test tests::test_dry_run_demo_config_is_hermetic ... ok
+test tests::test_dry_run_uses_demo_config_regardless_of_files ... ok
+test tests::test_frame_log_interval_constant ... ok
+test tests::test_options_dry_run_and_service_mutually_exclusive_logic ... ok
+test tests::test_service_mode_default_page_fallback ... ok
+test tests::test_service_mode_zero_page_config_falls_back ... ok
+test widgets::page::tests::test_hit_test_basic ... ok
+test widgets::page::tests::test_hit_test_round_trip_logical_space ... ok
+test widgets::page::tests::test_hit_test_stretch ... ok
+test widgets::page::tests::test_hit_test_y_bounds ... ok
+test providers::sim_input::tests::test_sim_input_creates_uinput_device ... ok
+test providers::sim_input::tests::test_sim_input_scales_real_abs_range_to_logical ... ok
+test providers::drm_backend::tests::test_retry_persistent_failure_is_bounded_by_budget ... ok
+
+test result: ok. 54 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.95s
+
+     Running tests/exit_code.rs (target/debug/deps/exit_code-d565d17a8b2d77e9)
+
+running 1 test
+test test_startup_failure_exits_nonzero ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/service_root_guard.rs (target/debug/deps/service_root_guard-086ba3a2096ed3d2)
+
+running 1 test
+test test_service_unprivileged_fast_fails ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/sigterm_master_release.rs (target/debug/deps/sigterm_master_release-732e5141a06bf9cc)
+
+running 1 test
+test test_sigterm_releases_master ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+
+EXIT=0

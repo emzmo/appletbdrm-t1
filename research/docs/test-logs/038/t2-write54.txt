@@ -1,0 +1,8 @@
+=== T2: write 54 (restore reference) ===
+timestamp: 2026-09-26T21:35:17+01:00
+--- BEFORE ---
+  value=200 mtime=2026-09-26 21:35:07.934797337 +0100
+--- WRITE 54 ---
+54
+--- AFTER ---
+  value=54 mtime=2026-09-26 21:35:17.771990516 +0100

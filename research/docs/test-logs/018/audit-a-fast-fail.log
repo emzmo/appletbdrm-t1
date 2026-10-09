@@ -1,0 +1,2 @@
+[2026-09-26T11:59:44Z ERROR tbard] tbard: service mode requires root (euid=1000); start as root or via the systemd unit (tbard.service) — exit 1
+Error: ServiceRequiresRoot { euid: 1000 }

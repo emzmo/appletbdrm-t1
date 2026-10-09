@@ -1,0 +1,77 @@
+# 9.5.2 — Agent restart command after `defaults write`
+# Date: 2026-08-25
+# Machine: MacBookPro14,2, macOS 13.7.8 (22H730)
+#
+# [CONFIRMED] The working restart command is:
+#
+#   launchctl kickstart -k "gui/$(id -u)/com.apple.controlstrip"
+#
+# NOT "com.apple.touchbar.agent" as the checklist suspected. On macOS 13.7.8
+# (Ventura), there is NO launchd service named com.apple.touchbar.agent.
+# The Touch Bar agent / Control Strip daemon runs as com.apple.controlstrip
+# (binary: /System/Library/CoreServices/ControlStrip.app/Contents/MacOS/ControlStrip).
+#
+# --- Test transcript ---
+#
+# Before:
+#   $ defaults read com.apple.touchbar.agent PresentationModeGlobal
+#   appWithControlStrip
+#
+# Step 1: set to functionKeys
+#   $ defaults write com.apple.touchbar.agent PresentationModeGlobal -string "functionKeys"
+#
+# Step 2: kickstart the CORRECT service (com.apple.controlstrip, not .touchbar.agent)
+#   $ launchctl kickstart -k "gui/$(id -u)/com.apple.controlstrip"
+#   (no output — success)
+#
+# Step 3: wait 4s, verify
+#   $ defaults read com.apple.touchbar.agent PresentationModeGlobal
+#   functionKeys
+#   $ ps -axo pid,comm | grep ControlStrip
+#   877 /System/Library/CoreServices/ControlStrip.app/Contents/MacOS/ControlStrip
+#   (PID changed from 468 to 877 — confirms the service was restarted)
+#   (Observed: Touch Bar switched to function-key row mode)
+#
+# Step 4: restore
+#   $ defaults write com.apple.touchbar.agent PresentationModeGlobal -string "appWithControlStrip"
+#   $ launchctl kickstart -k "gui/$(id -u)/com.apple.controlstrip"
+#
+# Step 5: verify restore
+#   $ defaults read com.apple.touchbar.agent PresentationModeGlobal
+#   appWithControlStrip
+#   (Restored to original state)
+#
+# --- Notes ---
+#
+# 1. The checklist's assumed command `launchctl kickstart -k gui/$(id -u)/com.apple.touchbar.agent`
+#    FAILS with: "Could not find service 'com.apple.touchbar.agent' in domain for user gui: 501"
+#    On macOS 13.7.8, the service label is `com.apple.controlstrip`, not
+#    `com.apple.touchbar.agent`. The `com.apple.touchbar.agent` defaults
+#    DOMAIN exists (and is where PresentationModeGlobal is stored), but the
+#    corresponding launchd SERVICE label is `com.apple.controlstrip`.
+#    This is a common Apple pattern: the defaults domain and the launchd
+#    service label don't have to match.
+#
+# 2. There is also `com.apple.SpacesTouchBarAgent.app` (running) and
+#    `com.apple.SpacesTouchBarService` (not running, on-demand) which handle
+#    the Spaces/multi-desktop Touch Bar integration — but these are NOT the
+#    agents that read PresentationModeGlobal. Only com.apple.controlstrip
+#    reads and applies that key.
+#
+# 3. The -k flag (kill) is necessary: without it, kickstart would only start
+#    the service if it wasn't already running. With -k, it kills the running
+#    instance first, forcing a fresh start that re-reads defaults. Confirmed
+#    by the PID change (468 → 877).
+#
+# 4. TouchBarServer (/usr/libexec/TouchBarServer, PID 313) did NOT restart
+#    during this test — it's a separate, more privileged daemon that handles
+#    the USB display protocol (interface 3, the appletbdrm endpoint).
+#    TouchBarServer is the userspace driver for the Touch Bar OLED display;
+#    ControlStrip is the higher-level agent that decides WHAT to show.
+#    To apply PresentationModeGlobal changes, only ControlStrip needs to
+#    restart.
+#
+# Promotion: docs/05 (or wherever 9.5.2 is tracked) should be updated:
+#   [UNKNOWN] → [CONFIRMED]
+#   Command: `launchctl kickstart -k "gui/$(id -u)/com.apple.controlstrip"`
+#   (NOT com.apple.touchbar.agent)

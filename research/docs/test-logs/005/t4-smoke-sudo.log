@@ -1,0 +1,5 @@
+[2026-09-25T22:04:40Z INFO  tbard] tbard: Touch Bar engine starting (mode: dry-run)
+[2026-09-25T22:04:40Z INFO  tbard::providers::sim_display] tbard: dry-run SimDisplay on vkms /dev/dri/card2 (60×2170)
+[2026-09-25T22:04:40Z INFO  tbard] tbard: Touch Bar display 60x2170
+[2026-09-25T22:04:40Z WARN  tbard] tbard: display flush error: Function not implemented (os error 38)
+[2026-09-25T22:04:48Z INFO  tbard] tbard: shutdown signal received, exiting

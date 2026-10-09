@@ -1,0 +1,65 @@
+=== REGRESSION EVIDENCE (post-reinstall, oracle untouched) ===
+--- debugfs dri/<touchbar N>/clients (card2 = Touch Bar) ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142 105638   2   y    y 65534          0                                                          <unset>                 1853
+--- tbard.service status ---
+○ tbard.service - Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer)
+     Loaded: loaded (/usr/lib/systemd/system/tbard.service; disabled; preset: disabled)
+     Active: inactive (dead)
+
+Sep 26 15:51:33 phobos systemd[1]: tbard.service: Scheduled restart job, restart counter is at 2.
+inactive
+disabled
+--- /dev/input count ---
+25
+--- /etc changes (mtime check vs known baseline) ---
+ls: cannot access '/etc/systemd/system/tbard.service': No such file or directory
+-rw-r--r-- 1 root root 1753 2026-09-14 19:15:21.078237426 +0100 99-touchbar-tiny-dfr-mbp142.rules
+-rw-r--r-- 1 root root 3191 2026-09-26 14:59:18.209223604 +0100 /usr/lib/udev/rules.d/69-touchbar-seat.rules
+--- /dev/input full listing ---
+total 0
+drwxr-xr-x  4 root root     540 Sep 26 18:38 .
+drwxr-xr-x 21 root root    4100 Sep 26 09:33 ..
+drwxr-xr-x  2 root root     240 Sep 26 09:33 by-id
+drwxr-xr-x  2 root root     600 Sep 26 09:33 by-path
+crw-rw----  1 root input 13, 64 Sep 26 09:32 event0
+crw-rw----  1 root input 13, 65 Sep 26 09:32 event1
+crw-rw----  1 root input 13, 74 Sep 26 09:32 event10
+crw-rw----  1 root input 13, 75 Sep 26 09:32 event11
+crw-rw----  1 root input 13, 76 Sep 26 09:32 event12
+crw-rw----  1 root input 13, 77 Sep 26 09:32 event13
+crw-rw----  1 root input 13, 78 Sep 26 15:53 event14
+crw-rw----  1 root input 13, 79 Sep 26 09:33 event15
+crw-rw----  1 root input 13, 80 Sep 26 09:33 event16
+crw-rw----  1 root input 13, 81 Sep 26 09:33 event17
+crw-rw----  1 root input 13, 66 Sep 26 09:32 event2
+crw-rw----  1 root input 13, 67 Sep 26 09:32 event3
+crw-rw----  1 root input 13, 68 Sep 26 09:32 event4
+crw-rw----  1 root input 13, 69 Sep 26 09:32 event5
+crw-rw----  1 root input 13, 70 Sep 26 09:32 event6
+crw-rw----  1 root input 13, 71 Sep 26 13:16 event7
+crw-rw----  1 root input 13, 72 Sep 26 09:32 event8
+crw-rw----  1 root input 13, 73 Sep 26 09:32 event9
+crw-rw----  1 root input 13, 63 Sep 26 09:32 mice
+crw-rw----  1 root input 13, 32 Sep 26 09:32 mouse0
+crw-rw----  1 root input 13, 33 Sep 26 13:16 mouse1
+crw-rw----  1 root input 13, 34 Sep 26 09:33 mouse2
+crw-rw----  1 root input 13, 35 Sep 26 09:33 mouse3
+--- count of event devices ---
+18
+--- count of all /dev/input entries (non-directory) ---
+23
+--- oracle master identity ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142 105638   2   y    y 65534          0                                                          <unset>                 1853
+--- tbard in clients? (expect: none) ---
+(none — tbard NOT a master, as expected)
+--- tbard.service inactive+disabled ---
+inactive
+disabled
+--- /etc changes: NO tbard.service in /etc/systemd/system (installed at /usr/lib) ---
+ls: cannot access '/etc/systemd/system/tbard.service': No such file or directory
+(absent — as expected; unit is at /usr/lib/systemd/system/tbard.service, untouched)
+--- /etc udev rules (oracle's own; NOT ours) ---
+80-nvme-d3hot.rules
+99-touchbar-tiny-dfr-mbp142.rules

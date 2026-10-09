@@ -1,0 +1,36 @@
+=== iBridge active config + interface→driver bindings ===
+timestamp: 2026-09-26T21:32:02+01:00
+Active USB config: 2
+idVendor:idProduct: 05ac:8600
+
+Interface -> driver bindings (config 2, 8 interfaces):
+  1-3:2.0  class=0e sub=01 proto=00  driver=uvcvideo
+  1-3:2.1  class=0e sub=02 proto=00  driver=driver
+  1-3:2.2  class=03 sub=00 proto=01  driver=usbhid
+  1-3:2.3  class=10 sub=00 proto=00  driver=appletbdrm
+  1-3:2.4  class=02 sub=0d proto=00  driver=driver
+  1-3:2.5  class=0a sub=00 proto=01  driver=driver
+  1-3:2.6  class=03 sub=00 proto=01  driver=appletbdrm
+  1-3:2.7  class=ff sub=f9 proto=11  driver=driver
+
+--- 1-3:2.2 (HID, usbhid) — child input devices ---
+ls: cannot access '/sys/bus/usb/devices/1-3/1-3:2.2/input/': No such file or directory
+cat: '/sys/bus/usb/devices/1-3/1-3:2.2/input/input*//name': No such file or directory
+ls: cannot access '/sys/bus/usb/devices/1-3/1-3:2.2/input/input*//': No such file or directory
+  input*: name='' handlers=
+--- 1-3:2.3 (appletbdrm DRM) ---
+card2
+controlD66
+--- 1-3:2.6 (appletbdrm) — second binding? ---
+authorized
+bAlternateSetting
+bInterfaceClass
+bInterfaceNumber
+bInterfaceProtocol
+bInterfaceSubClass
+bNumEndpoints
+driver
+ep_87
+firmware_node
+--- hid-appletb-bl: which interface? ---
+ls: cannot access '/sys/bus/hid/drivers/hid-appletb-bl/': No such file or directory

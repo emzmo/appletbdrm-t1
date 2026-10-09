@@ -1,0 +1,36 @@
+=== ABORT — final evidence capture (2026-09-27T02:02:02+01:00) ===
+--- rerun tbard state ---
+    PID   UID     ELAPSED CMD
+ 426784 65534       00:47 /usr/bin/tbard --service
+             command  tgid dev master a   uid      magic                                                             name                   id
+               tbard 426784   2   y    y 65534          0                                                          <unset>                 3277
+--- rerun journal (full, since rerun start 02:01:15) ---
+Sep 27 02:01:15 phobos systemd[1]: Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)
+--- backlight sysfs (rerun) ---
+appletb_backlight=54  bl_power=0
+--- human confirmed: no glow at 54 OR 255 (brightnessctl) on BOTH runs ---
+--- stopping the rerun tbard (abort) ---
+stop at 2026-09-27T02:02:02+01:00; exit=0
+is-active: inactive
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+Sep 27 02:01:15 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)
+Sep 27 02:02:02 phobos tbard[426784]: [2026-09-27T01:02:02Z INFO  tbard] tbard: shutdown signal received, exiting
+Sep 27 02:02:02 phobos systemd[1]: Stopping Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer)...
+Sep 27 02:02:03 phobos systemd[1]: tbard.service: Deactivated successfully.
+Sep 27 02:02:03 phobos systemd[1]: Stopped Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+--- post-stop debugfs (release) ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+no tbard process (clean exit)

@@ -1,0 +1,75 @@
+=== Preflight baseline (post-reinstall, 2026-09-27T01:28:57+01:00) ===
+Build: v0.2.6 (master cc374b3, /usr/bin/tbard sha cd7aa6c3...)
+Running: sudo sh scripts/bench/interlock-preflight.sh
+Expectation: STEP 0 a-f ALL PASS; STEP 2/3 NO-GO (oracle active) —
+the attempt-#5/Stage-4 baseline posture, NOT a failure.
+
+=== interlock-preflight.sh (ADR 019 Stage-3 preflight) ===
+2026-09-27T01:28:57+01:00
+repo: /home/emzmo/Projects/mbp142-deploy/touchbar
+
+=== STEP 0: environment inventory (ADR 040 — catch the class, not the instance) ===
+PASS 0a: privdrop user nobody (gid=65534) resolvable + primary group resolvable.
+PASS 0b: /dev/uinput exists.
+PASS 0c: touchbar backlight device resolvable (appletb_backlight, ADR 015).
+probe: candidate /dev/input/event7 (sysname=event7) → ABS_MT X max=32767 Y max=127 res=(0,0) iBridge=true 
+   predicate verdict: ACCEPT
+probe-input: digitizer IDENTIFIED (exit 0)
+PASS 0d: digitizer identified by /usr/bin/tbard --probe-input (ADR 041 structural predicate — same function as the runtime; preflight GO ⇒ runtime GO).
+PASS 0e: /usr/bin/tbard exists + strings --service count=7 + --probe-input count=3 (≥ 1 each, ADR 038 + ADR 041 stale-binary guards).
+PASS 0f: tbard.service installed + disabled+inactive (validation-run posture).
+
+=== STEP 1: locate the Touch Bar card by DRIVER (never trust cardN) ===
+  vkms decoy card: card0 (sim harness — NOT ours)
+  other card: card0-Virtual-1 (driver=driver)
+  other card: card0-Writeback-1 (driver=driver)
+  i915 card: card1 (main display — NOT ours)
+  other card: card1-DP-1 (driver=driver)
+  other card: card1-DP-2 (driver=driver)
+  other card: card1-eDP-1 (driver=driver)
+  other card: card1-HDMI-A-1 (driver=driver)
+  other card: card1-HDMI-A-2 (driver=driver)
+  Touch Bar card: card2 (driver=appletbdrm, dri minor=2)
+  other card: card2-USB-1 (driver=driver)
+
+=== STEP 2: debugfs master state on the Touch Bar card ===
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142 365566   2   y    y 65534          0                                                          <unset>                 2979
+FAIL: a process already holds DRM master on the Touch Bar card:
+       tiny-dfr-mbp142 365566   2   y    y 65534          0                                                          <unset>                 2979
+If this is the oracle (tiny-dfr-mbp142), stop it (Step 3). If it is
+another process, investigate before proceeding.
+
+=== STEP 3: oracle service status (tiny-dfr-mbp142.service) ===
+  oracle active:  active
+  oracle enabled: static
+FAIL: the oracle (tiny-dfr-mbp142.service) is ACTIVE. Ours and the
+oracle are mutually exclusive (ADR 019 D5). MASK + stop it first
+scripts/bench/interlock-preflight.sh: line 269: disable: command not found
+(ADR 049: for a static + Restart=always unit,  is a no-op
+scripts/bench/interlock-preflight.sh: line 270: stop: command not found
+and  alone does not suppress the restart policy — session 043
+proved the oracle self-restarts under explicit stop):
+  sudo systemctl mask --now tiny-dfr-mbp142.service
+  # Verify: is-active=inactive, is-enabled=masked (NOT static).
+  # ADR-049 assertion: no auto-restart within +60s:
+  sleep 60 && systemctl is-active tiny-dfr-mbp142.service  # still inactive
+
+=== STEP 4: tbard.service status (must NOT be running yet) ===
+  tbard active:  inactive
+unknown
+  tbard enabled: disabled
+disabled
+
+=== STEP 5: Esc-remap reminder ===
+REMINDER: if anything goes wrong during Stage 3, the recovery path is:
+  1. sudo systemctl stop tbard.service  (graceful SIGTERM, exit 0)
+  2. If unresponsive: sudo kill -9 $(pgrep tbard)
+  3. Re-enable + start the oracle to restore the lit bar:
+     sudo systemctl enable --now tiny-dfr-mbp142.service
+  See docs/recovery.md for the full tiered procedure.
+
+=== VERDICT ===
+NO-GO: one or more preflight checks FAILED. Do NOT start tbard.service.
+Resolve the failures above and re-run this script.
+EXIT=1

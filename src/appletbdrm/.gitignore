@@ -1,0 +1,20 @@
+# Build artifacts
+*.ko
+*.o
+*.mod
+*.mod.c
+Module.symvers
+modules.order
+.*.cmd
+
+# Binaries
+ibridge-switcher
+t1-brightness
+
+# Editor files
+*.swp
+*~
+
+# Excluded directories
+patches/
+tools/

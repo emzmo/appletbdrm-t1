@@ -1,0 +1,24 @@
+=== S0: session 039 baseline (2026-09-26T22:05:50+0100) ===
+Role: hardware interaction researcher (follow-up to session 038).
+Goal: settle the backlight value/luminance coupling regimes (T2 refinement).
+
+Safety bound (same as 038):
+  - ONLY writes: brightness values to
+    /sys/class/backlight/appletb_backlight/brightness, within [1..255].
+  - NEVER 0. Restore to 54 at end.
+  - Oracle (tiny-dfr-mbp142.service) stays RUNNING and lit throughout.
+  - tbard remains disabled+inactive (FREEZE on src/).
+  - bl_power: read-only this session; NO write without explicit human approval.
+
+--- oracle / tbard state ---
+oracle (tiny-dfr-mbp142.service): active (running since Sat 2026-09-26 21:00:55 WEST)
+tbard.service: inactive + disabled
+
+--- backlight sysfs baseline ---
+brightness        = 54
+actual_brightness = 54
+bl_power          = 0
+max_brightness    = 255
+scale             = unknown
+type              = raw
+brightness mtime  = 2026-09-26 21:59:43.422188320 +0100

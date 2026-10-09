@@ -1,0 +1,20 @@
+### Seat-gated test execution (fresh binary, uid=1000, seat0/wayland active, Hyprland holds card2)
+### test_sim_display_acquires_vkms + test_sigterm_releases_master (--nocapture, --test-threads=1)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/main.rs (target/debug/deps/tbard-024090071b748d61)
+
+running 2 tests
+test lifecycle::tests::test_sigterm_releases_master ... test_sigterm_releases_master: skipped (daemon could not acquire DRM master in this session — seat/privilege; re-run on an active VT or under sudo per ADR-010).
+--- child stderr ---
+[2026-09-25T23:59:59Z ERROR tbard] tbard: dry-run SimDisplay acquire failed: Permission denied (os error 13)
+--------------------
+ok
+test providers::sim_display::tests::test_sim_display_acquires_vkms ... test_sim_display_acquires_vkms: skipped (SimDisplayProvider::acquire failed):
+--- error ---
+Permission denied (os error 13)
+-------------
+ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 37 filtered out; finished in 0.50s
+
+SEATGATE_EXIT=0

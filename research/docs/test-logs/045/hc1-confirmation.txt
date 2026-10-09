@@ -1,0 +1,50 @@
+=== HC1 — Esc fallback connected + tested ===
+Timestamp: 2026-09-27T01:39:30+01:00 (answer received)
+Question asked (verbatim): "HC1 (MANDATORY, pre-mask checkpoint). I have read
+docs/recovery.md (Tier 0–4 recovery procedure) and verified the baseline: oracle
+tiny-dfr-mbp142 is active+static sole master on card2, tbard inactive,
+/etc/touchbar has no live config.yaml (only config.yaml.example).
+Before I mask the oracle (STEP 1) and start tbard (STEP 3), I must confirm the
+recovery fallback:
+1. Is the physical Esc key (the laptop's built-in keyboard Esc, NOT the Touch
+Bar Esc) connected and working — i.e. pressing it produces an Escape in some
+app you can see (e.g. a modal/vim/terminal)?
+2. Have you tested it just now (yes/no)?
+3. Have you read recovery.md (the recovery procedure), or do you accept my
+verbatim summary of it above (Tier 0 stop daemon → Tier 1 backlight safe-state
+→ Tier 2 USB config → Tier 3 modules → Tier 4 reboot; never patch on the air;
+capture first)?
+Please type your answer so I can record it verbatim with the timestamp. This
+gate must pass before I proceed to STEP 1 (mask the oracle)."
+
+Human answer (VERBATIM, typed):
+"+ I read recovery.md. CLARIFICATION FOR THE RECORD: on the MacBookPro14,2 there
+is NO physical Esc key outside the Touch Bar — the function row IS the bar. My
+tested fallback is the EXTERNAL USB KEYBOARD's Esc (pressed in a terminal just
+now; sends Escape). Proceed to STEP 1.
+
+BEFORE STEP 3 — derivation addition (read-only, cite file:line):
+The P1 display-backlight capture used acpi_video0 (90/90), but the curve's
+denominator is 509 — which main-display backlight device does OUR code actually
+read for display_bl, and by what selection logic (name match? scan order?
+hardcoded max)? And which device does the ORACLE read (does it open the
+tiny_dfr_mbp142_display_backlight udev alias from its rules — and on this bench,
+which node currently claims that alias)? Recompute the expected +1s curve value
+from the device OUR CODE reads (live current reading at that moment), and
+record: device path, raw value, max, selection evidence, recomputed expected.
+If our selection differs from the oracle's, LOG as a finding (ADR-050 candidate,
+tracking-scale mismatch) — do not fix on the air; use the code-true device for
+STEP 4b's expected value. Then proceed with the protocol as briefed."
+
+GATE: PASS.
+- recovery.md: human confirms read.
+- Esc fallback: the MacBookPro14,2 has NO physical Esc key outside the Touch
+  Bar (the function row IS the bar) — the briefed "physical Esc key" framing
+  does not apply on this hardware. The human's TESTED fallback is the EXTERNAL
+  USB KEYBOARD's Esc key (pressed in a terminal just now; sends Escape).
+  This is a valid, tested fallback path: if the Touch Bar Esc is unavailable
+  during the run (oracle masked, tbard rendering the render-only page which has
+  NO esc widget), the human can still Esc via the external USB keyboard.
+- Proceeding to STEP 1 (mask the oracle) per the protocol, AFTER the read-only
+  derivation addition the human requested is performed (see
+  display-backlight-selection-derivation.txt).

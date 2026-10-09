@@ -1,0 +1,23 @@
+SESSION 029 — STEP 1 — Stop the oracle (verbatim)
+=================================================
+Timestamp: 2026-09-26T15:50:46+01:00
+
+$ sudo systemctl stop tiny-dfr-mbp142.service
+stop rc=0
+
+$ systemctl is-active tiny-dfr-mbp142.service  (immediate)
+inactive
+
+After ~10s (t+11s):
+$ systemctl is-active tiny-dfr-mbp142.service
+inactive   <-- explicit stop BEATS Restart=always (live-verified, calibrated)
+
+$ sudo cat /sys/kernel/debug/dri/2/clients
+             command  tgid dev master a   uid      magic   name   id
+             (EMPTY — no master rows on touchbar card)
+
+$ cat /sys/class/backlight/appletb_backlight/brightness
+54   (sysfs holds last value; fd released, no master holding the surface)
+
+RESULT: STEP 1 PASS — oracle inactive+stays inactive, touchbar card empty (no master).
+Bar expected dark visually (HC2/HC3 will confirm surface state).

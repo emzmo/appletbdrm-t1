@@ -1,0 +1,18 @@
+=== STEP 3 — DEPLOY RENDER-ONLY PAGE + START TBARD (2026-09-27T01:49:27+01:00) ===
+--- pre-session /etc/touchbar state (recorded in P1; restated here for the deploy record) ---
+total 12
+drwxr-xr-x  2 root root 4096 Sep 26 13:16 .
+drwxr-xr-x 85 root root 4096 Sep 27 01:49 ..
+-rw-r--r--  1 root root 2279 Sep 26 13:16 config.yaml.example
+--- NO live config.yaml exists pre-session (only config.yaml.example). ---
+--- Per the briefed restore plan: the render-only page will be REMOVED at STEP 8 (no operator config to restore). ---
+--- install examples/render-only-validation-page.yaml → /etc/touchbar/config.yaml ---
+'examples/render-only-validation-page.yaml' -> '/etc/touchbar/config.yaml'
+--- verify install ---
+-rw-r--r-- 1 emzmo emzmo 2624 Sep 27 01:20 /etc/touchbar/config.yaml
+install OK (identical)
+--- read the curve input RIGHT BEFORE start (for the +1s probe expected value) ---
+display_bl(acpi_video0)=90  → expected display_to_touchbar(90, 128) = 54
+T-start: 2026-09-27T01:49:27+01:00
+--- start tbard.service ---
+--- start issued; immediately capture +1s state ---

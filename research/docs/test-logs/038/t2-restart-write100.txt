@@ -1,0 +1,8 @@
+=== T2 restart step 1: write 100 (from baseline 50) ===
+timestamp: 2026-09-26T21:34:54+01:00
+--- BEFORE ---
+  value=50 mtime=2026-09-26 21:34:42.112286910 +0100
+--- WRITE 100 ---
+100
+--- AFTER ---
+  value=100 mtime=2026-09-26 21:34:54.384530103 +0100

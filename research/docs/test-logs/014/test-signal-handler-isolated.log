@@ -1,0 +1,10 @@
+===== re-run: cargo test --bin tbard lifecycle::tests::test_signal_handler_sets_flag -- --exact (run 1) =====
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running unittests src/main.rs (target/debug/deps/tbard-024090071b748d61)
+
+running 1 test
+test lifecycle::tests::test_signal_handler_sets_flag ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 39 filtered out; finished in 0.00s
+
+exit=0

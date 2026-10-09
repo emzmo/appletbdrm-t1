@@ -1,0 +1,23 @@
+## getfacl /dev/input/event4
+```
+getfacl: Removing leading '/' from absolute path names
+# file: dev/input/event4
+# owner: root
+# group: input
+user::rw-
+group::rw-
+other::---
+
+```
+
+## getfacl under sudo (in case ACL needs root to show)
+```
+getfacl: Removing leading '/' from absolute path names
+# file: dev/input/event4
+# owner: root
+# group: input
+user::rw-
+group::rw-
+other::---
+
+```
