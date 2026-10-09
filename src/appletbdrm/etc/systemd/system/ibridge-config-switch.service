@@ -1,0 +1,16 @@
+[Unit]
+Description=Switch Apple T1 iBridge to USB config 2 (DRM mode)
+# Run after udev so the sysfs tree is populated, but before
+# multi-user so the Touch Bar is available by the time the
+# desktop session starts.
+After=systemd-udevd.service
+Wants=systemd-udevd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/ibridge-config-switch.sh
+RemainAfterExit=yes
+TimeoutStartSec=30
+
+[Install]
+WantedBy=sysinit.target
