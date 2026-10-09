@@ -35,7 +35,7 @@ echo 2 > "$BRIDGE/bConfigurationValue"
 # card appears only after appletbdrm finishes probing the new display
 # interface.  Wait up to 25s (under the systemd TimeoutStartSec=30).
 for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25; do
-    if ls /sys/class/drm/card*/device/driver 2>/dev/null | grep -q appletbdrm; then
+    if readlink /sys/class/drm/card*/device/driver 2>/dev/null | grep -q appletbdrm; then
         echo "ibridge-config: appletbdrm DRM card appeared"
         exit 0
     fi
