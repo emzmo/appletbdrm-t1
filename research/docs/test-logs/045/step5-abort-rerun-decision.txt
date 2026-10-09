@@ -1,0 +1,28 @@
+=== STEP 5 — ABORT/RERUN DECISION ===
+Timestamp: 2026-09-27T02:00:30+01:00 (decision received)
+
+Human answer (VERBATIM, typed): "re-do session to double check"
+
+Interpretation (recorded for the audit): the human does NOT confirm a hard
+abort+restore now. Instead they direct a re-run to double-check whether the
+no-glow is transient. The cleanest in-protocol way to honor this is to
+perform an immediate rerun cycle (STEP 7 in the protocol: stop → start →
++1s probe → observe). This stays within the controlled exception (stop/start
+tbard) and does NOT touch hardware recovery (USB flip / touchbar-activate /
+reboot — still out of scope, between sessions per recovery.md).
+
+Plan:
+  - STEP 6 (now): stop tbard → expect exit 0 + debugfs release.
+  - STEP 7 (immediate rerun): start tbard → +1s curve-value probe → observe
+    whether the bar produces any glow at all (human visual check) → ~15s →
+    stop → release verified.
+  - If the rerun's bar produces NO glow (same as this run): the no-glow is
+    confirmed as a hardware-level backlight failure that persists across a
+    clean tbard restart → ABORT, restore the oracle, report.
+  - If the rerun's bar DOES glow: the no-glow was a transient state cleared
+    by the restart cycle → continue the Stage-4 protocol (HC2/HC3/HC4).
+
+The ADR-047 wake-wiring proof from this run (14 `touch wake →
+backlight.notify_activity()` INFO lines at 01:50:40 on a real touch) is
+captured and will be reported regardless of the rerun outcome — it is the
+on-hardware evidence that the wake path fires.

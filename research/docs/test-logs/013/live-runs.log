@@ -1,0 +1,74 @@
+=== ADR-029 live scale test (all sub-assertions) ===
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+     Running unittests src/main.rs (target/debug/deps/tbard-024090071b748d61)
+
+running 1 test
+ok: mid-range scale 32767/127 → logical (1084.9337768554688, 29.53125) [expected ≈(1085, 30)]
+ok: edges-lo scale (0, 0) → logical (0, 0)
+ok: edges-hi scale (32767, 127) → logical (2169.9337768554688, 59.53125) [expected ≈(2170, 60)]
+ok: widget-tap raw (16383, 63) → logical (1084.9337768554688, 29.53125) → hit_test widget_id=1
+test providers::sim_input::tests::test_sim_input_scales_real_abs_range_to_logical ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 39 filtered out; finished in 0.76s
+
+
+=== ADR-030 adversarial: rm -f target/debug/tbard ===
+ls: cannot access 'target/debug/tbard': No such file or directory
+--- cargo test --no-run (expect rebuild) ---
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+  Executable unittests src/main.rs (target/debug/deps/tbard-024090071b748d61)
+  Executable tests/exit_code.rs (target/debug/deps/exit_code-d565d17a8b2d77e9)
+  Executable tests/sigterm_master_release.rs (target/debug/deps/sigterm_master_release-732e5141a06bf9cc)
+--- bin present after --no-run ---
+-rwxr-xr-x 2 emzmo emzmo 45169848 Sep 26 11:03 target/debug/tbard
+
+=== exit_code test live ===
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running tests/exit_code.rs (target/debug/deps/exit_code-d565d17a8b2d77e9)
+
+running 1 test
+ok: startup failure exited non-zero (code=Some(1)) per ADR-025
+test test_startup_failure_exits_nonzero ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+
+=== sigterm_master_release test live ===
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running tests/sigterm_master_release.rs (target/debug/deps/sigterm_master_release-732e5141a06bf9cc)
+
+running 1 test
+test_sigterm_releases_master: skipped (daemon could not acquire DRM master in this session — seat/privilege; re-run on an active VT or under sudo per ADR-010).
+--- child stderr ---
+[2026-09-26T10:04:46Z ERROR tbard] tbard: dry-run SimDisplay acquire failed: Permission denied (os error 13)
+Error: Permission denied (os error 13)
+--------------------
+test test_sigterm_releases_master ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+
+
+=== master-gated trio truthful skips ===
+--- test_sim_display_acquires_vkms ---
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running unittests src/main.rs (target/debug/deps/tbard-024090071b748d61)
+
+running 1 test
+test_sim_display_acquires_vkms: skipped (SimDisplayProvider::acquire failed):
+--- error ---
+Permission denied (os error 13)
+-------------
+test providers::sim_display::tests::test_sim_display_acquires_vkms ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 39 filtered out; finished in 0.00s
+
+--- test_retry_partial_alloc_releases_master_on_failure ---
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running unittests src/main.rs (target/debug/deps/tbard-024090071b748d61)
+
+running 1 test
+test_retry_partial_alloc_releases_master_on_failure: skipped (master not acquired — bench not granted; re-run per ADR-026 or on a clean VT). Err: Touch Bar DRM card never appeared: master acquire failed (bench not granted): Permission denied (os error 13)
+test providers::drm_backend::tests::test_retry_partial_alloc_releases_master_on_failure ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 39 filtered out; finished in 0.01s
+

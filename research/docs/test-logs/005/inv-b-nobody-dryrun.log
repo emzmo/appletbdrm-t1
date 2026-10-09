@@ -1,0 +1,20 @@
+[2026-09-25T22:03:37Z ERROR tbard::lifecycle] tbard: panic at src/main.rs:121:13: panicked at src/main.rs:121:13:
+    tbard: dry-run SimDisplay acquire failed: Permission denied (os error 13)
+    backtrace:
+       0: <unknown>
+       1: <unknown>
+       2: <unknown>
+       3: <unknown>
+       4: <unknown>
+       5: <unknown>
+       6: <unknown>
+       7: <unknown>
+       8: <unknown>
+       9: <unknown>
+      10: <unknown>
+      11: <unknown>
+      12: <unknown>
+      13: <unknown>
+      14: __libc_start_main
+      15: <unknown>
+    

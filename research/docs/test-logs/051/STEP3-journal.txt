@@ -1,0 +1,208 @@
+=== STEP 3 — Journal (tbard.service, INFO) ===
+Captured: 2026-09-27T11:44:33+01:00
+--- systemctl show Environment (RUST_LOG) ---
+Environment=RUST_LOG=info
+
+--- journalctl -u tbard.service (full since start) ---
+2026-09-26T23:44:14+01:00 phobos systemd[1]: Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z INFO  tbard::providers::backlight] tbard: backlight enable-write 128 (max 255, active_brightness 128)
+2026-09-26T23:44:15+01:00 phobos tbard[338190]: [2026-09-26T22:44:15Z WARN  tbard] tbard: --service config load failed, using built-in default: no pages configured: config has zero pages (set /etc/touchbar/config.yaml or run with --dry-run / --service)
+2026-09-27T00:38:58+01:00 phobos systemd[1]: Stopping Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer)...
+2026-09-27T00:38:58+01:00 phobos tbard[338190]: [2026-09-26T23:38:58Z INFO  tbard] tbard: shutdown signal received, exiting
+2026-09-27T00:38:59+01:00 phobos systemd[1]: tbard.service: Deactivated successfully.
+2026-09-27T00:38:59+01:00 phobos systemd[1]: Stopped Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T00:38:59+01:00 phobos systemd[1]: tbard.service: Consumed 8.617s CPU time over 54min 44.055s wall clock time, 6M memory peak.
+2026-09-27T01:49:27+01:00 phobos systemd[1]: Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+2026-09-27T01:49:27+01:00 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:50:40+01:00 phobos tbard[420043]: [2026-09-27T00:50:40Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:57:30+01:00 phobos tbard[420043]: [2026-09-27T00:57:30Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:57:31+01:00 phobos tbard[420043]: [2026-09-27T00:57:31Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:57:31+01:00 phobos tbard[420043]: [2026-09-27T00:57:31Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:57:31+01:00 phobos tbard[420043]: [2026-09-27T00:57:31Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:57:31+01:00 phobos tbard[420043]: [2026-09-27T00:57:31Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:57:31+01:00 phobos tbard[420043]: [2026-09-27T00:57:31Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:57:31+01:00 phobos tbard[420043]: [2026-09-27T00:57:31Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:57:31+01:00 phobos tbard[420043]: [2026-09-27T00:57:31Z INFO  tbard] tbard: tap page=render-only-validation logical=(55,1068) hit=None
+2026-09-27T01:57:31+01:00 phobos tbard[420043]: [2026-09-27T00:57:31Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:57:31+01:00 phobos tbard[420043]: [2026-09-27T00:57:31Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T01:57:31+01:00 phobos tbard[420043]: [2026-09-27T00:57:31Z INFO  tbard] tbard: tap page=render-only-validation logical=(56,1068) hit=None
+2026-09-27T02:01:00+01:00 phobos systemd[1]: Stopping Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer)...
+2026-09-27T02:01:00+01:00 phobos tbard[420043]: [2026-09-27T01:01:00Z INFO  tbard] tbard: shutdown signal received, exiting
+2026-09-27T02:01:00+01:00 phobos systemd[1]: tbard.service: Deactivated successfully.
+2026-09-27T02:01:00+01:00 phobos systemd[1]: Stopped Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T02:01:00+01:00 phobos systemd[1]: tbard.service: Consumed 4.663s CPU time over 11min 32.824s wall clock time, 6M memory peak.
+2026-09-27T02:01:15+01:00 phobos systemd[1]: Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+2026-09-27T02:01:15+01:00 phobos tbard[426784]: [2026-09-27T01:01:15Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)
+2026-09-27T02:02:02+01:00 phobos tbard[426784]: [2026-09-27T01:02:02Z INFO  tbard] tbard: shutdown signal received, exiting
+2026-09-27T02:02:02+01:00 phobos systemd[1]: Stopping Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer)...
+2026-09-27T02:02:03+01:00 phobos systemd[1]: tbard.service: Deactivated successfully.
+2026-09-27T02:02:03+01:00 phobos systemd[1]: Stopped Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T02:27:24+01:00 phobos systemd[1]: Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)
+2026-09-27T02:27:25+01:00 phobos tbard[442684]: [2026-09-27T01:27:25Z WARN  tbard] tbard: --service config load failed, using built-in default: no pages configured: config has zero pages (set /etc/touchbar/config.yaml or run with --dry-run / --service)
+2026-09-27T02:30:44+01:00 phobos tbard[442684]: [2026-09-27T01:30:44Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:44+01:00 phobos tbard[442684]: [2026-09-27T01:30:44Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:44+01:00 phobos tbard[442684]: [2026-09-27T01:30:44Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:44+01:00 phobos tbard[442684]: [2026-09-27T01:30:44Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:45+01:00 phobos tbard[442684]: [2026-09-27T01:30:45Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+2026-09-27T02:30:46+01:00 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:46+01:00 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:46+01:00 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: tap page=primary logical=(1,1068) hit=None
+2026-09-27T02:30:46+01:00 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:46+01:00 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:30:46+01:00 phobos tbard[442684]: [2026-09-27T01:30:46Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+2026-09-27T02:31:50+01:00 phobos tbard[442684]: [2026-09-27T01:31:50Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:51+01:00 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:51+01:00 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: tap page=primary logical=(14,1068) hit=None
+2026-09-27T02:31:51+01:00 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:51+01:00 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:51+01:00 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: tap page=primary logical=(14,1068) hit=None
+2026-09-27T02:31:51+01:00 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:51+01:00 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:51+01:00 phobos tbard[442684]: [2026-09-27T01:31:51Z INFO  tbard] tbard: tap page=primary logical=(14,1068) hit=None
+2026-09-27T02:31:52+01:00 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:52+01:00 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:52+01:00 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: tap page=primary logical=(14,1068) hit=None
+2026-09-27T02:31:52+01:00 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:52+01:00 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:52+01:00 phobos tbard[442684]: [2026-09-27T01:31:52Z INFO  tbard] tbard: tap page=primary logical=(14,1068) hit=None
+2026-09-27T02:31:53+01:00 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:53+01:00 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:53+01:00 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: tap page=primary logical=(13,1068) hit=None
+2026-09-27T02:31:53+01:00 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:53+01:00 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:31:53+01:00 phobos tbard[442684]: [2026-09-27T01:31:53Z INFO  tbard] tbard: tap page=primary logical=(13,1068) hit=None
+2026-09-27T02:32:41+01:00 phobos systemd[1]: Stopping Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer)...
+2026-09-27T02:32:41+01:00 phobos tbard[442684]: [2026-09-27T01:32:41Z INFO  tbard] tbard: shutdown signal received, exiting
+2026-09-27T02:32:41+01:00 phobos systemd[1]: tbard.service: Deactivated successfully.
+2026-09-27T02:32:41+01:00 phobos systemd[1]: Stopped Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T02:32:41+01:00 phobos systemd[1]: tbard.service: Consumed 2.172s CPU time over 5min 16.520s wall clock time, 6M memory peak.
+2026-09-27T02:32:56+01:00 phobos systemd[1]: Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+2026-09-27T02:32:56+01:00 phobos tbard[446089]: [2026-09-27T01:32:56Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: tap page=render-only-validation logical=(14,1068) hit=None
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: tap page=render-only-validation logical=(14,1068) hit=None
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: tap page=render-only-validation logical=(14,1068) hit=None
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: tap page=render-only-validation logical=(14,1068) hit=None
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: touch wake → backlight.notify_activity()
+2026-09-27T02:33:57+01:00 phobos tbard[446089]: [2026-09-27T01:33:57Z INFO  tbard] tbard: tap page=render-only-validation logical=(14,1068) hit=None
+2026-09-27T02:34:30+01:00 phobos systemd[1]: Stopping Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer)...
+2026-09-27T02:34:30+01:00 phobos tbard[446089]: [2026-09-27T01:34:30Z INFO  tbard] tbard: shutdown signal received, exiting
+2026-09-27T02:34:30+01:00 phobos systemd[1]: tbard.service: Deactivated successfully.
+2026-09-27T02:34:30+01:00 phobos systemd[1]: Stopped Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T02:34:32+01:00 phobos systemd[1]: Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+2026-09-27T02:34:32+01:00 phobos tbard[447064]: [2026-09-27T01:34:32Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)
+2026-09-27T02:34:34+01:00 phobos systemd[1]: Stopping Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer)...
+2026-09-27T02:34:34+01:00 phobos tbard[447064]: [2026-09-27T01:34:34Z INFO  tbard] tbard: shutdown signal received, exiting
+2026-09-27T02:34:34+01:00 phobos systemd[1]: tbard.service: Deactivated successfully.
+2026-09-27T02:34:34+01:00 phobos systemd[1]: Stopped Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+-- Boot 9e8da11f067c434c9ae0014ac3140163 --
+2026-09-27T11:44:26+01:00 phobos systemd[1]: Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+2026-09-27T11:44:26+01:00 phobos tbard[33476]: [2026-09-27T10:44:26Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)

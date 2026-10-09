@@ -1,0 +1,21 @@
+=== ADR-032 adversarial 10x re-run of test_signal_handler_sets_flag ===
+2026-09-26T11:35:37+01:00
+
+--- 10x full cargo test (the parallel-harness condition that exposed the flake) ---
+run 1: PASS
+run 2: PASS
+run 3: PASS
+run 4: PASS
+run 5: PASS
+run 6: PASS
+run 7: PASS
+run 8: PASS
+run 9: PASS
+run 10: PASS
+
+Results (full cargo test, parallel harness): 10 passed, 0 failed (of 10)
+
+--- 10x full-suite run (all tests in parallel — the original flake condition) ---
+Results (full suite): 10 passed, 0 failed (of 10)
+
+VERDICT: 20/20 PASS — the ADR-032 spin-wait fix eliminated the flake.

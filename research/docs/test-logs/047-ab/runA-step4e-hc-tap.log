@@ -1,0 +1,65 @@
+# 047 RUN A STEP 4e — HC-A + HC-A2 (tap-line capture)
+# Captured: 2026-09-27 02:30:44 → 02:31:53 WEST
+
+## HC-A (timed, verbatim)
+Question: "Is the esc-button mark VISIBLE right now? One sentence."
+Answer (verbatim): "the esc-button mark is visible right now"
+Recorded at: 2026-09-27T02:31:13+01:00
+VERDICT HC-A: esc mark VISIBLE → Run A GLOWS (matches the 043 counter-example).
+  Brightness at observation: 100 (from STEP 4d external write).
+
+## HC-A2 — single crisp touch
+Instruction (verbatim): "Touch the bar ONCE, gently but CRISPLY (finger down and up as fast as you can)."
+Operator confirmed: "done" (touch performed ~02:30:44..02:31:53)
+
+## Journal capture (wake + TAP lines)
+12 tap lines (Gesture::Tap classified — within TAP_MAX_MS=300ms)
+36 wake lines (touch wake → backlight.notify_activity())
+
+### Tap line details (all)
+  02:30:45 tap page=primary logical=(2,1068)  hit=None
+  02:30:45 tap page=primary logical=(2,1068)  hit=None
+  02:30:45 tap page=primary logical=(2,1068)  hit=None
+  02:30:46 tap page=primary logical=(1,1068)  hit=None
+  02:30:46 tap page=primary logical=(2,1068)  hit=None
+  02:31:51 tap page=primary logical=(14,1068) hit=None
+  02:31:51 tap page=primary logical=(14,1068) hit=None
+  02:31:51 tap page=primary logical=(14,1068) hit=None
+  02:31:52 tap page=primary logical=(14,1068) hit=None
+  02:31:52 tap page=primary logical=(14,1068) hit=None
+  02:31:53 tap page=primary logical=(13,1068) hit=None
+  02:31:53 tap page=primary logical=(13,1068) hit=None
+
+  hit=None: 12/12 (all taps)
+  hit=Some: 0/12
+
+### Key observations
+1. TAP line IS present (12 of them) → the touch was classified as Gesture::Tap
+   (within TAP_MAX_MS=300ms). Stage-4 item 3 (tap log) is SATISFIED for Run A.
+   The Task-0 threshold caveat (no tap line => touch >300ms) does NOT apply here —
+   the tap lines are present, so the touch was crisp (<300ms).
+
+2. hit=None on ALL taps → the touch landed at logical x=2..14, y=1068 (leftmost
+   edge, near but OUTSIDE the esc widget hit box). NO key was injected (Esc was
+   NOT emitted). The default page injects by design, but this touch missed all
+   widgets. This is SAFER than expected — no key injection occurred.
+
+3. The wake mechanism works: touch → notify_activity → bar wakes (was already
+   lit at 100 from 4d). The wake lines confirm the ADR-047 wake path fires per
+   touch event.
+
+4. brightness returned to 54 (curve output) after the touch — the adaptive
+   loop's update() saw current_bl=54 != sysfs 100 and wrote 54 back (clobbering
+   the external 4d write). This is the ADR-048 single-owner behavior: the
+   backlight provider owns the level; external writes are transient.
+
+## Stage-4 item 3 verdict (Run A)
+TAP line PRESENT → item 3 SATISFIED (a crisp <300ms tap produced an observable
+TAP line in the journal). The hit=None result means no key was injected (the
+touch missed all widgets), which is a separate observation about hit-testing at
+the leftmost edge — NOT a defect in the tap-logging path.
+
+## TAP_MAX_MS=300ms caveat (Task-0 finding)
+The 12 tap lines confirm the touch was within the 300ms threshold. The caveat
+(touch >300ms => no tap line => item 3 blocked on a crisp re-touch) does NOT
+apply to Run A. The tap-logging path is VERIFIED.

@@ -1,0 +1,22 @@
+[Unit]
+Description=Touch Bar daemon for MacBookPro14,2 (T1, appletbdrm framebuffer)
+# The daemon scans /dev/dri itself (aspect-ratio match); Restart=always
+# covers the DRM card appearing late (config switch at sysinit).
+After=systemd-logind.service systemd-user-sessions.service
+
+[Service]
+ExecStart=/usr/bin/tiny-dfr-mbp142
+Restart=always
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateIPC=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=strict
+RestrictAddressFamilies=AF_UNIX AF_NETLINK
+RestrictNamespaces=true
+RestrictSUIDSGID=true

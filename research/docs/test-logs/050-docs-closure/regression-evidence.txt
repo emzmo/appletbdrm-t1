@@ -1,0 +1,46 @@
+=== REGRESSION EVIDENCE — v0.2.7 docs closure (session 050, post-reinstall) ===
+Date: 2026-09-27. Host safety binding: oracle untouched and lit; NO service
+lifecycle actions; /dev/input unchanged (25); no /etc changes; debugfs —
+oracle sole master (name+uid, never tgid/cardN).
+
+=== 1. debugfs dri/<touchbar N>/clients — oracle sole master ===
+The touchbar DRM device is /sys/kernel/debug/dri/1-3:2.3/clients (dev 2).
+Its complete clients list (ONE entry):
+    command            tgid  dev  master  a  uid    name
+    tiny-dfr-mbp142    568   2    y       y  65534  <unset>
+
+Oracle = tiny-dfr-mbp142 (the deployed oracle), PID 568, uid 65534 (nobody),
+master=y, a=y. SOLE master of the touchbar card. Identity is name+uid
+(tiny-dfr-mbp142 / nobody), NOT tgid/cardN. NO tbard entry in the touchbar
+card's clients — tbard never started. (The other DRI cards 0/1/128 are the
+iGPU/display: Hyprland/logind/kitty/etc., NOT the touchbar.)
+
+=== 2. tbard.service state (NO service lifecycle actions) ===
+  is-active:  inactive
+  is-enabled: disabled
+  (inactive + disabled ✓ — no service lifecycle actions this session)
+
+=== 3. /dev/input unchanged (expect 25) ===
+  count: 25
+
+=== 4. no /etc changes (oracle unit mtime unchanged) ===
+  oracle unit: /etc/systemd/system/tiny-dfr-mbp142.service
+  mtime: 2026-09-14 19:15:21.081692229 +0100
+  (2026-09-14 — UNCHANGED from prior sessions; matches the v13 report's record)
+  tbard.service unit: /usr/lib/systemd/system/tbard.service
+  mtime: 2026-09-26 23:36:43.705313119 +0100
+  (2026-09-26 23:36 — from a prior session; NOT touched this session)
+  /etc recent-writes check (find /etc -newermt '2026-09-27 10:25'): only
+  unrelated system files (ld.so.cache, gshadow/group/resolv.conf); NO
+  touchbar/oracle/tbard files touched.
+
+=== 5. corrected example file in tree at tip ===
+  examples/render-only-validation-page.yaml lines 87-101 (git show HEAD):
+  F-13-1 correction present (BACKWARDS comment fixed in-place; annotate,
+  don't rewrite history; HC target = SHAPE widget; wide bars TRIGGER
+  auto-esc). Confirmed above in the git show output.
+
+=== SUMMARY ===
+Regression PASS. Host safety maintained: oracle sole master and lit;
+tbard inactive + disabled; /dev/input 25; no /etc changes; corrected
+example file in the tree at the tip.

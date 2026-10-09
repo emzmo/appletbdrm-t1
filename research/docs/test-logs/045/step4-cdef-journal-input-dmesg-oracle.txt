@@ -1,0 +1,45 @@
+=== STEP 4c — journal: NO EACCES / dispatch-Err warns; boot sequence; digitizer identify; self-check ===
+T: 2026-09-27T01:49:45+01:00
+Sep 27 01:49:27 phobos systemd[1]: Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: Touch Bar engine starting (mode: real)
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card2 → Touch Bar geometry (60×2170, ratio 3616) [ACCEPTED]
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card0 → rejected: aspect ratio 768/1024 (1024×768)
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard::providers] tbard: DRM scan /dev/dri/card1 → rejected: aspect ratio 1600/2560 (2560×1600)
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard::providers] tbard: DRM scan accepted /dev/dri/card2
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: Touch Bar display fb 60x2170 → logical 2170x60
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard::providers::backlight] tbard: backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)
+
+--- specifically: any EACCES / open_restricted / permission-denied / dispatch-Err? ---
+NONE (acceptance item 11 OK)
+--- specifically: digitizer identify line? ---
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+--- specifically: config-fallback WARN? (EXPECTED: none — page found) ---
+NONE (render-only page loaded — no fallback WARN, as expected)
+--- self-check line (must include digitizer_is_identified assertion) ---
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: privdrop target resolved: nobody uid=65534 gid=65534
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: service-mode privdrop to nobody complete (ADR-039 resolved gid)
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: post-drop fd self-check OK (drm + uinput + backlight + digitizer)
+Sep 27 01:49:27 phobos tbard[420043]: [2026-09-27T00:49:27Z INFO  tbard] tbard: post-drop digitizer-identified self-check OK (ADR 047)
+
+=== STEP 4d — /dev/input delta (expect UNCHANGED — render-only page, no uinput device) ===
+T: 2026-09-27T01:49:45+01:00
+/dev/input count now: 25
+P1 baseline count: 25
+--- diff vs P1 (captured inline below from P1 baseline) ---
+/dev/input UNCHANGED (no uinput device created)
+
+=== STEP 4e — dmesg delta (no appletbdrm stall / flush timed out) ===
+T: 2026-09-27T01:49:45+01:00
+
+=== STEP 4f — ADR-049 mid-run oracle check (oracle masked, no oracle row) ===
+T: 2026-09-27T01:49:45+01:00
+--- debugfs card2: grep for tiny-dfr (EXPECT no output) ---
+NO oracle row (mask held — ADR-049 interlock OK)
+--- is-active/is-enabled (oracle still masked+inactive?) ---
+oracle is-active: inactive
+oracle is-enabled: masked

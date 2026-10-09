@@ -1,0 +1,58 @@
+=== QA v5 session 011 — GATES VERBATIM ===
+Date: 2026-09-26
+
+--- cargo fmt --check ---
+$ cargo fmt --check
+FMT_EXIT=0
+
+--- cargo clippy --all-targets -- -D warnings ---
+$ cargo clippy --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.14s
+CLIPPY_EXIT=0
+
+--- cargo test (reconcile counts: 39 baseline + N new) ---
+$ cargo test
+     Running unittests src/main.rs (target/debug/deps/tbard-024090071b748d61)
+running 41 tests
+[... all pass ...]
+test result: ok. 41 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+     Running tests/exit_code.rs (target/debug/deps/exit_code-d565d17a8b2d77e9)
+running 1 test
+test test_startup_failure_exits_nonzero ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+TEST_EXIT=0
+
+Reconciliation: 41 unit + 1 integration = 42 total. Baseline 39 (QA v4)
+  + 3 new = 42. New tests:
+  - test_sim_input_scales_real_abs_range_to_logical (ADR-024)
+  - test_startup_failure_exits_nonzero (ADR-025)
+  - test_retry_partial_alloc_releases_master_on_failure (ADR-027)
+  ADR-028 added no new test (ci-gate build step only).
+  COUNT RECONCILED: 39 + 3 = 42 ✓.
+
+--- scripts/check-invariants.sh ---
+$ bash scripts/check-invariants.sh
+check-invariants: PASS
+INVARIANTS_EXIT=0
+
+--- scripts/ci-gate.sh ---
+$ bash scripts/ci-gate.sh
+==> cargo fmt --check
+==> cargo build --bin tbard
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 19.48s
+==> scripts/check-invariants.sh (ADR 009: zero name-string matching)
+check-invariants: PASS
+CI gate: PASS
+CI_GATE_EXIT=0
+
+--- Commit hygiene ---
+Branch: fix/hygiene-adr-016-023 (single branch, two ADR sets)
+  ADR-016..023 commits: 00a1689, 2af9513, d22c8a6, 075bae3, b457f42, 1d240d8, 4c3a6da
+  ADR-024..028 commits: f18b82a, 41ab94d, cc58081, 5f6a77c, c4bd310
+  One commit per ADR: ✓ (f18b82a=024, 41ab94d=025, cc58081=027, 5f6a77c=028)
+  c4bd310 = docs self-assessment-4 + session 007 resume wrap-up (docs-only)
+  9b57c3d = baseline session 010 post-mortem docs (docs-only, pre-024..028)
+  ADR-before-code: ✓ (each ADR doc in the same commit as its code, ADR
+    section written first per commit messages)
+  ADR-019 untouched: ✓ (no docs/adr/019* file exists — reserved)
+  Logged exceptions: none observed in the ADR-024..028 commits.

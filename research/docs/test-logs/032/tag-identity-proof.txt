@@ -1,0 +1,15 @@
+=== v0.2.3 tag identity proof (tag == HEAD) ===
+git rev-parse v0.2.3^{commit}:
+9ce94afe8883ca054b5b5c86e30715eb6f5210ba
+git rev-parse master:
+9ce94afe8883ca054b5b5c86e30715eb6f5210ba
+git rev-parse HEAD:
+9ce94afe8883ca054b5b5c86e30715eb6f5210ba
+---
+equality check:
+PASS: v0.2.3^{commit} == master == HEAD == 9ce94afe8883ca054b5b5c86e30715eb6f5210ba
+---
+tag object type:
+tag
+tag -> commit (peeled):
+9ce94afe8883ca054b5b5c86e30715eb6f5210ba

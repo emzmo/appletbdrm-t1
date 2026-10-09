@@ -1,0 +1,115 @@
+=== QA v10 adversarial demos (re-run live, session 035) ===
+Date: 2026-09-26
+Branch: fix/backlight-write-adr-043 (HEAD = d13196c)
+All mutations on the real tree then RESTORED from /tmp/opencode backups; baseline re-verified PASS after each restore.
+
+--- Demo 1: check-invariants guard #8 (ADR-043 enable-write present on render path) ---
+
+BASELINE (unmodified src/main.rs):
+  547:    if let Err(e) = backlight.enable() {
+  check-invariants: PASS (exit 0)
+
+ADVERSARIAL: sed replaced 'if let Err(e) = backlight.enable() {' with 'if false {'
+  → grep for `backlight\.enable\(\)\s*[\{;]` on src/main.rs: NO match
+
+GUARD OUTPUT against the planted tree:
+  FAIL: ADR 043 src/main.rs render path missing the backlight.enable() call —
+  the deterministic enable-write at scanout-begin was removed (session-033
+  regression: panel dark because no enable-write reached the held fd). The
+  call must be present on a CODE line (statement context: backlight.enable()
+  followed by an open-brace or semicolon), not just a doc comment or string
+  literal.
+  check-invariants: FAIL (exit 1)
+
+RESTORE + re-verify:
+  547:    if let Err(e) = backlight.enable() {
+  check-invariants: PASS (exit 0)
+
+VERDICT: guard #8 is NON-VACUOUS — removing the enable-write call FAILS the
+gate (exit 1); restoring it PASSES (exit 0). The exact session-033 regression
+is caught.
+
+--- Demo 2: check-invariants guard #7a (D-031-2 — code-line scoping) ---
+
+BASELINE (unmodified src/providers/input.rs):
+  113:        // (geometry::is_touchbar_digitizer). ADR 036: reuse the held
+  130:        crate::geometry::is_touchbar_digitizer(&candidate)
+  194:                if crate::geometry::is_touchbar_digitizer(&candidate) {
+  230:    /// `geometry::is_touchbar_digitizer` — the same predicate function.
+  280:                let verdict = crate::geometry::is_touchbar_digitizer(&candidate);
+  534:  // call `geometry::is_touchbar_digitizer`; the equivalence (same
+  check-invariants: PASS (exit 0)
+
+ADVERSARIAL: python script commented out the 3 code-line calls (130, 194, 280),
+leaving only the comment/doc mentions (113, 230, 534):
+  113:        // (geometry::is_touchbar_digitizer). ADR 036: reuse the held
+  130:        // ADVERSARIAL: geometry::is_touchbar_digitizer removed
+  194:        // ADVERSARIAL: geometry::is_touchbar_digitizer removed
+  230:    /// `geometry::is_touchbar_digitizer` — the same predicate function.
+  280:        // ADVERSARIAL: geometry::is_touchbar_digitizer removed
+  534:  // call `geometry::is_touchbar_digitizer`; the equivalence (same
+
+GUARD OUTPUT against the comment-only tree:
+  FAIL: ADR 041 src/providers/input.rs does not call geometry::is_touchbar_digitizer
+  on a CODE line — the runtime/probe paths must invoke the SINGLE structural
+  predicate (preflight GO ⇒ runtime GO). A comment-only mention does not
+  satisfy the guard (D-031-2).
+  check-invariants: FAIL (exit 1)
+
+RESTORE + re-verify:
+  check-invariants: PASS (exit 0)
+
+VERDICT: guard #7a is NON-VACUOUS under the D-031-2 scoping — a comment-only
+copy (no real code calls) FAILS the gate (exit 1); restoring the code calls
+PASSES (exit 0). The prior `grep -q` form would have passed on the
+comment-only copy (vacuous — the D-031-1 lesson: comments are not code).
+
+--- Demo 3: render-path ordering test (ADR-043 enable precedes first flush + update) ---
+
+BASELINE (unmodified src/main.rs):
+  cargo test --bin tbard test_render_path_enable_write_precedes_first_flush_and_update
+  → test result: ok. 1 passed (calls[0] == "enable"; enable_idx < update_idx;
+    write_log non-empty + first_write > 0)
+
+ADVERSARIAL: python script
+  (a) removed the scanout-begin `if let Err(e) = backlight.enable() { ... }` block
+      (replaced with a comment);
+  (b) inserted `let _ = backlight.enable();` AFTER the loop-bottom
+      `backlight.update();` (so enable runs after the first flush + update,
+      then the OneShotShutdownDisplay breaks the loop at the next top check).
+  Added an eprintln of the captured call order right before the first assert.
+
+TEST OUTPUT against the planted tree:
+  ADVERSARIAL CALL ORDER: ["update", "enable"]
+  thread 'tests::test_render_path_enable_write_precedes_first_flush_and_update'
+  panicked at src/main.rs:1450:9:
+  assertion `left == right` failed: ADR 043: backlight.enable() must be the
+  FIRST backlight call on the render path (scanout-begin), before the first
+  flush and the loop-bottom update; got order ["update", "enable"]
+    left: "update"
+   right: "enable"
+  test result: FAILED. 0 passed; 1 failed
+
+RESTORE + re-verify:
+  test result: ok. 1 passed
+
+VERDICT: the render-path ordering test is NON-VACUOUS — moving `enable()`
+after the loop-bottom `update()` (i.e. after the first flush) flips the
+recorded call order to ["update", "enable"] and the test FAILS at the
+`calls[0] == "enable"` assertion. The ordering is ASSERTED, not implied.
+
+--- MockBacklight write_log non-vacuity ---
+
+Inspection (src/providers/mock_backlight.rs):
+  enable()  → self.write_log.push_back(v) at line 53 (v = brightness.clamp(max))
+  set_brightness() → self.write_log.push_back(v) at line 38
+The render-path test asserts `!backlight.inner.write_log().is_empty()` AND
+`*front() > 0` after real_main runs one iteration. The adversarial demo
+above (moving enable after update) still records BOTH writes (update's
+internal set_brightness path is a no-op on MockBacklight because the trait
+`update()` default is a no-op — wait: MockBacklight does NOT override
+update(), so update() records NOTHING; only enable() records). Confirmed:
+in the adversarial run the write_log would still be non-empty (enable
+recorded), but calls[0] == "update" fails the ordering assertion first.
+The write_log assertion is a SEPARATE, non-vacuous check that the
+enable-write produced a recorded non-zero value.

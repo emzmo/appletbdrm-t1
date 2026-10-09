@@ -1,0 +1,48 @@
+=== evtest caps of iBridge digitizer node ===
+timestamp: 2026-09-26T21:25:01+01:00
+digitizer event node: /dev/input/event6
+--- sysfs caps (full) ---
+input node: input9
+  name: Apple Inc. iBridge Touchpad
+  --- capabilities/abs (bitmap) ---
+a60800000000003
+  --- capabilities/key (bitmap) ---
+e520 0 0 0 0 0
+  --- capabilities/syn (bitmap) ---
+cat: /sys/class/input/input9/capabilities/syn: No such file or directory
+  --- capabilities/msc (bitmap) ---
+0
+  --- capabilities/sw (bitmap) ---
+0
+  --- capabilities/ff (bitmap) ---
+0
+  --- capabilities/rel (bitmap) ---
+0
+  --- properties ---
+3
+  --- id ---
+  bustype: 0003
+  vendor: 05ac
+  product: 8600
+  version: 0101
+  --- uniq/phys ---
+  uniq: ''
+  phys: 'usb-0000:00:14.0-3/input2'
+--- abs axis ranges (via /sys/class/input/input9/abs/) ---
+--- evtest --query (caps + abs ranges, human-readable) ---
+Input driver version is 1.0.1
+Input device ID: bus 0x19 vendor 0x0 product 0x6 version 0x0
+Input device name: "Video Bus"
+Supported events:
+  Event type 0 (EV_SYN)
+  Event type 1 (EV_KEY)
+    Event code 224 (KEY_BRIGHTNESSDOWN)
+    Event code 225 (KEY_BRIGHTNESSUP)
+    Event code 227 (KEY_SWITCHVIDEOMODE)
+    Event code 241 (KEY_VIDEO_NEXT)
+    Event code 242 (KEY_VIDEO_PREV)
+    Event code 243 (KEY_BRIGHTNESS_CYCLE)
+    Event code 244 (KEY_BRIGHTNESS_ZERO)
+    Event code 245 (KEY_DISPLAY_OFF)
+Properties:
+Testing ... (interrupt to exit)

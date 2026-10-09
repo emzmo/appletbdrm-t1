@@ -1,0 +1,31 @@
+# 047 RUN A STEP 4b — +1s curve probe
+# Captured: 2026-09-27 02:27:49 WEST
+
+## Formula (src/providers/backlight.rs:159-163)
+  normalized = display / MAX_DISPLAY_BRIGHTNESS(509)
+  adjusted   = int(normalized^0.5 * active_brightness) + 1
+  result     = min(adjusted, MAX_TOUCH_BAR_BRIGHTNESS(255))
+
+## P1 inputs (recomputed at run time)
+  display_bl (acpi_video0/brightness) = 90
+  active_brightness (default)         = 128
+  max touchbar                        = 255
+
+## Run-time recomputation
+  normalized = 90/509 = 0.17681728880157171
+  normalized^0.5 = 0.4204964789407537
+  int(0.4204964789407537 * 128) + 1 = 53 + 1 = 54
+  min(54, 255) = 54
+  EXPECTED = 54
+
+## Observed
+  sysfs appletb_backlight/brightness at +~1s after start (02:27:49): 54
+  bl_power: 0 (ON)
+  journal enable-tick line (02:27:25):
+    "backlight enable-tick → 54 (display_bl active_brightness 128, adaptive true, max 255)"
+
+## VERDICT: 4b PASS
+  observed 54 == expected 54 == journal enable-tick 54
+  The ADR-048 curve fires on the enable-tick (scanout-begin); the bar is lit at the
+  display-linked level (54), NOT raw 128. Confirms ADR-048 D3 datapoint.
+  (Unit test test_adr048_display_to_touchbar_curve_90_to_54_datapoint pins this.)

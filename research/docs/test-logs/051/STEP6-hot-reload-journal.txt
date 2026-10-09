@@ -1,0 +1,12 @@
+=== STEP 6 — journal witness (reload line) ===
+Edit completed at 11:51:47; watching journal 11:51:46 → 11:52:06 (20s window) for reload lines
+Timestamp: 2026-09-27T11:51:52+01:00
+
+--- journal since edit (11:51:46) — look for reload/config lines ---
+2026-09-27T11:51:47+01:00 phobos tbard[33476]: [2026-09-27T10:51:47Z INFO  tbard] tbard: config reloaded
+
+--- grep reload/config lines in this window ---
+2026-09-27T11:51:47+01:00 phobos tbard[33476]: [2026-09-27T10:51:47Z INFO  tbard] tbard: config reloaded
+
+--- also check for any error lines (storm detection) ---
+No ERROR/WARN/panic lines in window

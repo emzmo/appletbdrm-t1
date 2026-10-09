@@ -1,0 +1,27 @@
+=== STEP 6 — SIGTERM from the running loop (2026-09-27T02:01:00+01:00) ===
+--- tbard state before stop ---
+    PID   UID     ELAPSED CMD
+ 420043 65534       11:32 /usr/bin/tbard --service
+             command  tgid dev master a   uid      magic                                                             name                   id
+               tbard 420043   2   y    y 65534          0                                                          <unset>                 3263
+--- stop ---
+stop issued at 2026-09-27T02:01:00+01:00; exit=0
+--- post-stop: is-active ---
+is-active: inactive
+--- journal: exit code + shutdown line ---
+Sep 27 02:01:00 phobos systemd[1]: Stopping Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer)...
+Sep 27 02:01:00 phobos tbard[420043]: [2026-09-27T01:01:00Z INFO  tbard] tbard: shutdown signal received, exiting
+Sep 27 02:01:00 phobos systemd[1]: tbard.service: Deactivated successfully.
+Sep 27 02:01:00 phobos systemd[1]: Stopped Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+Sep 27 02:01:00 phobos systemd[1]: tbard.service: Consumed 4.663s CPU time over 11min 32.824s wall clock time, 6M memory peak.
+--- post-stop: debugfs (tbard row should be GONE — release verified) ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+--- post-stop: tbard process gone? ---
+338240 /usr/bin/bash -c echo "=== restart journal tail with valid format ==="; rm -f /tmp/opencode/journal-043-step3.log; sudo journalctl -u tbard.service -f -o short-precise --no-pager 2>&1 | tee /tmp/opencode/journal-043-step3.log
+338242 sudo journalctl -u tbard.service -f -o short-precise --no-pager
+338248 journalctl -u tbard.service -f -o short-precise --no-pager
+426619 /usr/bin/bash -c cd /home/emzmo/Projects/mbp142-deploy/touchbar && { TB_CARD=2 echo "=== STEP 6 — SIGTERM from the running loop ($(date -Is)) ===" echo "--- tbard state before stop ---" ps -o pid,uid,etime,cmd -C tbard 2>&1 sudo cat /sys/kernel/debug/dri/$TB_CARD/clients 2>&1 echo "--- stop ---" T_STOP=$(date -Is) sudo systemctl stop tbard.service 2>&1 echo "stop issued at $T_STOP; exit=$?" echo "--- post-stop: is-active ---" echo "is-active: $(systemctl is-active tbard.service)" echo "--- journal: exit code + shutdown line ---" journalctl -u tbard.service --no-pager --since "1 minute ago" 2>&1 | tail -15 echo "--- post-stop: debugfs (tbard row should be GONE — release verified) ---" sudo cat /sys/kernel/debug/dri/$TB_CARD/clients 2>&1 echo "--- post-stop: tbard process gone? ---" pgrep -af tbard 2>&1 || echo "no tbard process (clean exit)" echo "--- post-stop: backlight (tbard no longer maintaining; will decay or hold last) ---" echo "appletb_backlight=$(cat /sys/class/backlight/appletb_backlight/brightness)" } 2>&1 | tee docs/test-logs/045/step6-stop-tbard.txt
+426620 /usr/bin/bash -c cd /home/emzmo/Projects/mbp142-deploy/touchbar && { TB_CARD=2 echo "=== STEP 6 — SIGTERM from the running loop ($(date -Is)) ===" echo "--- tbard state before stop ---" ps -o pid,uid,etime,cmd -C tbard 2>&1 sudo cat /sys/kernel/debug/dri/$TB_CARD/clients 2>&1 echo "--- stop ---" T_STOP=$(date -Is) sudo systemctl stop tbard.service 2>&1 echo "stop issued at $T_STOP; exit=$?" echo "--- post-stop: is-active ---" echo "is-active: $(systemctl is-active tbard.service)" echo "--- journal: exit code + shutdown line ---" journalctl -u tbard.service --no-pager --since "1 minute ago" 2>&1 | tail -15 echo "--- post-stop: debugfs (tbard row should be GONE — release verified) ---" sudo cat /sys/kernel/debug/dri/$TB_CARD/clients 2>&1 echo "--- post-stop: tbard process gone? ---" pgrep -af tbard 2>&1 || echo "no tbard process (clean exit)" echo "--- post-stop: backlight (tbard no longer maintaining; will decay or hold last) ---" echo "appletb_backlight=$(cat /sys/class/backlight/appletb_backlight/brightness)" } 2>&1 | tee docs/test-logs/045/step6-stop-tbard.txt
+426621 tee docs/test-logs/045/step6-stop-tbard.txt
+--- post-stop: backlight (tbard no longer maintaining; will decay or hold last) ---
+appletb_backlight=200

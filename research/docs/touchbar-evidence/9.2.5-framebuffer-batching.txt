@@ -1,0 +1,24 @@
+# 9.2.5 — macOS framebuffer batching [MED] — DEFERRED to Linux usbmon
+# Date: 2026-08-25
+# Machine: MacBookPro14,2, macOS 13.7.8 (22H730)
+#
+# STATUS: DEFERRED — cannot capture from macOS.
+#
+# Reason: Same as 9.1.2 and 9.2.3 — requires USB OUT transfer capture to
+# interface 3 to count appletbdrm_frame records per bulk URB. macOS cannot
+# capture the internal USB bus. See 9.1.2-refresh-rate.txt for the full
+# toolchain analysis.
+#
+# What this item needs: count the number of appletbdrm_frame records per
+# bulk OUT URB in macOS's traffic. The Linux appletbdrm driver sends
+# appletbdrm_fb_request with multiple appletbdrm_frame records per transfer
+# (src/appletbdrm/appletbdrm.c:124-151). If macOS uses the same multi-frame
+# batching, the framing matches. If macOS uses one frame per URB, a future
+# firmware update might enforce that.
+#
+# DTrace option (NOT executed — needs sudo): same DTrace approach as 9.2.3
+# — capture transfer buffer bytes and count the appletbdrm_frame records
+# by their header signature. Flagged for user manual execution.
+#
+# Promotion: NO CHANGE — 9.2.5 stays [UNKNOWN] pending Linux usbmon or
+#   a manual DTrace run by the user.

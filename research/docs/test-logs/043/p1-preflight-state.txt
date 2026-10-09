@@ -1,0 +1,64 @@
+# P1 — Pre-flight state capture
+# Session 043 — Stage-3 attempt #5 (render-only hardware validation)
+# Captured: 2026-09-26T23:42:35+01:00
+
+## git state
+HEAD = d66f3efadf9980e5b50577ba7970518400a4f38a
+tag  = v0.2.5 (HEAD == tag == d66f3ef)
+branch: master (clean working tree; only untracked: docs/test-logs/042/tag-identity-proof.txt)
+
+## installed binary
+/usr/bin/tbard  sha256 = 90daf3d622faf90404b459a428661e42a32de6a9970be05856fdd24195c4a082
+(matches v0.2.5 merge report)
+
+## card mapping (touchbar = appletbdrm)
+card0 -> faux_driver
+card1 -> i915          (eDP — compositor Hyprland)
+card2 -> appletbdrm    (TOUCHBAR — oracle sole master)
+
+## /dev/input count
+total devices: 25
+event devices: 18   (event0..event17)  [expect 18 — MATCH]
+mice: 4 (mouse0..mouse3)
+by-id, by-path dirs
+
+## debugfs dri/2 clients (touchbar card — appletbdrm)
+             command  tgid dev master a   uid      magic    name                   id
+     tiny-dfr-mbp142 241900   2   y    y 65534          0    <unset>               2261
+ORACLE SOLE MASTER — name=tiny-dfr-mbp142, uid=65534 (identified by name+uid, NOT tgid)
+tgid 241900 (current value — changes across attempts; not an identity field)
+
+## debugfs dri/0 (faux) — unaffected, Hyprland + logind masters
+## debugfs dri/1 (i915 eDP) — Hyprland master + many render clients (kitty/firefox/etc.)
+eDP UNAFFECTED — no tbard process present on dri/1
+
+## backlight sysfs BASELINE
+device: /sys/class/backlight/appletb_backlight
+  -> /sys/devices/pci0000:00/0000:00:14.0/usb1/1-3/1-3:2.3/backlight/appletb_backlight
+brightness     = 54
+max_brightness = 255
+(NO mtime read — mtime is DEAD per ADR-046 / s040v11; value probe is the only acceptance)
+timestamp: 2026-09-26T23:42:35,355450257+01:00
+
+## systemctl status (both services)
+tiny-dfr-mbp142.service: is-active=active   is-enabled=static
+tbard.service:           is-active=inactive is-enabled=disabled
+
+## installed unit — RUST_LOG present
+/usr/lib/systemd/system/tbard.service:
+  line 59: # ADR 045 (observability): RUST_LOG=info so the boot sequence + the
+  line 65: # defaults to the error level with no RUST_LOG, suppressing every
+  line 77: # fail-safe) are ERROR-level (always emitted regardless of RUST_LOG).
+  line 78: Environment=RUST_LOG=info
+JOURNAL IS A LIVE WITNESS AT INFO LEVEL — confirmed.
+
+/usr/lib/systemd/system/tiny-dfr-mbp142.service: (no RUST_LOG line — oracle unaffected)
+
+## summary
+All P1 fields match the v0.2.5 merge report expectations:
+- HEAD == v0.2.5 == d66f3ef
+- oracle sole master of touchbar card by name+uid (tiny-dfr-mbp142 / 65534)
+- /dev/input event count = 18 (expect 18)
+- tbard.service inactive+disabled
+- RUST_LOG=info present in installed unit
+- brightness baseline 54/255 (oracle's adaptive idle-dim hold — expected)

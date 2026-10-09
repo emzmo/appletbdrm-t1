@@ -1,0 +1,15 @@
+=== STEP4 IDLE-DECAY OBSERVATION (NO TOUCH) 2026-09-27T13:06:33+01:00 ===
+t=10s value=1
+t=20s value=1
+t=30s value=1
+t=40s value=0
+t=50s value=0
+t=60s value=0
+t=70s value=0
+t=80s value=0
+--- decay complete at 2026-09-27T13:07:53+01:00: value=0 ---
+--- mid-run interlock check (STEP 4f): touchbar card ---
+             command  tgid dev master a   uid      magic                                                             name                   id
+               tbard 51168   2   y    y 65534          0                                                          <unset>                  269
+--- /dev/input delta ---
+25

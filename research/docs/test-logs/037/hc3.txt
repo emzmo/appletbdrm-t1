@@ -1,0 +1,8 @@
+HC3 (oracle restore — window CLOSED check)
+Question asked verbatim:
+  "Does the bar show the oracle's normal F-row, and does Esc on the bar
+   send Esc again?"
+Human answer (verbatim): "Both confirmed"
+Interpretation: (a) oracle F-row visible, (b) Esc on the bar sends Esc.
+Window CLOSED. Oracle fully restored (active+static, sole master on dev 2,
+bar lit with F-row, Esc working). Final state matches the pre-session baseline.

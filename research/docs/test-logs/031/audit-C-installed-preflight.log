@@ -1,0 +1,119 @@
+=== AUDIT C — INSTALLED-BINARY DELTA + PREFLIGHT (W12 evidence) ===
+Date: 2026-09-26T18:28Z
+Bench: fix/digitizer-identity-adr-041 @ bd36962
+Oracle: active+running throughout (untouched)
+
+--- C.1: /usr/bin/tbard --probe-input (installed/stale binary) ---
+
+$ timeout 15 /usr/bin/tbard --probe-input
+tbard: unknown argument '--probe-input'
+usage: tbard [--dry-run | --service]
+
+--dry-run   run the engine against simulated providers backed by
+		vkms (display) + uinput (input); no Touch Bar hardware touched
+		(load vkms first: modprobe vkms). NO privdrop.
+--service   production mode: root-start + privdrop to nobody/nogroup
+		after opening DRM/uinput/backlight fds, post-drop self-check,
+		default-page fallback on missing config. Read /etc/touchbar/.
+		The unit's first real start IS Stage 3 (under the interlock).
+		(bare `tbard` = dev/real non-service: NO privdrop)
+INSTALLED_PROBE_EXIT=2
+
+VERDICT: W12 CONFIRMED. The installed /usr/bin/tbard predates ADR-041
+(lacks the --probe-input subcommand → exit 2 "unknown argument"). This
+is the reinstall precondition (NF-020-B class — ADR-038 stale-binary),
+NOT a defect in the branch. The failure mode is LOUD (exit 2 + usage),
+not silent — the preflight cannot falsely PASS 0d with a stale binary.
+
+--- C.2: interlock-preflight.sh (full, verbatim) ---
+
+$ timeout 60 bash scripts/bench/interlock-preflight.sh
+=== interlock-preflight.sh (ADR 019 Stage-3 preflight) ===
+2026-09-26T18:28:28+01:00
+repo: /home/emzmo/Projects/mbp142-deploy/touchbar
+
+=== STEP 0: environment inventory (ADR 040 — catch the class, not the instance) ===
+PASS 0a: privdrop user nobody (gid=65534) resolvable + primary group resolvable.
+PASS 0b: /dev/uinput exists.
+PASS 0c: touchbar backlight device resolvable (appletb_backlight, ADR 015).
+tbard: unknown argument '--probe-input'
+usage: tbard [--dry-run | --service]
+
+--dry-run   run the engine against simulated providers backed by
+		vkms (display) + uinput (input); no Touch Bar hardware touched
+		(load vkms first: modprobe vkms). NO privdrop.
+--service   production mode: root-start + privdrop to nobody/nogroup
+		after opening DRM/uinput/backlight fds, post-drop self-check,
+		default-page fallback on missing config. Read /etc/touchbar/.
+		The unit's first real start IS Stage 3 (under the interlock).
+		(bare `tbard` = dev/real non-service: NO privdrop)
+FAIL 0d: /usr/bin/tbard --probe-input did NOT identify a digitizer (exit 2). The probe runs the SAME structural predicate as the service-arm identify_digitizer (multitouch + strip-class + iBridge-associated + resolution-aspect; ADR 041). A preflight GO here guarantees a runtime GO. Check the iBridge device is present and the seat-touchbar udev rule applied (packaging/udev/69-touchbar-seat.rules).
+PASS 0e: /usr/bin/tbard exists + strings --service count=6 (≥ 1, ADR 038 guard).
+PASS 0f: tbard.service installed + disabled+inactive (validation-run posture).
+
+=== STEP 1: locate the Touch Bar card by DRIVER (never trust cardN) ===
+  vkms decoy card: card0 (sim harness — NOT ours)
+  other card: card0-Virtual-1 (driver=driver)
+  other card: card0-Writeback-1 (driver=driver)
+  i915 card: card1 (main display — NOT ours)
+  other card: card1-DP-1 (driver=driver)
+  other card: card1-DP-2 (driver=driver)
+  other card: card1-eDP-1 (driver=driver)
+  other card: card1-HDMI-A-1 (driver=driver)
+  other card: card1-HDMI-A-2 (driver=driver)
+  Touch Bar card: card2 (driver=appletbdrm, dri minor=2)
+  other card: card2-USB-1 (driver=driver)
+
+=== STEP 2: debugfs master state on the Touch Bar card ===
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142 105638   2   y    y 65534          0                                                          <unset>                 1853
+FAIL: a process already holds DRM master on the Touch Bar card:
+       tiny-dfr-mbp142 105638   2   y    y 65534          0                                                          <unset>                 1853
+If this is the oracle (tiny-dfr-mbp142), stop it (Step 3). If it is
+another process, investigate before proceeding.
+
+=== STEP 3: oracle service status (tiny-dfr-mbp142.service) ===
+  oracle active:  active
+  oracle enabled: static
+FAIL: the oracle (tiny-dfr-mbp142.service) is ACTIVE. Ours and the
+oracle are mutually exclusive (ADR 019 D5). Stop + disable it first:
+  sudo systemctl disable --now tiny-dfr-mbp142.service
+
+=== STEP 4: tbard.service status (must NOT be running yet) ===
+  tbard active:  inactive
+unknown
+  tbard enabled: disabled
+disabled
+
+=== STEP 5: Esc-remap reminder ===
+REMINDER: if anything goes wrong during Stage 3, the recovery path is:
+  1. sudo systemctl stop tbard.service  (graceful SIGTERM, exit 0)
+  2. If unresponsive: sudo kill -9 $(pgrep tbard)
+  3. Re-enable + start the oracle to restore the lit bar:
+     sudo systemctl enable --now tiny-dfr-mbp142.service
+  See docs/recovery.md for the full tiered procedure.
+
+=== VERDICT ===
+NO-GO: one or more preflight checks FAILED. Do NOT start tbard.service.
+Resolve the failures above and re-run this script.
+PREFLIGHT_EXIT=1
+
+=== VERDICT: W12 CONFIRMED, expected NO-GO (reinstall precondition, NOT a defect) ===
+STEP 0d FAILs because the INSTALLED /usr/bin/tbard (stale, predates
+ADR-041) does not understand --probe-input → exit 2 → 0d FAIL → overall
+NO-GO. STEP 2/3 FAILs are the ORACLE-ACTIVE interlock (correct — the
+oracle stays lit per HOST SAFETY; we do NOT stop it in a read-only QA
+session). The preflight correctly distinguishes:
+  - 0a/0b/0c/0e/0f PASS (environment + stale-binary-class checks);
+  - 0d FAIL (stale binary lacks the probe — the reinstall trigger);
+  - 2/3 FAIL (oracle active — the Stage-3 interlock gate, correct).
+
+This is the reinstall precondition working as designed. After
+`makepkg -si` (reinstall /usr/bin/tbard from this branch's tip), 0d will
+call the installed probe and PASS (the branch probe ACCEPTed event7 in
+Audit B). The strings --probe-input behavioral guard flagged in
+self-assessment-10 C6 (preflight 0e checks --service but NOT
+--probe-input) is NOT yet implemented; the loud exit-2 failure mode is
+the current safety net. ADR proposal: add a 0e-sub-check
+`strings /usr/bin/tbard | grep -c -- --probe-input` ≥ 1 (new finding
+D-031-1, logged not implemented per FREEZE).

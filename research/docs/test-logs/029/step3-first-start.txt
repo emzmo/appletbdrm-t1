@@ -1,0 +1,70 @@
+SESSION 029 — STEP 3 — First real start of tbard.service (verbatim)
+===================================================================
+Start timestamp: 2026-09-26T15:51:22+01:00
+
+$ sudo systemctl start tbard.service
+start rc=0  (immediate)
+
+$ systemctl is-active tbard.service  (t+2s)
+activating
+
+$ systemctl is-active tbard.service  (t+9s)
+failed
+
+$ systemctl status tbard.service --no-pager | head -15
+× tbard.service - Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer)
+     Loaded: loaded (/usr/lib/systemd/system/tbard.service; disabled; preset: disabled)
+     Active: failed (Result: start-limit-hit) since Sat 2026-09-26 15:51:39 WEST; 3s ago
+   Duration: 282ms
+ Invocation: 9b4ba97210fb4ffe8468d8d5bca79fd5
+    Process: 104854 ExecStart=/usr/bin/tbard --service (code=exited, status=1/FAILURE)
+   Main PID: 104854 (code=exited, status=1/FAILURE)
+   Mem peak: 3.1M
+        CPU: 108ms
+
+Sep 26 15:51:39 systemd[1]: tbard.service: Scheduled restart job, restart counter is at 3.
+Sep 26 15:51:39 systemd[1]: tbard.service: Start request repeated too quickly.
+Sep 26 15:51:39 systemd[1]: tbard.service: Failed with result 'start-limit-hit'.
+Sep 26 15:51:39 systemd[1]: Failed to start Touch Bar daemon (...).
+
+JOURNAL (full, since 15:51:20):
+--------------------------------
+Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+[2026-09-26T14:51:23Z ERROR tbard] tbard: input init (digitizer identify) failed: input init failed: no digitizer found on seat-touchbar (geometry gate: ABS_MT vs (60, 2170))
+Error: input init failed: no digitizer found on seat-touchbar (geometry gate: ABS_MT vs (60, 2170))
+tbard.service: Main process exited, code=exited, status=1/FAILURE
+tbard.service: Failed with result 'exit-code'.
+tbard.service: Scheduled restart job, restart counter is at 1.
+Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+[2026-09-26T14:51:28Z ERROR tbard] tbard: input init (digitizer identify) failed: input init failed: no digitizer found on seat-touchbar (geometry gate: ABS_MT vs (60, 2170))
+Error: input init failed: no digitizer found on seat-touchbar (geometry gate: ABS_MT vs (60, 2170))
+tbard.service: Main process exited, code=exited, status=1/FAILURE
+tbard.service: Failed with result 'exit-code'.
+tbard.service: Scheduled restart job, restart counter is at 2.
+Started Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+[2026-09-26T14:51:33Z ERROR tbard] tbard: input init failed: no digitizer found on seat-touchbar (geometry gate: ABS_MT vs (60, 2170))
+Error: input init failed: no digitizer found on seat-touchbar (geometry gate: ABS_MT vs (60, 2170))
+tbard.service: Main process exited, code=exited, status=1/FAILURE
+tbard.service: Failed with result 'exit-code'.
+tbard.service: Scheduled restart job, restart counter is at 3.
+tbard.service: Start request repeated too quickly.
+tbard.service: Failed with result 'start-limit-hit'.
+Failed to start Touch Bar daemon (tbard) for MacBookPro14,2 (T1, appletbdrm framebuffer).
+
+OBSERVATIONS
+------------
+1. tbard exited status=1 on each of 3 attempts; StartLimit 3-burst hit at 15:51:39
+   (7s after first start) — CALIBRATED, live-verified behavior (matches CONTEXT).
+2. The error is NOT the session-025 privdrop/nogroup failure. ADR-039's privdrop
+   fix is NOT reached — tbard fails BEFORE privdrop, at the digitizer identify
+   step (input init, ADR-036 pre-drop phase). The expected ADR-039 ordering
+   (privdrop target resolution FIRST, before device work) was therefore NOT
+   exercised on hardware this run.
+3. Root cause: digitizer geometry-gate mismatch (see step3-diagnosis.txt).
+   This is a code defect (preflight vs runtime contradiction), NOT an
+   environment regression. NO-GO — captured, NOT fixed on the air.
+
+debugfs DRI 2 throughout STEP 3: EMPTY (tbard never acquired the master —
+it failed in input init, before the DRM master acquire).
+
+reset-failed: rc=0; tbard inactive after reset.

@@ -1,0 +1,35 @@
+=== STEP 8 — Restore the oracle + HC3 — Stage-3 attempt #3, session 033 ===
+Start issued : 2026-09-26T17:57:03Z
+Command      : sudo systemctl start tiny-dfr-mbp142.service
+start rc     : 0
++4s is-active: active
+is-enabled   : static
+
+--- debugfs (oracle sole master, identified by NAME + UID, never tgid) ---
+/sys/kernel/debug/dri/2/clients (17:57:07Z):
+             command         tgid   dev master a   uid      magic name      id
+     tiny-dfr-mbp142        146352   2   y    y 65534          0 <unset>  1968
+IDENTITY: tiny-dfr-mbp142 + uid 65534  (tgid 146352 — again different from
+          105638 baseline / 144955 / 146140; tgid is volatile, NOT used for identity)
+STATE:    sole master on touchbar card, master=y. Oracle fully restored.
+backlight: 54 (oracle holding the panel lit)
+
+--- HC3 (oracle restored checkpoint) ---
+Asked (verbatim):
+  "HC3 (oracle restored checkpoint). I have stopped tbard and restarted the
+  oracle (tiny-dfr-mbp142.service is active, sole master on the touchbar card by
+  name+uid, backlight=54).
+
+  Please answer verbatim:
+  "Does the bar show the oracle's normal F-row, and does Esc on the bar send Esc
+  again?"
+
+  Type your answer. I will record it verbatim and this closes the validation window."
+
+Answer (verbatim, typed by human):
+  "Yes — F-row + Esc works"
+
+OUTCOME: Window CLOSED. Oracle relit the bar with the normal F-row; Esc on the
+bar sends Esc again. Recovery complete; system back to pre-validation posture.
+
+=== END STEP 8 ===

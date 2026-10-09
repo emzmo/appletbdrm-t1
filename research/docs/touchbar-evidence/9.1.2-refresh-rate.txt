@@ -1,0 +1,55 @@
+# 9.1.2 — Panel refresh rate [MED] — DEFERRED to Linux usbmon
+# Date: 2026-08-25
+# Machine: MacBookPro14,2, macOS 13.7.8 (22H730)
+#
+# STATUS: DEFERRED — cannot capture from macOS.
+#
+# Reason: The OLED panel refresh rate requires capturing the inter-frame
+# interval of bulk OUT transfers to interface 3 (the display endpoint).
+# macOS cannot capture the internal USB bus:
+#   - Wireshark on macOS has no USB extcap (verified: only ciscodump,
+#     randpktdump, sshdump, udpdump, wifidump in
+#     /Applications/Wireshark.app/Contents/Resources/extcap/)
+#   - tshark -D / dumpcap -D list only network interfaces (en0, awdl0, etc.)
+#   - No Homebrew formula for a userspace USB sniffer exists (usbtrapp/usbtb
+#     don't exist; usbtree is a viewer, not a sniffer; macusb is an installer
+#     creator)
+#   - The T1 device is entitlement-locked (UsbUserClientEntitlementRequired =
+#     "com.apple.ibridge.control"), so even lsusb -v fails with
+#     IOCreatePlugInInterfaceForService 0xe00002be (with SIP on).
+#     With SIP off + amfi_get_out_of_my_way=1 (current state), lsusb -v
+#     still uses system_profiler which hits a different code path that also
+#     fails. ioreg reads the registry directly and works, but it does not
+#     expose transfer timing.
+#
+# What this means for the Linux side: the original checklist Option A
+# (Wireshark pcap from macOS) is NOT VIABLE on this machine. Option B
+# (Linux usbmon via tshark) per docs/09 §9.1.2 remains the only path.
+# The capture-t1.sh script on the Linux side should be used instead.
+#
+# Partial data captured (from ioreg, for cross-checking once Linux has
+# the pcap):
+#   - T1 device: idVendor=0x05ac, idProduct=0x8600, USB Address=4
+#   - locationID = 0x14100000
+#   - Device Speed = 2 (High Speed, 480 Mb/s) — USBSpeed=3
+#   - Active configuration: 2 (kUSBCurrentConfiguration=2)
+#   - Display interface: interface 3 (bInterfaceClass=0x10,
+#     bInterfaceNumber=3, bNumEndpoints=2, bConfigurationValue=2)
+#     UsbExclusiveOwner = "pid 313, TouchBarServer"
+#     UsbUserClientEntitlementRequired = "com.apple.appledfr.client"
+#   - TouchBarServer (PID 313, /usr/libexec/TouchBarServer) is the
+#     userspace driver sending display OUT transfers to interface 3.
+#
+# DTrace option (NOT executed — needs sudo):
+#   A DTrace script probing IOUSBHostPipe::Complete or AppleUSBXHCI
+#   transfer functions could capture transfer timestamps and compute
+#   inter-frame intervals. DTrace Restrictions are already disabled on
+#   this machine, but running dtrace requires root (sudo), which this
+#   session cannot provide without a tty. The script would be:
+#     sudo dtrace -n 'fbt:IOUSBHostPipe:Complete:entry /execname=="TouchBarServer"/ { printf("%d\n", timestamp); }'
+#   run while exercising the Touch Bar, then compute inter-frame deltas.
+#   This would resolve 9.1.2 without Linux usbmon. Flagged for user
+#   manual execution if desired.
+#
+# Promotion: NO CHANGE — 9.1.2 stays [UNKNOWN] pending Linux usbmon or
+#   a manual DTrace run by the user.

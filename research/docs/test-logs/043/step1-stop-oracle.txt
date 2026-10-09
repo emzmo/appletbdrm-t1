@@ -1,0 +1,33 @@
+# STEP 1 — Stop the oracle
+# Session 043
+
+## stop command
+sudo systemctl stop tiny-dfr-mbp142.service   @ 2026-09-26T23:43:28,021508081+01:00
+exit=0
+
+## +1s probe @ 23:43:32,665
+systemctl is-active tiny-dfr-mbp142.service = inactive
+is-enabled = static  (unchanged)
+
+debugfs dri/2 (touchbar/appletbdrm):
+             command  tgid dev master a   uid      magic  name  id
+  (header only — NO client rows — CARD EMPTY)
+ORACLE RELEASED MASTER. Sole-master invariant: card empty = release confirmed.
+
+tbard.service (control): is-active=inactive  is-enabled=disabled  (untouched)
+
+## +10s hold @ 23:43:45,593
+still inactive (10s sustained)
+debugfs dri/2 still empty (no master-holder appeared)
+brightness sysfs = 54  (stale last-value; NO active writer; bar DARK — expected)
+  NOTE: the sysfs value persists when no master holds the card; this is the
+  value-probe corollary to "mtime is dead" (ADR-046) — only a value read within
+  ~1s of a CONFIRMED enable-write is acceptance evidence. 54 here is NOT evidence
+  of anything; it's a leftover register/value.
+
+eDP (dri/1) untouched — Hyprland still master there (verified in P1, not re-read
+to avoid noise; no lifecycle touched it).
+
+## verdict
+STEP 1 PASS — oracle stopped, inactive +10s, touchbar card empty, bar dark
+(expected), human fallback is the only Esc (HC1 confirmed).

@@ -1,0 +1,18 @@
+# Build artifacts
+*.ko
+*.o
+*.cmd
+*.mod
+*.mod.c
+.tmp_versions/
+Module.symvers
+modules.order
+ibridge-switcher
+
+# Cargo / Rust
+target/
+
+# Editor
+*.swp
+*.swo
+*~

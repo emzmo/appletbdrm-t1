@@ -1,0 +1,31 @@
+=== Binary reinstall (ADR-038 process rule — BINARY ONLY) ===
+Date: 2026-09-26T15:44:09+01:00
+Source tip: 37e47cd4999a38ae64baecd30cc1d34bc0579310 (== v0.2.2^{commit} == 37e47cd4999a38ae64baecd30cc1d34bc0579310)
+
+--- cargo build --release ---
+    Finished `release` profile [optimized] target(s) in 0.12s
+
+--- PRE-INSTALL sha256 target/release/tbard ---
+9a58dea729a1897c7a327605ab50434500339873a62c1a3023754a0b31a9077e  target/release/tbard
+
+--- install ---
+install exit=0
+
+--- POST-INSTALL sha256 /usr/bin/tbard ---
+9a58dea729a1897c7a327605ab50434500339873a62c1a3023754a0b31a9077e  /usr/bin/tbard
+
+--- MATCH CHECK ---
+MATCH: pre == post == 9a58dea729a1897c7a327605ab50434500339873a62c1a3023754a0b31a9077e
+
+--- behavioral verify: strings --service count ---
+6
+
+--- behavioral verify: unprivileged fast-fail ---
+[2026-09-26T14:44:09Z ERROR tbard] tbard: service mode requires root (euid=1000); start as root or via the systemd unit (tbard.service) — exit 1
+Error: ServiceRequiresRoot { euid: 1000 }
+exit=1
+elapsed=0.00557804s
+
+--- sudo /usr/bin/tbard --service: NOT started (oracle active; STEP 0/2 context) ---
+
+--- unit + udev rule UNCHANGED vs v0.2.1 — NOT reinstalled ---

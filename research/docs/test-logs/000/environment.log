@@ -1,0 +1,102 @@
+=== Stage 0 environment capture ===
+2026-09-25T08:32:09+01:00
+--- build hash (no git) ---
+no release binary; debug build only
+no debug binary either
+--- uname ---
+Linux phobos 7.2.6-arch2-1 #1 SMP PREEMPT_DYNAMIC Mon, 14 Sep 2026 22:41:30 +0000 x86_64 GNU/Linux
+Linux version 7.2.6-arch2-1 (linux@archlinux) (gcc (GCC) 16.2.1 20260810, GNU ld (GNU Binutils) 2.47) #1 SMP PREEMPT_DYNAMIC Mon, 14 Sep 2026 22:41:30 +0000
+--- modules ---
+appletbdrm             40960  1
+hid_multitouch         36864  0
+--- modinfo appletbdrm ---
+filename:       /lib/modules/7.2.6-arch2-1/updates/dkms/appletbdrm.ko.zst
+license:        GPL
+description:    Apple Touch Bar DRM Driver
+author:         sunplex07
+author:         Kerem Karabay <kekrby@gmail.com>
+srcversion:     53BD058DF3D26312C449D48
+alias:          usb:v05ACp8302d*dc*dsc*dp*ic10isc*ip*in*
+alias:          usb:v05ACp8600d*dc*dsc*dp*ic*isc*ip*in03*
+--- modinfo hid_multitouch ---
+filename:       /lib/modules/7.2.6-arch2-1/updates/dkms/hid-multitouch.ko.zst
+license:        GPL
+description:    HID multitouch panels
+author:         Benjamin Tissoires <benjamin.tissoires@gmail.com>
+author:         Stephane Chatty <chatty@enac.fr>
+srcversion:     7177AC55287404614FE8D90
+alias:          hid:b*g0004v*p*
+alias:          hid:b*g0002v*p*
+--- modinfo hid_appletb_bl ---
+filename:       /lib/modules/7.2.6-arch2-1/kernel/drivers/hid/hid-appletb-bl.ko.zst
+license:        GPL
+description:    MacBook Pro Touch Bar Backlight driver
+author:         Kerem Karabay <kekrby@gmail.com>
+author:         Ronald Tschalär
+srcversion:     D0B6C1C8D09247E0F78DFFB
+alias:          hid:b0003g*v000005ACp00008102
+depends:        
+--- USB config ---
+2
+--- /dev/dri ---
+total 0
+drwxr-xr-x   3 root root        120 Sep 25 08:05 .
+drwxr-xr-x  19 root root       4000 Sep 25 08:05 ..
+drwxr-xr-x   2 root root        120 Sep 25 08:05 by-path
+crw-rw----   1 root video  226,   0 Sep 25 08:30 card0
+crw-rw----+  1 root video  226,   1 Sep 25 08:05 card1
+crw-rw-rw-   1 root render 226, 128 Sep 25 08:05 renderD128
+== /dev/dri/card0 ==
+DEVTYPE=usb_interface
+DRIVER=appletbdrm
+PRODUCT=5ac/8600/101
+TYPE=239/2/1
+INTERFACE=16/0/0
+MODALIAS=usb:v05ACp8600d0101dcEFdsc02dp01ic10isc00ip00in03
+status /sys/class/drm/card0-USB-1/status: connected
+modes /sys/class/drm/card0-USB-1/modes: 60x2170 
+== /dev/dri/card1 ==
+DRIVER=i915
+PCI_CLASS=30000
+PCI_ID=8086:5927
+PCI_SUBSYS_ID=106B:0175
+PCI_SLOT_NAME=0000:00:02.0
+MODALIAS=pci:v00008086d00005927sv0000106Bsd00000175bc03sc00i00
+status /sys/class/drm/card1-DP-1/status: disconnected
+status /sys/class/drm/card1-DP-2/status: disconnected
+status /sys/class/drm/card1-eDP-1/status: connected
+status /sys/class/drm/card1-HDMI-A-1/status: disconnected
+status /sys/class/drm/card1-HDMI-A-2/status: disconnected
+modes /sys/class/drm/card1-DP-1/modes: 
+modes /sys/class/drm/card1-DP-2/modes: 
+modes /sys/class/drm/card1-eDP-1/modes: 2560x1600 
+modes /sys/class/drm/card1-HDMI-A-1/modes: 
+modes /sys/class/drm/card1-HDMI-A-2/modes: 
+--- backlight ---
+acpi_video0
+appletb_backlight
+== /sys/class/backlight/acpi_video0 ==
+max: 90
+cur: 20
+== /sys/class/backlight/appletb_backlight ==
+max: 255
+cur: 26
+--- input devices + seats ---
+input0: name='Lid Switch' seat=''
+input10: name='Apple SPI Touchpad' seat=''
+input11: name='Video Bus' seat=''
+input13: name='Apple Inc. iBridge Touchpad' seat=''
+input14: name='PC Speaker' seat=''
+input15: name='HDA Intel PCH Mic' seat=''
+input16: name='HDA Intel PCH Headphone' seat=''
+input17: name='HDA Intel PCH HDMI/DP,pcm=3' seat=''
+input18: name='HDA Intel PCH HDMI/DP,pcm=7' seat=''
+input19: name='HDA Intel PCH HDMI/DP,pcm=8' seat=''
+input1: name='Power Button' seat=''
+input20: name='Dynamic Function Row Virtual Input Device' seat=''
+input2: name='Sleep Button' seat=''
+input3: name='Power Button' seat=''
+input5: name='HXC ADXM0923' seat=''
+input6: name='HXC ADXM0923 Mouse' seat=''
+input7: name='HXC ADXM0923 Keyboard' seat=''
+input9: name='Apple SPI Keyboard' seat=''

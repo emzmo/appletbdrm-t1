@@ -1,0 +1,26 @@
+=== ADR-030 adversarial self-check: rm -f target/debug/tbard → cargo test ===
+Date: 2026-09-26
+
+--- step 1: rm -f target/debug/tbard ---
+ls: cannot access 'target/debug/tbard': No such file or directory
+
+--- step 2: cargo test --no-run (shows the bin is rebuilt as a test dep) ---
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+  Executable unittests src/main.rs (target/debug/deps/tbard-024090071b748d61)
+  Executable tests/exit_code.rs (target/debug/deps/exit_code-d565d17a8b2d77e9)
+  Executable tests/sigterm_master_release.rs (target/debug/deps/sigterm_master_release-732e5141a06bf9cc)
+
+--- step 3: bin present after --no-run ---
+-rwxr-xr-x 2 emzmo emzmo 45169848 Sep 26 10:52 target/debug/tbard
+
+--- step 4: cargo test (tests run against the rebuilt bin, no false-pass) ---
+test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.80s
+test test_startup_failure_exits_nonzero ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+test test_sigterm_releases_master ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+
+VERDICT: with CARGO_BIN_EXE_tbard, cargo test rebuilds the bin as a
+test dependency. The spawn-based tests RUN against the fresh binary
+instead of skipping (no false-pass). The ADR-028 stale-binary hazard
+is closed structurally.

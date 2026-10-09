@@ -1,0 +1,16 @@
+=== STEP 6 — optional second edit (change fill back 1.0 → 0.5; expect second clean reload) ===
+Timestamp: 2026-09-27T11:51:59+01:00
+--- EDIT 2 TIMESTAMP ---
+2026-09-27T11:51:59+01:00
+EDIT2_COMPLETED: 2026-09-27T11:51:59+01:00
+73:        fill: 0.5
+79:        fill: 0.8
+85:        fill: 0.2
+105:        fill: 0.5
+8e6865f0189d163d7e54e7383d2089f9fdc1228567360fac03025514ff79797e  /etc/touchbar/config.yaml
+
+--- journal since edit2 ---
+no reload/error lines
+
+--- full reload-line count since 11:51:46 (storm check across BOTH edits) ---
+1

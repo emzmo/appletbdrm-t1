@@ -1,0 +1,31 @@
+=== S4: bl_power probe (read-only, 2026-09-26T22:28:25+0100) ===
+Purpose: does bl_power track luminance better than brightness?
+  On many panels bl_power is the actual on/off control and brightness
+  is only a level. Here we correlate bl_power across all observed states.
+
+--- bl_power correlation table (across S0-S3 states) ---
+state                                  | brightness | actual | bl_power | mtime moved? | panel observed
+---------------------------------------|------------|--------|----------|--------------|--------------
+S0 baseline (lit, recently active)    | 54         | 54     | 0        | (frozen)     | lit
+S1a write 54 (lit)                     | 54         | 54     | 0        | yes          | lit
+S1b write 2 (dim)                      | 2          | 2      | 0        | yes          | visible (dim)
+S2a write 128 (lit, bright)            | 128        | 128    | 0        | yes          | lit (bright)
+S2b 60s idle (auto-dim 128→1)          | 1          | 1      | 0        | NO (frozen)  | dim, then dark
+S2d 300s idle (auto-dim →0)            | 0          | 0      | 0        | NO (frozen)  | dark
+S2b post-keyboard wake                 | 54         | 54     | 0        | NO (frozen)  | lit (bright)
+S3 pre-write (DARK, sysfs=54)          | 54         | 54     | 0        | NO (frozen)  | DARK
+S3b write 128 to DARK bar (ignited)    | 128        | 128    | 0        | yes          | LIT UP
+
+--- bl_power read NOW ---
+bl_power = 0
+
+S4 VERDICT: bl_power does NOT track luminance on this driver.
+  - bl_power was 0 (FB_BLANK_UNBLANK / powered) throughout EVERY observed
+    state: lit, dim, dark (auto-dim complete), and post-ignition.
+  - The panel went DARK (S2d, S3 pre-write) while bl_power stayed 0.
+  - The panel LIT from a brightness write (S3b) while bl_power stayed 0.
+  - bl_power is NOT the on/off control on this T1 fork; brightness IS.
+  - A brightness write to a dark bar lights it WITHOUT touching bl_power.
+  - bl_power would NOT be a useful companion to the enable-write; the
+    enable-write of a non-zero brightness is sufficient on its own.
+  - bl_power was NEVER written this session (safety: read-only).

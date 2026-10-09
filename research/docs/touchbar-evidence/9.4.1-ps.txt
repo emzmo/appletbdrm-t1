@@ -1,0 +1,3 @@
+  313 /usr/libexec/Tou /usr/libexec/TouchBarServer
+  468 /System/Library/ /System/Library/CoreServices/ControlStrip.app/Contents/MacOS/ControlStrip
+  552 opencode         opencode touchbar-evidence

@@ -1,0 +1,5 @@
+=== STEP5 EXTERNAL WRITE 255 2026-09-27T13:08:21+01:00 ===
+written: value=255 at 2026-09-27T13:08:21+01:00
+readback +2s: value=255
+             command  tgid dev master a   uid      magic                                                             name                   id
+               tbard 51168   2   y    y 65534          0                                                          <unset>                  269

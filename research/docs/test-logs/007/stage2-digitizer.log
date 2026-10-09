@@ -1,0 +1,24 @@
+## Digitizer found by geometry (corrected lookup)
+```
+inputdev=input10 name='Apple SPI Touchpad' event=dev
+  VID:PID = 06cb:0557
+  (engine matches by ABS_MT_POSITION_X/Y geometry vs Touch Bar DRM mode 60x2170, NOT by name — ADR-009)
+  udev rule matches by VID:PID 05ac:8600 (this unit: 06cb:0557)
+inputdev=input13 name='Apple Inc. iBridge Touchpad' event=dev
+  VID:PID = 05ac:8600
+  (engine matches by ABS_MT_POSITION_X/Y geometry vs Touch Bar DRM mode 60x2170, NOT by name — ADR-009)
+  udev rule matches by VID:PID 05ac:8600 (this unit: 05ac:8600)
+```
+
+## Touch Bar DRM mode (card0, read via sysfs — no master needed)
+```
+DEVTYPE=usb_interface
+DRIVER=appletbdrm
+PRODUCT=5ac/8600/101
+TYPE=239/2/1
+INTERFACE=16/0/0
+card0 modes:
+60x2170
+card0 status:
+connected
+```

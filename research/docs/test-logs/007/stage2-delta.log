@@ -1,0 +1,21 @@
+## dmesg delta (after Stage 2 runs)
+```
+```
+
+## journal delta (kernel, since Stage 2 start ~23:38)
+```
+```
+
+## Digitizer found by geometry (no name dependency in log path)
+```
+digitizer event node: /dev/input/event4 (input4 = input)
+name: 
+ABS_MT_POSITION_X max: 
+vendor=05ac product=8600 (matched by VID:PID 05ac:8600, geometry-verified by engine at runtime)
+```
+
+## Oracle state FINAL (must be PID 562, lit)
+```
+                     USER        PID ACCESS COMMAND
+/dev/dri/card0:      nobody      562 F.... tiny-dfr-mbp142
+```

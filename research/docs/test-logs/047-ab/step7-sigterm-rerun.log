@@ -1,0 +1,32 @@
+# 047 STEP 7 — SIGTERM + rerun (short)
+# Captured: 2026-09-27 02:34:30 → 02:34:36 WEST
+
+## 7a: stop (render-only config still installed)
+  02:34:30 stop rc=0
+  journal: "shutdown signal received, exiting" → "Deactivated successfully"
+  exit code 0
+
+## 7b: release verified
+  dri/2 clients: EMPTY (tbard released DRM master)
+
+## 7c: start again
+  02:34:32 start rc=0, active
+  new PID 447064 /usr/bin/tbard --service (uid 65534 — same identity)
+
+## 7d: +1s probe
+  02:34:34 brightness=54 (enable-tick → 54, same curve output as Run A/B)
+  display_to_touchbar(90, 128) = 54 — consistent across all starts.
+
+## 7e: stop → release
+  02:34:34 stop rc=0, inactive
+
+## 7f: release verified
+  dri/2 clients: EMPTY
+  dri/2 state: plane-0 crtc=(null) fb=0 (scanout disarmed)
+  no tbard process
+
+## STEP 7 VERDICT: PASS
+  The SIGTERM → exit 0 → start → +1s probe → stop → release cycle is clean.
+  DRM master is acquired and released correctly across two stop/start cycles.
+  The enable-tick is deterministic (54) across all three starts (Run A, Run B, STEP 7).
+  No StartLimit burst issues (3 stops in this window, all exit 0).

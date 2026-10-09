@@ -1,0 +1,24 @@
+ADR-034 fast-fail evidence: `tbard --service` unprivileged → exit 1 in ~10ms.
+
+Verbatim capture (cargo test --test service_root_guard -- --nocapture):
+  ok: `tbard --service` unprivileged fast-failed in 10.2576ms with the
+  typed ServiceRequiresRoot error (exit 1) per ADR-034
+  test test_service_unprivileged_fast_fails ... ok
+
+The fast-fail is the regression target for NF-A2:
+- Pre-ADR-034 (and pre-ADR-033): ~30min (NF-A1 nested retry) before
+  exit 1.
+- Post-ADR-033, pre-ADR-034: ~90s (flattened retry budget) before
+  exit 1.
+- Post-ADR-034: ~10ms (hard root guard at entry, BEFORE any scanning or
+  retry).
+
+The `Restart=on-failure` spin-storm is impossible: the daemon exits
+fast with a greppable typed error ("service mode requires root
+(euid=1000); start as root or via the systemd unit (tbard.service) —
+exit 1"). The operator sees the error in the journal immediately.
+
+The test runs as the current (unprivileged, uid 1000) user. If run as
+root (e.g. under sudo), it skips truthfully — the fast-fail is
+unprivileged-only. The real privdrop path (root → nobody) remains
+QA/Stage-3 acceptance (unchanged).

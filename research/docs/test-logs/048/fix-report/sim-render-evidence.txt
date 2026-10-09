@@ -1,0 +1,38 @@
+QA v13 — sim-render evidence (throwaway probe at /tmp/opencode/v13-sim, deleted after capture; NOT a repo source change — replicates ShapeWidget draw path + parses the shipped examples/render-only-validation-page.yaml)
+
+Surface: 2170×60 ARGB32 (the MBP 14,2 bar geometry), black background, shapes laid out left-to-right proportionally to stretch (matches build_pages + Page::layout).
+
+== Parse ==
+v13-sim: parsed 1 page(s)
+v13-sim: page id = render-only-validation
+v13-sim: 4 shape widgets, total stretch = 9
+v13-sim:   shape fill=0.5 stretch=2
+v13-sim:   shape fill=0.8 stretch=2
+v13-sim:   shape fill=0.2 stretch=2
+v13-sim:   shape fill=0.5 stretch=2
+
+== Page render (non-black pixel count) ==
+v13-sim: page render -> non_black pixels = 115800 / 130200 (black = 14400)
+  (14400 black = the spacer's stretch-1 slot = 2170×60/9; the 4 shapes cover 8/9 of the bar)
+
+== Per-shape centroid RGB (sampling the middle of each shape) ==
+v13-sim:   shape(fill=0.5) centroid(241, 30)  -> RGB=(128,128,128)   [0.5×256=128 ✓]
+v13-sim:   shape(fill=0.8) centroid(723, 30)  -> RGB=(204,204,204)   [0.8×256=204.8≈204 ✓]
+v13-sim:   shape(fill=0.2) centroid(1205, 30) -> RGB=(51,51,51)      [0.2×256=51.2≈51 ✓]
+v13-sim:   shape(fill=0.5) centroid(1928, 30) -> RGB=(128,128,128)   [0.5×256=128 ✓]
+
+== Adversarial (all shapes forced fill=0.0 → black) ==
+v13-sim: adversarial (all shapes fill=0.0) -> non_black = 0 (MUST be 0)
+  → the shipped-page probe semantics would FAIL if the page's shapes were made black
+  → the pixel-probe is NON-VACUOUS (constructive proof, inline, not on the shipped page)
+
+== W17 auto-esc gate (build_pages at width=2170, ESC_THRESHOLD=2170) ==
+v13-sim: W17 auto-esc gate at width=2170 (ESC_THRESHOLD=2170): auto_esc_inserted = true
+v13-sim: W17 FINDING — an esc ButtonWidget (TEXT-dependent, white show_text)
+v13-sim:   IS auto-inserted at position 0 on the validation page at production width.
+v13-sim:   The runbook's HC question must name the SHAPE widget as the visibility target,
+v13-sim:   NOT the esc (the esc's own visibility is text-dependent).
+
+v13-sim: PASS — validation page parses + draws non-black shapes
+
+Probe code: /tmp/opencode/v13-sim/main.rs (replicated ShapeWidget::render + serde schema for WidgetDef::shape/spacer; no repo source touched). Deleted after capture.

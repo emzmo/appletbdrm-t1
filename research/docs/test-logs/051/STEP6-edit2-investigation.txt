@@ -1,0 +1,13 @@
+=== STEP 6 — second-edit reload investigation ===
+Timestamp: 2026-09-27T11:52:06+01:00
+--- wider journal window 11:51:55 → 11:52:30 ---
+-- No entries --
+
+--- all reload lines in the full session window 11:51:46 → now ---
+2026-09-27T11:51:47+01:00 phobos tbard[33476]: [2026-09-27T10:51:47Z INFO  tbard] tbard: config reloaded
+
+--- count ---
+1
+
+--- wait 5s and recheck (in case of debounce delay) ---
+still no second reload line

@@ -1,0 +1,49 @@
+=== interlock-preflight.sh (ADR 019 Stage-3 preflight) ===
+2026-09-26T11:31:56+01:00
+repo: /home/emzmo/Projects/mbp142-deploy/touchbar
+
+=== STEP 1: locate the Touch Bar card by DRIVER (never trust cardN) ===
+  vkms decoy card: card0 (sim harness — NOT ours)
+  other card: card0-Virtual-1 (driver=driver)
+  other card: card0-Writeback-1 (driver=driver)
+  i915 card: card1 (main display — NOT ours)
+  other card: card1-DP-1 (driver=driver)
+  other card: card1-DP-2 (driver=driver)
+  other card: card1-eDP-1 (driver=driver)
+  other card: card1-HDMI-A-1 (driver=driver)
+  other card: card1-HDMI-A-2 (driver=driver)
+  Touch Bar card: card2 (driver=appletbdrm, dri minor=2)
+  other card: card2-USB-1 (driver=driver)
+
+=== STEP 2: debugfs master state on the Touch Bar card ===
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142   542   2   y    y 65534          0                                                          <unset>                    8
+FAIL: a process already holds DRM master on the Touch Bar card:
+       tiny-dfr-mbp142   542   2   y    y 65534          0                                                          <unset>                    8
+If this is the oracle (tiny-dfr-mbp142), stop it (Step 3). If it is
+another process, investigate before proceeding.
+
+=== STEP 3: oracle service status (tiny-dfr-mbp142.service) ===
+  oracle active:  active
+  oracle enabled: static
+FAIL: the oracle (tiny-dfr-mbp142.service) is ACTIVE. Ours and the
+oracle are mutually exclusive (ADR 019 D5). Stop + disable it first:
+  sudo systemctl disable --now tiny-dfr-mbp142.service
+
+=== STEP 4: tbard.service status (must NOT be running yet) ===
+  tbard active:  inactive
+unknown
+  tbard enabled: not-found
+disabled
+
+=== STEP 5: Esc-remap reminder ===
+REMEMDER: if anything goes wrong during Stage 3, the recovery path is:
+  1. sudo systemctl stop tbard.service  (graceful SIGTERM, exit 0)
+  2. If unresponsive: sudo kill -9 $(pgrep tbard)
+  3. Re-enable + start the oracle to restore the lit bar:
+     sudo systemctl enable --now tiny-dfr-mbp142.service
+  See docs/recovery.md for the full tiered procedure.
+
+=== VERDICT ===
+NO-GO: one or more preflight checks FAILED. Do NOT start tbard.service.
+Resolve the failures above and re-run this script.

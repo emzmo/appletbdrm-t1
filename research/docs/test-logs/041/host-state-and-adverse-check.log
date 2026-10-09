@@ -1,0 +1,62 @@
+2026-09-26T23:30:04+01:00
+---HEAD---
+cac5d50cdba0fd7f20bcf7a3363f0d5cd0f05d7c
+cac5d50 docs: session 040 — devlog + self-assessment-13 + Cargo.lock (v0.2.5 regen)
+3b69c3f F4 ride-along: bump Cargo.toml + PKGBUILD 0.1.0/0.2.0 -> 0.2.5 to match the tag lineage
+5691150 ADR 046: runbook revision -- value-only backlight probe (drop mtime)
+3fdad79 ADR 045: observability -- RUST_LOG=info in tbard.service
+2d764f6 ADR 044: BacklightProvider dispatch audit (audit-only; one guard-hardening test)
+00a277d docs: sessions 037/038/039 uncommitted evidence (Stage-3 attempt #4 + backlight research manual + corpus)
+---dri clients (oracle sole master at END)---
+=== card0 (minor 0) ===
+             command  tgid dev master a   uid      magic                                                             name                   id
+      systemd-logind   476   0   y    y     0          0                                                          <unset>                   43
+            Hyprland  1678   0   y    y  1000          0                                                          <unset>                   51
+            Hyprland  1678   0   n    n  1000          0                                                          <unset>                   57
+=== card1 (minor 1) ===
+             command  tgid dev master a   uid      magic                                                             name                   id
+            Hyprland  1678 128   n    n  1000          0                                                          <unset>                   44
+      systemd-logind   476   1   y    y     0          0                                                          <unset>                   45
+            Hyprland  1678 128   n    n  1000          0                                                          <unset>                   46
+            Hyprland  1678   1   y    y  1000          0                                                          <unset>                   48
+            Hyprland  1678 128   n    n  1000          0                                                          <unset>                   50
+            Xwayland  1725 128   n    n  1000          0                                                          <unset>                   55
+            Hyprland  1678   1   n    n  1000          0                                                          <unset>                   56
+            noctalia  1720 128   n    n  1000          0                                                          <unset>                   58
+               kitty  1928 128   n    n  1000          0                                                          <unset>                   59
+               kitty  2066 128   n    n  1000          0                                                          <unset>                   60
+             python3  2048 128   n    n  1000          0                                                          <unset>                   61
+             python3  2048 128   n    n  1000          0                                                          <unset>                   62
+               kitty  3235 128   n    n  1000          0                                                          <unset>                   64
+               kitty 22103 128   n    n  1000          0                                                          <unset>                  215
+            electron 22261 128   n    n  1000          0                                                          <unset>                  217
+            electron 22303 128   n    n  1000          0                                                          <unset>                  220
+            electron 22303 128   n    n  1000          0                                                          <unset>                  223
+             firefox 26165 128   n    n  1000          0                                                          <unset>                  265
+             firefox 26165 128   n    n  1000          0                                                          <unset>                  267
+               kitty 40299 128   n    n  1000          0                                                          <unset>                  931
+         RDD Process 26291 128   n    n  1000          0                                                          <unset>                 1943
+             vesktop 150648 128   n    n  1000          0                                                          <unset>                 1970
+             vesktop 150699 128   n    n  1000          0                                                          <unset>                 1973
+             vesktop 150699 128   n    n  1000          0                                                          <unset>                 1976
+            nicotine 151199 128   n    n  1000          0                                                          <unset>                 1977
+            nicotine 151199 128   n    n  1000          0                                                          <unset>                 1979
+         RDD Process 26291 128   n    n  1000          0                                                          <unset>                 2136
+               kitty 233072 128   n    n  1000          0                                                          <unset>                 2252
+               kitty 233141 128   n    n  1000          0                                                          <unset>                 2253
+            kodi.bin 233305 128   n    n  1000          0                                                          <unset>                 2254
+               kitty 293793 128   n    n  1000          0                                                          <unset>                 2289
+=== card2 (minor 2) ===
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142 241900   2   y    y 65534          0                                                          <unset>                 2261
+---/dev/input count (baseline 25)---
+25
+---/etc untouched this session---
+/etc/resolv.conf
+---installed /usr/bin/tbard (v0.2.4 build, NOT yet reinstalled to v0.2.5)---
+2026-09-26 20:36:26.106057806 +0100 2982584
+f7297cf387b749923feddaa45bf88bb4e2568c7c60a86d73f488ee5cdcfb9b06  /usr/bin/tbard
+---R1 audit on installed binary---
+7
+---adverse-check evidence: throwaway /tmp/opencode/tb-adv DELETED---
+ls: cannot access '/tmp/opencode/tb-adv': No such file or directory

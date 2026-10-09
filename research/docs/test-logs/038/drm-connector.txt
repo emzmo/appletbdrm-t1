@@ -1,0 +1,101 @@
+=== DRM connector sysfs (card2-USB-1) + debugfs ===
+timestamp: 2026-09-26T21:32:18+01:00
+--- card2-USB-1 connector sysfs ---
+total 0
+drwxr-xr-x 3 root root    0 Sep 26 21:32 .
+drwxr-xr-x 4 root root    0 Sep 26 09:32 ..
+-r--r--r-- 1 root root 4096 Sep 26 21:32 connector_id
+lrwxrwxrwx 1 root root    0 Sep 26 20:09 device -> ../../card2
+-r--r--r-- 1 root root 4096 Sep 26 21:32 dpms
+-r--r--r-- 1 root root    0 Sep 26 21:32 edid
+-r--r--r-- 1 root root 4096 Sep 26 21:32 enabled
+-r--r--r-- 1 root root 4096 Sep 26 21:32 modes
+drwxr-xr-x 2 root root    0 Sep 26 21:32 power
+-rw-r--r-- 1 root root 4096 Sep 26 21:32 status
+lrwxrwxrwx 1 root root    0 Sep 26 09:32 subsystem -> ../../../../../../../../../class/drm
+-rw-r--r-- 1 root root 4096 Sep 26 09:32 uevent
+  status: connected
+  enabled: enabled
+  modes: 60x2170
+  dpms: On
+--- edid (hexdump) ---
+--- card2 uevent ---
+MAJOR=226
+MINOR=2
+DEVNAME=dri/card2
+DEVTYPE=drm_minor
+--- modetest -M appletbdrm (driver-resolved) ---
+opened device `Apple Touch Bar DRM Driver` on driver `appletbdrm` (version 1.2.0 at 0)
+Encoders:
+id	crtc	type	possible crtcs	possible clones	
+38	37	DAC	0x00000001	0x00000001
+
+Connectors:
+id	encoder	status		name		size (mm)	modes	encoders
+39	38	connected	USB-1          	253x7		1	38
+  modes:
+	index name refresh (Hz) hdisp hss hse htot vdisp vss vse vtot
+  #0 60x2170 60.00 60 60 60 60 2170 2170 2170 2170 7812 flags: ; type: preferred, driver
+  props:
+	1 EDID:
+		flags: immutable blob
+		blobs:
+
+		value:
+	2 DPMS:
+		flags: enum
+		enums: On=0 Standby=1 Suspend=2 Off=3
+		value: 0
+	5 link-status:
+		flags: enum
+		enums: Good=0 Bad=1
+		value: 0
+	7 non-desktop:
+		flags: immutable range
+		values: 0 1
+		value: 1
+	4 TILE:
+		flags: immutable blob
+		blobs:
+
+		value:
+	40 panel orientation:
+		flags: immutable enum
+		enums: Normal=0 Upside Down=1 Left Side Up=2 Right Side Up=3
+		value: 3
+
+CRTCs:
+id	fb	pos	size
+37	41	(0,0)	(60x2170)
+  #0 60x2170 60.00 60 60 60 60 2170 2170 2170 2170 7812 flags: ; type: preferred, driver
+  props:
+	25 VRR_ENABLED:
+		flags: range
+		values: 0 1
+		value: 0
+
+Planes:
+id	crtc	fb	CRTC x,y	x,y	gamma size	possible crtcs
+35	37	41	0,0		0,0	0       	0x00000001
+  formats: BG24 XR24
+  props:
+	9 type:
+		flags: immutable enum
+		enums: Overlay=0 Primary=1 Cursor=2
+		value: 1
+	32 IN_FORMATS:
+		flags: immutable blob
+		blobs:
+
+		value:
+			01000000000000000200000018000000
+			01000000200000004247323458523234
+			03000000000000000000000000000000
+			0000000000000000
+		in_formats blob decoded:
+			 BG24:  LINEAR(0x0)
+			 XR24:  LINEAR(0x0)
+
+Frame buffers:
+id	size	pitch
+

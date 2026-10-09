@@ -1,0 +1,20 @@
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_ring_bell RING !
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_write_rptr W r_ptr 36 (36), ring 2
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_pcie_quick_check_isr Enter
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_pcie_isr_thread Enter 10000
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_update_wptr R w_ptr 0 (0), ring 4
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_update_wptr R w_ptr 0 (0), ring 3
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_update_wptr R w_ptr 37 (36), ring 2
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_msgbuf_process_msgtype MSGBUF_TYPE_WL_EVENT
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_write_wptr W w_ptr 53 (16), ring 0
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_ring_bell RING !
+Sep 25 23:38:20 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_write_rptr W r_ptr 37 (37), ring 2
+Sep 25 23:38:22 phobos kernel: brcmfmac: brcmf_pcie_quick_check_isr Enter
+Sep 25 23:38:22 phobos kernel: brcmfmac: brcmf_pcie_isr_thread Enter 10000
+Sep 25 23:38:22 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_update_wptr R w_ptr 0 (0), ring 4
+Sep 25 23:38:22 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_update_wptr R w_ptr 0 (0), ring 3
+Sep 25 23:38:22 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_update_wptr R w_ptr 38 (37), ring 2
+Sep 25 23:38:22 phobos kernel: brcmfmac: brcmf_msgbuf_process_msgtype MSGBUF_TYPE_WL_EVENT
+Sep 25 23:38:22 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_write_wptr W w_ptr 54 (16), ring 0
+Sep 25 23:38:22 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_ring_bell RING !
+Sep 25 23:38:22 phobos kernel: brcmfmac: brcmf_pcie_ring_mb_write_rptr W r_ptr 38 (38), ring 2

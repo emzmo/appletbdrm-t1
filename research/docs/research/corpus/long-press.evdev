@@ -1,0 +1,55 @@
+Input driver version is 1.0.1
+Input device ID: bus 0x3 vendor 0x5ac product 0x8600 version 0x101
+Input device name: "Apple Inc. iBridge Touchpad"
+Supported events:
+  Event type 0 (EV_SYN)
+  Event type 1 (EV_KEY)
+    Event code 325 (BTN_TOOL_FINGER)
+    Event code 328 (BTN_TOOL_QUINTTAP)
+    Event code 330 (BTN_TOUCH)
+    Event code 333 (BTN_TOOL_DOUBLETAP)
+    Event code 334 (BTN_TOOL_TRIPLETAP)
+    Event code 335 (BTN_TOOL_QUADTAP)
+  Event type 3 (EV_ABS)
+    Event code 0 (ABS_X)
+      Value   8954
+      Min        0
+      Max    32767
+    Event code 1 (ABS_Y)
+      Value     63
+      Min        0
+      Max      127
+    Event code 47 (ABS_MT_SLOT)
+      Value      2
+      Min        0
+      Max       10
+    Event code 53 (ABS_MT_POSITION_X)
+      Value      0
+      Min        0
+      Max    32767
+    Event code 54 (ABS_MT_POSITION_Y)
+      Value      0
+      Min        0
+      Max      127
+    Event code 57 (ABS_MT_TRACKING_ID)
+      Value      0
+      Min        0
+      Max    65535
+    Event code 59 (ABS_MT_DISTANCE)
+      Value      0
+      Min        0
+      Max        1
+Properties:
+  Property type 0 (INPUT_PROP_POINTER)
+  Property type 1 (INPUT_PROP_DIRECT)
+Testing ... (interrupt to exit)
+Event: time 1790455964.483528, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value 82
+Event: time 1790455964.483528, type 3 (EV_ABS), code 53 (ABS_MT_POSITION_X), value 9452
+Event: time 1790455964.483528, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 1
+Event: time 1790455964.483528, type 1 (EV_KEY), code 325 (BTN_TOOL_FINGER), value 1
+Event: time 1790455964.483528, type 3 (EV_ABS), code 0 (ABS_X), value 9452
+Event: time 1790455964.483528, -------------- SYN_REPORT ------------
+Event: time 1790455966.201560, type 3 (EV_ABS), code 57 (ABS_MT_TRACKING_ID), value -1
+Event: time 1790455966.201560, type 1 (EV_KEY), code 330 (BTN_TOUCH), value 0
+Event: time 1790455966.201560, type 1 (EV_KEY), code 325 (BTN_TOOL_FINGER), value 0
+Event: time 1790455966.201560, -------------- SYN_REPORT ------------

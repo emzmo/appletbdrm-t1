@@ -1,0 +1,90 @@
+=== ADVERSARIAL INVARIANT TESTS (throwaway copy, deleted after) ===
+Date: 2026-09-26
+Method: rsync --exclude=target repo → /tmp/opencode/touchbar-adv, mutate,
+run scripts/check-invariants.sh, observe, DELETE the copy. No source
+changes to the working repo (FREEZE respected).
+
+--- (a) re-add a geometry_matches_tb reimplementation ---
+
+Added to /tmp/opencode/touchbar-adv/src/geometry.rs:
+    // ADVERSARIAL TEST (QA v9 throwaway): re-introduce a second predicate.
+    pub fn geometry_matches_tb(_x_max: i32, _y_max: i32, _tb_dims: (u16, u16)) -> bool {
+        false
+    }
+
+$ bash scripts/check-invariants.sh
+src/geometry.rs:494:pub fn geometry_matches_tb(_x_max: i32, _y_max: i32, _tb_dims: (u16, u16)) -> bool {
+FAIL: ADR 041 src/ re-introduced fn geometry_matches_tb — the old predicate is removed; the structural predicate is is_touchbar_digitizer in src/geometry.rs (single source of truth).
+check-invariants: FAIL
+$ bash scripts/check-invariants.sh >/dev/null 2>&1; echo $?
+1
+
+VERDICT (a): invariants FAIL (exit 1) — guard #7b catches the
+re-introduction. CONFIRMED.
+
+--- (b) point input.rs at a local copy instead of geometry:: ---
+
+Reverted (a). Then in /tmp/opencode/touchbar-adv/src/providers/input.rs:
+  - replaced ALL THREE call sites `crate::geometry::is_touchbar_digitizer(&candidate)`
+    (lines 130, 194, 280) with `local_is_touchbar_digitizer(&candidate)`;
+  - added `fn local_is_touchbar_digitizer(c: &crate::geometry::DigitizerCandidate) -> bool { c.is_multitouch }` (a trivial local predicate).
+
+The doc COMMENTS mentioning `geometry::is_touchbar_digitizer` (lines 113,
+230, 534) were LEFT UNTOUCHED.
+
+$ grep -n 'crate::geometry::is_touchbar_digitizer\|local_is_touchbar' src/providers/input.rs
+37:fn local_is_touchbar_digitizer(c: &crate::geometry::DigitizerCandidate) -> bool { c.is_multitouch }
+114:        // (geometry::is_touchbar_digitizer). ADR 036: reuse the held
+131:        local_is_touchbar_digitizer(&candidate)
+195:                if local_is_touchbar_digitizer(&candidate)
+231:    /// `geometry::is_touchbar_digitizer` — the same predicate function.
+281:                let verdict = local_is_touchbar_digitizer(&candidate)
+535:    // call `geometry::is_touchbar_digitizer`; the equivalence (same
+
+$ bash scripts/check-invariants.sh
+check-invariants: PASS
+$ bash scripts/check-invariants.sh >/dev/null 2>&1; echo $?
+0
+
+VERDICT (b): invariants PASS (exit 0) — REFUTED. The guard #7a
+(`grep -qE 'geometry::is_touchbar_digitizer' src/providers/input.rs`)
+is NOT scoped to code lines: it matches the doc comments (lines 113,
+230, 534) that mention `geometry::is_touchbar_digitizer`, so replacing
+ALL real call sites with a local predicate while leaving the comments
+untouched SATISFIES the guard. This is a GUARD-STRENGTH WEAKNESS.
+
+--- (b2) confirm: scrub the comments too, then the guard fires ---
+
+Replaced `geometry::is_touchbar_digitizer` → `geometry::REMOVED_predicate`
+in the comments too (lines 113, 230, 534):
+
+$ bash scripts/check-invariants.sh
+FAIL: ADR 041 src/providers/input.rs does not call geometry::is_touchbar_digitizer — the runtime/probe paths must invoke the SINGLE structural predicate (preflight GO ⇒ runtime GO).
+check-invariants: FAIL
+$ bash scripts/check-invariants.sh >/dev/null 2>&1; echo $?
+1
+
+VERDICT (b2): when the comments are also scrubbed, the guard correctly
+FAILs. The weakness is specifically that COMMENT-ONLY mentions satisfy
+the guard while all real call sites are replaced.
+
+=== NEW FINDING D-031-2 (guard strength, logged NOT implemented per FREEZE) ===
+check-invariants.sh guard #7a
+(`grep -qE 'geometry::is_touchbar_digitizer' src/providers/input.rs`)
+is not scoped to code lines — it matches `//` and `///` comments. A
+regression that replaces all real call sites with a local predicate
+while leaving the doc comments mentioning `geometry::is_touchbar_digitizer`
+untouched would PASS the invariant. The other guards in the same script
+(#1, #2, #5, #6) DO scope to code lines via `grep -vE '^[0-9]+:\s*//'`;
+guard #7 omits this filter. This is the same class of lesson as
+ADR-031/NF-5 (grep guards must be code-scoped or they are theatrical).
+
+ADR PROPOSAL D-031-2: scope guard #7a to code lines (exclude `//` and
+`///` comments) so a comment-only mention does not satisfy the
+single-source-of-truth invariant; OR strengthen to require ≥1 real CALL
+site (e.g. grep for `is_touchbar_digitizer(` with a preceding non-comment
+context). Logged, NOT implemented per FREEZE.
+
+=== Cleanup ===
+$ rm -rf /tmp/opencode/touchbar-adv
+throwaway copy deleted. Working repo source unchanged (FREEZE respected).

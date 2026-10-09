@@ -1,0 +1,32 @@
+=== HC0: autonomous dim finding (2026-09-26T21:25:30+01:00) ===
+Oracle: tiny-dfr-mbp142.service active (PID 241900) since 21:00:55
+Observation sequence (all reads, NO writes performed this session yet):
+  21:24:33 (first read of session): brightness=54, max=255, bl_power=0, mtime=2026-09-26 21:24:15.939835979
+  21:24:50 (sysfs dump):           brightness=1,  actual_brightness=1, mtime UNCHANGED (21:24:15)
+  21:25:13 (evtest capture start): brightness=0 (per watch)
+  21:25:20-25 (5s watch):          brightness=0 throughout, mtime frozen at 1790454255 (=21:24:15)
+  bl_power=0 throughout (FB_BLANK_UNBLANK — powered)
+
+Human checkpoint (asked verbatim: 'What do you see on the Touch Bar right now?')
+  HUMAN ANSWER (verbatim): 'Still lit (F-row visible)'
+
+INTERPRETATION (ground truth, oracle running, NO writes performed):
+  - sysfs brightness dropped 54→1→0 over ~15s WITHOUT any userspace write
+    (mtime frozen at 21:24:15, which predates the drop).
+  - mtime reflects only userspace writes; kernel-internal brightness changes
+    do NOT update mtime. This RE-CONFIRMS the session-037 mtime quirk:
+    mtime is NOT a reliable 'did userspace write' witness on this driver.
+  - The panel is VISIBLE per the human despite sysfs=0. Two hypotheses:
+    (H1) the appletbdrm driver / hid-appletb-bl auto-dims the sysfs value on
+         idle but the oracle's DRM scanout keeps the panel lit independently
+         of the backlight sysfs knob (i.e. the backlight knob is DECOUPLED
+         from the panel-enable / scanout path).
+    (H2) sysfs reads a cached/software state that drifts from the hardware.
+    Either way: the sysfs brightness value does NOT reliably track the actual
+    panel luminance while a DRM master is scanning out. This is a NEW
+    ground-truth finding beyond session-037.
+
+SAFETY: NO writes were performed. tbard remains disabled+inactive.
+  Pre-session reference value for end-of-session restore: 54.
+  Human DECLINED the relight-to-54 requirement; the F-row is visible
+  without any write. No action required.

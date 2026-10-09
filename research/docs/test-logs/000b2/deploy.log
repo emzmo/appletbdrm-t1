@@ -1,0 +1,19 @@
+# udev deploy + verify — Session 006 (000b2)
+
+Date: 2026-09-25T23:32:21+01:00
+Rule source: packaging/udev/99-touchbar-seat.rules
+
+## Deploy commands
+```
+$ sudo install -m 0644 packaging/udev/99-touchbar-seat.rules /etc/udev/rules.d/
+install OK
+$ sudo udevadm control --reload-rules
+reload OK
+$ sudo udevadm trigger --action=add --subsystem-match=input
+trigger OK
+```
+
+NOTE: udev TAGs/ENV apply on next device-add or re-login. The ACL
+(user:emzmo:rw- via uaccess) is granted by logind at login time — a
+re-login is required for the ACL to take effect on the digitizer node.
+TAG=seat-touchbar and TAG=uaccess are set by the rule immediately on trigger.

@@ -1,0 +1,38 @@
+=== Regression audit (post-reinstall, v0.2.5) — 2026-09-26T23:37:32+01:00 ===
+Repo HEAD: 469f480 on master
+Installed /usr/bin/tbard sha256: 90daf3d622faf90404b459a428661e42a32de6a9970be05856fdd24195c4a082
+Installed unit sha256: 27ee77e8a1f56d12cb68b17612d9c56592710efbb7a7ac7a3eb81b94dd7dd8b8
+
+--- 9a: debugfs dri/<touchbar N>/clients (oracle sole master) ---
+Touch Bar card: card2
+Card number: 2
+
+debugfs clients on dri/2:
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142 241900   2   y    y 65534          0                                                          <unset>                 2261
+
+Interpretation: oracle 'tiny-dfr-mbp142' (tgid 241900, uid 65534)
+SOLE master (only one row, master=y, a=y). Name + uid match the
+expected identity; tgid is NOT keyed (per ADR-019 D5 + session 037
+precedent: tgid is per-restart, never tgid/cardN). No 'tbard' row.
+
+--- 9b: tbard.service inactive + DISABLED (reinstall must not enable) ---
+tbard active (must be 'inactive'):
+inactive
+tbard enabled (must be 'disabled'):
+disabled
+
+--- 9c: /dev/input count (must be 25 per s037 baseline, ls method) ---
+/dev/input count (ls /dev/input/ | wc -l) = 25
+(matches s037 baseline of 25; event-only count is 18 — same as s037
+which also used the ls method and recorded 25 entries)
+
+--- 9d: /etc unchanged beyond the unit install path ---
+Unit install path: /usr/lib/systemd/system/tbard.service (NOT under /etc)
+/etc/systemd/system mtime (should be unchanged):
+2026-09-26 12:37:43.283713571 +0100 /etc/systemd/system
+
+No new tbard-related files under /etc:
+(empty = no /etc writes from this session)
+
+=== end of regression audit ===

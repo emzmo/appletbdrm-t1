@@ -1,0 +1,10 @@
+=== INJECTION CHECK (safety: human touched bar on default page) 2026-09-27T13:13:29+01:00 ===
+--- full journal: tap/emit/page lines ---
+Sep 27 13:00:32.928463 phobos tbard[51168]: [2026-09-27T12:00:32Z WARN  tbard] tbard: --service config load failed, using built-in default: no pages configured: config has zero pages (set /etc/touchbar/config.yaml or run with --dry-run / --service)
+Sep 27 13:10:59.404812 phobos tbard[51168]: [2026-09-27T12:10:59Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+Sep 27 13:10:59.791767 phobos tbard[51168]: [2026-09-27T12:10:59Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+Sep 27 13:11:00.128357 phobos tbard[51168]: [2026-09-27T12:11:00Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+Sep 27 13:11:00.383594 phobos tbard[51168]: [2026-09-27T12:11:00Z INFO  tbard] tbard: tap page=primary logical=(2,1068) hit=None
+--- /dev/input count now (was 25) ---
+25
+--- uinput devices (any tbard-created virtual?) ---

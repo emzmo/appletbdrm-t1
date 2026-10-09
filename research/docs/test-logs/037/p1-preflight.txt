@@ -1,0 +1,50 @@
+=== P1 PREFLIGHT EVIDENCE (read-only, before any lifecycle action) ===
+Captured: 2026-09-26T19:46:42Z
+
+--- GIT STATE ---
+HEAD = ccd70242f912a4e96fddc3747137929f3b5b5578
+tag  = v0.2.4 (exact match at HEAD)
+git status --short:
+  ?? docs/test-logs/036/tag-identity-proof.txt   (bookkeeping sweep, deferred from 036)
+  (no src/ changes; FREEZE intact)
+
+--- CARD MAPPING ---
+/sys/class/drm/card2  driver = appletbdrm   (touchbar panel)
+  /sys/kernel/debug/dri/2/name          -> "appletbdrm dev=1-3:2.3 unique=1-3:2.3"
+  /sys/kernel/debug/dri/1-3:2.3/clients -> same device, alternate path
+/sys/class/drm/card1  driver = i915       (eDP + externals, unaffected by this session)
+/sys/class/drm/card0  driver = faux_driver (vkms, unrelated)
+
+--- DRI CLIENTS — touchbar card (dev 2 / 1-3:2.3) — ORACLE SOLE MASTER ---
+Path /sys/kernel/debug/dri/2/clients:
+             command  tgid   dev master a   uid      magic   name   id
+     tiny-dfr-mbp142 146352   2   y    y 65534       0   <unset>  1968
+Path /sys/kernel/debug/dri/1-3:2.3/clients: identical row.
+  Oracle identified by NAME (tiny-dfr-mbp142) + UID (65534) — NOT by tgid.
+  tgid history: 542 -> 87113 -> 105638 -> 146352 (4th value; do NOT key on it).
+  Sole master on dev 2: YES (only one row, master=y, a=y).
+
+--- /dev/input NODE COUNT ---
+Expect 25. Observed: 25 entries (event0..event17, mice, mouse0..mouse3, by-id, by-path).
+  (ls counts directory entries including . and ..; effective nodes = 25 per spec.)
+
+--- BACKLIGHT SYSFS BASELINE (DECISIVE for STEP 4b) ---
+sysfs path: /sys/class/backlight/appletb_backlight
+  driver:        appletbdrm
+  brightness:    54
+  max_brightness:255
+  brightness mtime: 1790411567  (2026-09-26 09:32:47.381027281 +0100)
+Boot: uptime -s = 2026-09-26 09:32:40 ; boot_epoch = 1790411560
+  => baseline mtime = boot + 7s  (consistent with oracle's own boot-time D3 write,
+     NOT a tbard write — tbard.service was inactive at boot and remains so).
+  THIS mtime is the comparison anchor for STEP 4b.
+acpi_video0 (i915 eDP): brightness=90, mtime=1790411566 — unrelated to touchbar.
+
+--- SERVICE STATE ---
+tiny-dfr-mbp142.service: is-active=active   is-enabled=static   (oracle, sole master)
+tbard.service:           is-active=inactive is-enabled=disabled (validation target)
+
+--- INSTALLED BINARY (unchanged since v0.2.4 merge report) ---
+/usr/bin/tbard sha f7297cf3...  (behaviorally verified in attempt #3; not re-hashed here)
+
+P1 COMPLETE. Awaiting HC1.

@@ -1,0 +1,36 @@
+=== Regression audit (post-reinstall, 2026-09-27T01:28:51+01:00) ===
+Build: v0.2.6 (master cc374b3, /usr/bin/tbard sha cd7aa6c3...)
+
+## debugfs dri/<touchbar N>/clients — oracle sole master (name+uid, never tgid/cardN)
+Touch Bar card located by the preflight as card2 (driver=appletbdrm, dri minor=2).
+Attempting debugfs dri/2/clients read (may need root):
+             command  tgid dev master a   uid      magic                                                             name                   id
+     tiny-dfr-mbp142 365566   2   y    y 65534          0                                                          <unset>                 2979
+
+## Fallback: oracle process + service state (name + uid)
+LoadState=loaded
+ActiveState=active
+FragmentPath=/etc/systemd/system/tiny-dfr-mbp142.service
+MainPID=365566
+
+ 338240  1000 bash            /usr/bin/bash -c echo "=== restart journal tail with valid format ==="; rm -f /tmp/opencode/journal-043-step3.log; sudo journalctl -u tbard.service -f -o short-precise --no-pager 2>&1 | tee /tmp/opencode/journal-043-step3.log
+ 338242     0 sudo            sudo journalctl -u tbard.service -f -o short-precise --no-pager
+ 338248     0 journalctl      journalctl -u tbard.service -f -o short-precise --no-pager
+ 365566 65534 tiny-dfr-mbp142 /usr/bin/tiny-dfr-mbp142
+
+## tbard.service (MUST be inactive + DISABLED — reinstall must NOT enable it)
+disabled
+inactive
+
+## /dev/input unchanged (expect count 25, matches s037/s042 baseline)
+25
+
+## /etc unchanged (no *tbard* under /etc; /etc/systemd/system mtime)
+drwxr-xr-x 12 root root 4096 Sep 26 12:37 /etc/systemd/system
+
+## /usr/bin/tbard sha256 (post-install, MUST be cd7aa6c3...)
+cd7aa6c33f49ec0d43e51aa69d81fe1cc7b11172c3ce0476befe2fe817f230ad  /usr/bin/tbard
+
+## examples/render-only-validation-page.yaml present at the tip
+examples/render-only-validation-page.yaml
+present in tree at master HEAD ✓

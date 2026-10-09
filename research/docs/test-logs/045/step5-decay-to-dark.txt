@@ -1,0 +1,14 @@
+=== STEP 5 prep — monitor idle decay to dark (decay schedule: 30s→1, 60s→0) ===
+tbard started at 01:49:27. Watching appletb_backlight until it reaches 0.
+T0: 2026-09-27T01:49:54+01:00
+T+10s (2026-09-27T01:50:04+01:00): appletb_backlight=1
+T+20s (2026-09-27T01:50:14+01:00): appletb_backlight=1
+T+30s (2026-09-27T01:50:24+01:00): appletb_backlight=1
+T+40s (2026-09-27T01:50:34+01:00): appletb_backlight=54
+T+50s (2026-09-27T01:50:44+01:00): appletb_backlight=54
+T+60s (2026-09-27T01:50:54+01:00): appletb_backlight=54
+T+70s (2026-09-27T01:51:04+01:00): appletb_backlight=54
+T+80s (2026-09-27T01:51:14+01:00): appletb_backlight=54
+T+90s (2026-09-27T01:51:24+01:00): appletb_backlight=54
+T+100s (2026-09-27T01:51:34+01:00): appletb_backlight=54
+T+110s (2026-09-27T01:51:44+01:00): appletb_backlight=54

@@ -1,0 +1,39 @@
+SESSION 029 — STEP 2 — Preflight (verbatim)
+===========================================
+$ sudo sh scripts/bench/interlock-preflight.sh
+preflight rc=0  (GO)
+
+=== STEP 0: environment inventory (ADR 040) ===
+PASS 0a: privdrop user nobody (gid=65534) resolvable + primary group resolvable.
+PASS 0b: /dev/uinput exists.
+PASS 0c: touchbar backlight device resolvable (appletb_backlight, ADR 015).
+PASS 0d: digitizer resolvable by geometry (/dev/input/event7: ABS_MT X max 32767 / Y max 127).
+PASS 0e: /usr/bin/tbard exists + strings --service count=6 (≥ 1, ADR 038 guard).
+PASS 0f: tbard.service installed + disabled+inactive (validation-run posture).
+
+=== STEP 1: locate the Touch Bar card by DRIVER (never trust cardN) ===
+  Touch Bar card: card2 (driver=appletbdrm, dri minor=2)
+  (vkms decoy card0; i915 card1 — both excluded)
+
+=== STEP 2: debugfs master state on the Touch Bar card ===
+  (empty clients table)
+  OK: no master holder on the Touch Bar card.
+
+=== STEP 3: oracle service status ===
+  oracle active:  inactive
+  oracle enabled: static
+
+=== STEP 4: tbard.service status ===
+  tbard active:  inactive
+  tbard enabled: disabled
+
+=== STEP 5: Esc-remap reminder ===
+  (recovery path printed)
+
+=== VERDICT ===
+GO: all preflight checks passed. Safe to proceed to Stage 3 step 1
+(first real start of tbard.service under the interlock).
+
+RESULT: STEP 2 PASS — GO. No NO-GO, no master-holder, STEP 0 a–f all PASS
+with oracle inactive (matches ALREADY-LIVE-VERIFIED preflight-with-oracle-active
+pattern; here oracle inactive as expected for STEP 1).

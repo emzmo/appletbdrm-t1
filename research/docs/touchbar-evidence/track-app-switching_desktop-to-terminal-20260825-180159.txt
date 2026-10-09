@@ -1,0 +1,116 @@
+=================== TRACK RECORD ===================
+Scenario:        app-switching_desktop-to-terminal
+Start (UTC):     2026-08-25T17:00:51Z
+Stop (UTC):      2026-08-25T17:01:14Z
+Duration:        23s (actual, requested 20s)
+Events captured:       74
+User note:
+Switching from desktop focus to a terminal windows
+
+
+------------------- SYSTEM CONTEXT -------------------
+macOS:           ProductName:		macOS|ProductVersion:		13.7.8|BuildVersion:		22H730|
+Hardware:              Model Name: MacBook Pro|      Model Identifier: MacBookPro14,2|      Processor Name: Dual-Core Intel Core i7|      Processor Speed: 3.5 GHz|      Number of Processors: 1|      Memory: 16 GB|      System Firmware Version: 529.140.2.0.0|      SMC Version (system): 2.44f6|
+SIP:             System Integrity Protection status: disabled.
+boot-args:       boot-args	amfi_get_out_of_my_way=1
+DTrace:          dtrace: Sun D 1.19
+Kexts (USB/T1):     21    4 0xffffff8001acd000 0xdffc     0xdffc     com.apple.driver.AppleSEPManager (1.0.1) 1F0A4E11-F72E-3157-BF71-7DE956FB1971 <20 17 10 9 8 7 6 3 1>|   25   21 0xffffff800325c000 0x75ff4    0x75ff4    com.apple.iokit.IOUSBHostFamily (1.2) D0E25720-2CF2-31CE-A1B5-BD0CEC23EF95 <24 23 22 18 16 9 8 7 6 3 1>|   71    1 0xffffff8003383000 0x3cff8    0x3cff8    com.apple.driver.usb.AppleUSBXHCI (1.2) DE9A5356-0DB4-3CA4-96A4-F7E66865DD16 <25 23 16 9 8 7 6 3 1>|   72    0 0xffffff80033ca000 0x24ff5    0x24ff5    com.apple.driver.usb.AppleUSBXHCIPCI (1.2) 73AF9981-98B1-339F-826D-805EA2D4A409 <71 25 23 17 16 9 8 7 6 3 1>|   88    2 0xffffff8001a4d000 0x14ff9    0x14ff9    com.apple.driver.AppleMultitouchDriver (6440.7) CC2AEE9A-C4C2-302D-B543-EACA0E343525 <87 59 47 9 8 7 6 3 1>|  118    0 0xffffff8001cbc000 0x1fff     0x1fff     com.apple.driver.usb.AppleUSBiBridge (1.0) 67114808-DB1E-3322-92CE-370598A02C61 <25 23 9 8 7 6 3 1>|  153    0 0xffffff7f95061000 0x4fff     0x4fff     com.apple.driver.AppleEmbeddedOSSupportHost (1) 561D8596-55A2-379B-9ED6-738564A4F9D5 <18 16 8 7 6 3 1>|
+Processes:         313 /usr/libexec/Tou /usr/libexec/TouchBarServer| 1095 /System/Library/ /System/Library/CoreServices/ControlStrip.app/Contents/MacOS/ControlStrip|
+T1 device:           +-o Apple T1 Controller@14100000  <class AppleUSBDevice, id 0x1000004a1, registered, matched, active, busy 0 (0 ms), retain 26>|        {|          "sessionID" = 4281073688|          "idProduct" = 34304|          "iManufacturer" = 1|          "bDeviceClass" = 239|          "bMaxPacketSize0" = 64|          "bcdDevice" = 257|          "iProduct" = 2|          "iSerialNumber" = 0|          "bNumConfigurations" = 3|          "Bus Power Available" = 250|          "USB Address" = 4|          "Built-In" = Yes|          "locationID" = 336592896|          "bDeviceSubClass" = 2|          "bcdUSB" = 512|          "USB Product Name" = "Apple T1 Controller"|          "PortNum" = 1|          "non-removable" = "yes"|          "AppleUSBAlternateServiceRegistryID" = 4294968479|          "bDeviceProtocol" = 1|          "IOCFPlugInTypes" = {"9dc7b780-9ec0-11d4-a54f-000a27052861"="IOUSBHostFamily.kext/Contents/PlugIns/IOUSBLib.bundle"}|          "IOPowerManagement" = {"DevicePowerState"=0,"CurrentPowerState"=3,"CapabilityFlags"=65536,"MaxPowerState"=4,"DriverPowerState"=3}|          "kUSBCurrentConfiguration" = 2|          "Device Speed" = 2|          "USB Vendor Name" = "Apple Inc."|          "idVendor" = 1452|          "IOGeneralInterest" = "IOCommand is not serializable"|          "kUSBProductString" = "Apple T1 Controller"|          "kUSBVendorString" = "Apple Inc."|          "IOClassNameOverride" = "IOUSBDevice"|          "UsbUserClientEntitlementRequired" = "com.apple.ibridge.control"|        }|        |
+
+------------------- DTRACE PROBES -------------------
+  DFRDisplay313:DFRDisplay:_DFRDisplayDrawRectsRequest:draw_request   (framebuffer OUT to T1)
+  DFRDisplay313:DFRDisplay:_DFRDisplayUsbRecvComplete:draw_completion  (T1 completion ACK)
+DTrace stderr (if any):
+
+
+------------------- CAPTURE SUMMARY -------------------
+Total events:                74
+draw_req events:       26   (framebuffer update requests — OUT to T1 display)
+draw_comp events:      26  (completion callbacks — IN from T1)
+
+9.1.2 refresh-rate signal (inter-draw_req intervals):
+  min=13.590 max=2005.340 mean=100.668 median=16.701 (ms), n=25
+
+9.2.5 batching signal (draw_comp per draw_req burst):
+  draw_req=26 draw_comp=0  avg_comp_per_req=1.08  max_comp_burst=2
+
+------------------- RAW CAPTURE LOG -------------------
+Format: <timestamp_ns> <event_type>
+(event_type: draw_req = framebuffer update OUT; draw_comp = T1 completion ACK IN)
+# heartbeat 1
+# heartbeat 2
+291275779719 draw_req
+291312824008 draw_req
+291314669614 draw_comp
+291321319827 draw_comp
+291326414217 draw_req
+291334947542 draw_comp
+291343120860 draw_req
+291351485713 draw_comp
+291359809972 draw_req
+291368342862 draw_comp
+291376431529 draw_req
+291384942250 draw_comp
+291393132625 draw_req
+291401668205 draw_comp
+291411420110 draw_req
+291419998416 draw_comp
+291426613055 draw_req
+291435189379 draw_comp
+291528872432 draw_req
+291533392985 draw_comp
+291542832393 draw_req
+291546065572 draw_comp
+291561649746 draw_req
+291564917155 draw_comp
+291576064031 draw_req
+291579167348 draw_comp
+291594884833 draw_req
+291598341090 draw_comp
+291609366257 draw_req
+291612589279 draw_comp
+291628469103 draw_req
+291631917544 draw_comp
+291642684633 draw_req
+291645843325 draw_comp
+291661523122 draw_req
+291664835742 draw_comp
+# heartbeat 3
+# heartbeat 4
+293666864152 draw_req
+293695126869 draw_req
+293695759775 draw_comp
+293699102613 draw_comp
+293710949260 draw_req
+293714193387 draw_comp
+293725607863 draw_req
+293728876459 draw_comp
+# heartbeat 5
+293744979365 draw_req
+293748214477 draw_comp
+293759556861 draw_req
+293762650172 draw_comp
+293778411631 draw_req
+293781817798 draw_comp
+293792478694 draw_req
+293795526806 draw_comp
+# heartbeat 6
+# heartbeat 7
+# heartbeat 8
+# heartbeat 9
+# heartbeat 10
+# heartbeat 11
+# heartbeat 12
+# heartbeat 13
+# heartbeat 14
+# heartbeat 15
+# heartbeat 16
+# heartbeat 17
+# heartbeat 18
+# heartbeat 19
+# heartbeat 20
+# capture complete after 20s
+
+
+=================== END TRACK RECORD ===================

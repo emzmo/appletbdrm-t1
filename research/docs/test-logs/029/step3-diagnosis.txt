@@ -1,0 +1,139 @@
+> **ERRATUM (D-031-1, v0.2.3 docs closure) — mechanism correction.**
+> The "tbard fails at `identify_digitizer` ... BEFORE reaching privdrop
+> (ADR-039) or DRM master acquire. The Touch Bar card stayed empty in
+> debugfs throughout — tbard never became master." claim below (lines
+> 12-17 of the original) was mechanism-WRONG. The DRM acquire DID run
+> at step 3 (oracle stopped, card free); the daemon failed at
+> `identify_digitizer` (the geometry gate, the actual session-029
+> blocker) AFTER the acquire, BEFORE privdrop; and the acquired DRM
+> master released cleanly via RAII `Drop` at the step-5 failure
+> (per ADR-041 D1 ordering reconciliation — see
+> `docs/adr/041-unified-digitizer-identity.md`). The debugfs-empty
+> observation recorded here was the RAII cleanup, NOT never-acquired.
+> Credit acceptance-1 as live-verified 6× (3 bursts × sessions 025/029):
+> acquire→identify-fail→release ×6, debugfs empty between bursts.
+> Same discipline as the D-027-1 erratum in v0.2.2
+> (`docs/test-logs/025/STEP3-first-start-failure.txt`). The original
+> text below is preserved verbatim.
+>
+>   -- session 032, v0.2.3 docs closure
+
+SESSION 029 — STEP 3 DIAGNOSIS — digitizer geometry-gate mismatch (read-only)
+=============================================================================
+NO-GO root cause. NO code modified. ADR proposal candidate.
+
+SYMPTOM
+-------
+tbard.service first start exits 1 with:
+  input init (digitizer identify) failed: input init failed:
+  no digitizer found on seat-touchbar (geometry gate: ABS_MT vs (60, 2170))
+
+tbard fails at `identify_digitizer` (src/providers/input.rs:181-190) BEFORE
+reaching privdrop (ADR-039) or DRM master acquire. The Touch Bar card stayed
+empty in debugfs throughout — tbard never became master.
+
+ROOT CAUSE — preflight script vs runtime predicate contradiction
+----------------------------------------------------------------
+The iBridge Touch Bar digitizer is /dev/input/event7, "Apple Inc. iBridge
+Touchpad", USB 05ac:8600 interface 2. Its ABS_MT_POSITION_X/Y maxima (read
+live via EVIOCGABS, this session):
+
+  ABS_MT_POSITION_X: min=0  MAX=32767
+  ABS_MT_POSITION_Y: min=0  MAX=127
+
+(i.e. the device reports a 15-bit X axis and a 7-bit Y axis — typical of a
+hid-multitouch digitizer whose abs range is NOT 1:1 with panel pixels.)
+
+PREFLIGHT (scripts/bench/interlock-preflight.sh:97-153) accepts this device:
+  DIGI_GEOM_X=32767
+  DIGI_GEOM_Y=127
+  ... if xm == want_x and ym == want_y: PASS 0d
+The preflight's header comment claims it "Mirrors identify_digitizer
+(src/providers/input.rs)" — THIS CLAIM IS FALSE.
+
+RUNTIME (src/providers/input.rs:262-269, geometry_matches_tb):
+  pub fn geometry_matches_tb(x_max, y_max, tb_dims: (u16,u16)) -> bool {
+      const TOLERANCE: i32 = 40;
+      let (w,h) = (tb_dims.0 as i32, tb_dims.1 as i32);
+      let near = |a,b| (a-b).abs() <= TOLERANCE;
+      (near(x_max,w) && near(y_max,h)) || (near(x_max,h) && near(y_max,w))
+  }
+With tb_dims=(60,2170) (from main.rs:276-279, the DRM mode fallback):
+  near(32767, 60)   = false  (|32707| > 40)
+  near(32767, 2170) = false  (|30597| > 40)
+  near(127, 60)     = false  (|67| > 40)
+  near(127, 2170)   = false  (|2043| > 40)
+  => REJECTS event7.
+
+So the SAME device the preflight accepts (32767/127) is REJECTED by tbard's
+runtime gate, which expects the raw ABS_MT maxima to be ~60/~2170 (the DRM
+framebuffer mode dims, in either orientation, ±40px).
+
+EVIDENCE THE HARDWARE IS CORRECT
+--------------------------------
+- event7 abs bits decoded: X, Y, MT_SLOT, MT_POSITION_X, MT_POSITION_Y,
+  MT_TRACKING_ID, MT_DISTANCE (full multitouch digitizer).
+- ABS_MT_POSITION_X max=32767, ABS_MT_POSITION_Y max=127 — the exact
+  "audit-C / acceptance-10" geometry cited in the protocol and in
+  src/providers/sim_input.rs:109 ("(32767/127) and exercise the
+  32767→2170 / 127→60 scale").
+- The sim_input provider explicitly models a 32767/127 digitizer and scales
+  to the 2170/60 logical space; the REAL provider's geometry_matches_tb
+  gate does NOT perform this scaling before comparing — it compares raw
+  abs maxima directly to the DRM mode dims.
+
+CONTRADICTION SUMMARY
+---------------------
+  source                          expects digitizer ABS_MT maxima ≈
+  ------------------------------- ----------------------------------------
+  sim_input.rs (test model)       32767 / 127   (then scales to 2170/60)
+  interlock-preflight.sh 0d       32767 / 127   (hardcoded exact match)
+  input.rs::geometry_matches_tb   60 / 2170  (±40, either orientation)
+  protocol STEP 3 expectation     "ABS X max 32767 / Y max 127"
+
+The runtime gate is the outlier. It compares apples (raw evdev abs maxima,
+typically 2^n−1) to oranges (DRM framebuffer pixel dims). The unit tests at
+input.rs:375-404 only ever exercise geometry_matches_tb with values already
+in the 2170/60 neighborhood, so the 32767/127 case was never tested against
+the real predicate — only against the sim, which bypasses the gate.
+
+SEAT TAGS (secondary observation, NOT the root cause)
+-----------------------------------------------------
+No /dev/input device on this host carries an ID_SEAT= property (verified by
+udevadm info across all event* nodes). The digitizer is on the default seat
+(seat0), not seat-touchbar. The libinput seat-touchbar context created at
+input.rs:75 (udev_assign_seat) therefore enumerates devices the kernel/udev
+have NOT tagged for that seat. Whether libinput falls back to seat0 devices
+when no devices carry the seat-touchbar tag is a libinput behavior question;
+the practical observation is that tbard's seat-touchbar context DID see
+*something* (otherwise the error would differ), but no device on it passed
+geometry_matches_tb. The gate, not the seat assignment, is the blocker: even
+if event7 were correctly enumerated, 32767/127 fails the (60,2170) predicate.
+The seat-tag question is logged as a SECONDARY item for the ADR; the geometry
+gate is the PRIMARY blocker.
+
+NOT FIXED ON THE AIR
+--------------------
+Per protocol: capture → restore oracle → report. No src/ changes. FREEZE
+discipline maintained. This file is a docs/test-log commit only.
+
+ADR PROPOSAL (for a later code session, NOT this one)
+-----------------------------------------------------
+ADR-041 (proposed): Unify the digitizer geometry gate.
+  - geometry_matches_tb (input.rs:262) must accept the real iBridge
+    digitizer's ABS_MT maxima (32767/127), either by:
+      (a) scaling the raw maxima to the DRM mode space before the
+          near() comparison (mirror sim_input's 32767→2170 / 127→60
+          scaling), or
+      (b) comparing against the raw 2^n−1 ranges the device actually
+          reports, with the DRM-mode dims carried separately for layout.
+  - interlock-preflight.sh:0d's claim "Mirrors identify_digitizer" must
+    become true: the preflight must run the SAME predicate the runtime
+    runs, so a preflight GO guarantees a runtime GO (the property the
+    protocol relies on).
+  - Unit tests at input.rs:375-404 must add a 32767/127 case against the
+    REAL predicate (not just the sim), to close the test gap that let
+    this survive to hardware.
+  - Secondary: audit whether any device on this host should carry
+    ID_SEAT=seat-touchbar (udev rule), or whether tbard should enumerate
+    by device geometry across seats rather than trusting a seat tag.

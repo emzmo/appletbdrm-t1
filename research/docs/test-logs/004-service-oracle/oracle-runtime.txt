@@ -1,0 +1,71 @@
+=== systemctl status tiny-dfr-mbp142 ===
+● tiny-dfr-mbp142.service - Touch Bar daemon for MacBookPro14,2 (T1, appletbdrm framebuffer)
+     Loaded: loaded (/etc/systemd/system/tiny-dfr-mbp142.service; static)
+     Active: active (running) since Fri 2026-09-25 08:05:23 WEST; 14h ago
+ Invocation: e878aeb22aec41c9b42b918e689fd436
+   Main PID: 562 (tiny-dfr-mbp142)
+      Tasks: 1 (limit: 18986)
+     Memory: 28.8M (peak: 29.8M)
+        CPU: 1min 2.994s
+     CGroup: /system.slice/tiny-dfr-mbp142.service
+             └─562 /usr/bin/tiny-dfr-mbp142
+
+Sep 25 19:17:46 phobos tiny-dfr-mbp142[562]: See https://wayland.freedesktop.org/libinput/doc/1.32.0/touchpad-jumping-cursors.html for details
+Sep 25 19:39:08 phobos tiny-dfr-mbp142[562]: libinput error: event9  - Apple SPI Touchpad: kernel bug: Touch jump detected and discarded.
+Sep 25 19:39:08 phobos tiny-dfr-mbp142[562]: See https://wayland.freedesktop.org/libinput/doc/1.32.0/touchpad-jumping-cursors.html for details
+Sep 25 20:11:17 phobos tiny-dfr-mbp142[562]: libinput error: event9  - Apple SPI Touchpad: kernel bug: Touch jump detected and discarded.
+Sep 25 20:11:17 phobos tiny-dfr-mbp142[562]: See https://wayland.freedesktop.org/libinput/doc/1.32.0/touchpad-jumping-cursors.html for details
+Sep 25 20:29:58 phobos tiny-dfr-mbp142[562]: libinput error: event9  - Apple SPI Touchpad: kernel bug: Touch jump detected and discarded.
+Sep 25 20:29:58 phobos tiny-dfr-mbp142[562]: See https://wayland.freedesktop.org/libinput/doc/1.32.0/touchpad-jumping-cursors.html for details
+Sep 25 20:39:59 phobos tiny-dfr-mbp142[562]: libinput error: event9  - Apple SPI Touchpad: kernel bug: Touch jump detected and discarded.
+Sep 25 20:39:59 phobos tiny-dfr-mbp142[562]: See https://wayland.freedesktop.org/libinput/doc/1.32.0/touchpad-jumping-cursors.html for details
+
+=== ps ===
+    PID USER     CMD
+    562 nobody   /usr/bin/tiny-dfr-mbp142
+
+=== fuser /dev/dri/card0 ===
+                     USER        PID ACCESS COMMAND
+/dev/dri/card0:      nobody      562 F.... tiny-dfr-mbp142
+
+=== fuser /dev/dri/card1 card2 ===
+                     USER        PID ACCESS COMMAND
+/dev/dri/card1:      root          1 F.... systemd
+                     root        497 F.... systemd-logind
+                     emzmo       746 F.... Hyprland
+                     emzmo       790 F.... Xwayland
+/dev/dri/card2:      root          1 F.... systemd
+                     root        497 F.... systemd-logind
+                     emzmo       746 F.... Hyprland
+
+=== /proc/562/fd (which fds held) ===
+total 0
+dr-x------ 2 root   root   27 Sep 25 08:05 .
+dr-xr-xr-x 9 nobody nobody  0 Sep 25 08:05 ..
+lr-x------ 1 root   root   64 Sep 25 08:05 0 -> /dev/null
+lrwx------ 1 root   root   64 Sep 25 08:05 1 -> socket:[11602]
+lrwx------ 1 root   root   64 Sep 25 20:09 10 -> anon_inode:[timerfd]
+lrwx------ 1 root   root   64 Sep 25 20:09 11 -> socket:[11754]
+lrwx------ 1 root   root   64 Sep 25 20:09 12 -> socket:[11759]
+lrwx------ 1 root   root   64 Sep 25 20:09 13 -> /dev/input/event4
+lrwx------ 1 root   root   64 Sep 25 20:09 14 -> /dev/input/event5
+lrwx------ 1 root   root   64 Sep 25 20:09 15 -> /dev/input/event6
+lrwx------ 1 root   root   64 Sep 25 20:09 16 -> /dev/input/event7
+lrwx------ 1 root   root   64 Sep 25 20:09 17 -> /dev/input/event9
+lrwx------ 1 root   root   64 Sep 25 08:05 18 -> /dev/input/event8
+lrwx------ 1 root   root   64 Sep 25 20:09 19 -> /dev/input/event10
+lrwx------ 1 root   root   64 Sep 25 08:05 2 -> socket:[11602]
+lrwx------ 1 root   root   64 Sep 25 20:09 20 -> /dev/input/event3
+lrwx------ 1 root   root   64 Sep 25 20:09 21 -> /dev/input/event1
+lrwx------ 1 root   root   64 Sep 25 20:09 22 -> /dev/input/event0
+lrwx------ 1 root   root   64 Sep 25 20:09 23 -> /dev/input/event2
+lrwx------ 1 root   root   64 Sep 25 20:09 24 -> socket:[11771]
+lrwx------ 1 root   root   64 Sep 25 20:09 25 -> anon_inode:[eventpoll]
+lrwx------ 1 root   root   64 Sep 25 20:09 26 -> /dev/input/event17
+l-wx------ 1 root   root   64 Sep 25 08:05 3 -> /dev/uinput
+lrwx------ 1 root   root   64 Sep 25 08:05 4 -> /dev/dri/card0
+l-wx------ 1 root   root   64 Sep 25 20:09 5 -> /sys/devices/pci0000:00/0000:00:14.0/usb1/1-3/1-3:2.3/backlight/appletb_backlight/brightness
+lr-x------ 1 root   root   64 Sep 25 20:09 6 -> anon_inode:inotify
+lrwx------ 1 root   root   64 Sep 25 20:09 7 -> anon_inode:[eventpoll]
+lrwx------ 1 root   root   64 Sep 25 20:09 8 -> anon_inode:[timerfd]
+lrwx------ 1 root   root   64 Sep 25 20:09 9 -> anon_inode:[eventpoll]

@@ -1,0 +1,35 @@
+=== cargo fmt --check ===
+FMT_EXIT=0
+=== cargo build --bin tbard ===
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+BUILD_EXIT=0
+=== cargo clippy --all-targets -- -D warnings ===
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.15s
+CLIPPY_EXIT=0
+=== scripts/check-invariants.sh ===
+130:        crate::geometry::is_touchbar_digitizer(&candidate)
+194:                if crate::geometry::is_touchbar_digitizer(&candidate) {
+280:                let verdict = crate::geometry::is_touchbar_digitizer(&candidate);
+547:    if let Err(e) = backlight.enable() {
+check-invariants: PASS
+INV_EXIT=0
+=== scripts/ci-gate.sh ===
+==> cargo fmt --check
+==> cargo build --bin tbard
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.15s
+==> cargo clippy --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.16s
+==> scripts/check-invariants.sh (ADR 009: zero name-string matching)
+130:        crate::geometry::is_touchbar_digitizer(&candidate)
+194:                if crate::geometry::is_touchbar_digitizer(&candidate) {
+280:                let verdict = crate::geometry::is_touchbar_digitizer(&candidate);
+547:    if let Err(e) = backlight.enable() {
+check-invariants: PASS
+CI gate: PASS
+CIGATE_EXIT=0
+=== bash -n packaging/PKGBUILD ===
+PKGBUILD_EXIT=0
+=== bash -n scripts/bench/interlock-preflight.sh ===
+PREFLIGHT_EXIT=0
+=== systemd-analyze verify packaging/systemd/tbard.service ===
+VERIFY_EXIT=0

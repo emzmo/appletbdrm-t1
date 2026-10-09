@@ -1,0 +1,91 @@
+=== QA v5 session 011 — T4 LIVE RE-VERIFICATION (sudo path) ===
+Date: 2026-09-26
+
+ENVIRONMENT RECORD:
+  uid: 1000 (emzmo); sudo uid: 0
+  session type: wayland
+  XDG_SESSION_CLASS: unset
+  DISPLAY: :1; WAYLAND_DISPLAY: wayland-1
+  Boot card mapping (driver-resolved):
+    card0 -> faux_driver (vkms)
+    card1 -> i915
+    card2 -> appletbdrm
+  debugfs /sys/kernel/debug/dri/0/clients (card0=vkms):
+             command  tgid dev master a   uid
+      systemd-logind   476   0   y    y     0
+            Hyprland  1678   0   y    y  1000   <-- Hyprland holds master on vkms
+  debugfs /sys/kernel/debug/dri/1/clients (card1=i915):
+            Hyprland  1678   1   y    y  1000   <-- Hyprland holds master on i915
+
+--- T4.1 Hermetic smoke (privileged dry-run) ---
+$ sudo env HOME=$(mktemp -d) RUST_LOG=info ./target/debug/tbard --dry-run
+[2026-09-26T09:23:36Z INFO  tbard] tbard: Touch Bar engine starting (mode: dry-run)
+[2026-09-26T09:23:36Z ERROR tbard] tbard: dry-run SimDisplay acquire failed: Device or resource busy (os error 16)
+Error: Device or resource busy (os error 16)
+EXIT=1
+
+VERDICT T4.1: CANNOT EXECUTE. Hyprland holds DRM master on card0 (vkms).
+  SimDisplayProvider::acquire EBUSYes (master-exclusivity blocks root
+  too — ADR-016 §1 model). The render loop never starts, so:
+  - NO frame counter advancement (ADR-023 S1-F2) — unverifiable
+  - NO synthetic tap → S1-F1 acceptance line — unverifiable
+  - NO config hot-reload (ADR-021) — unverifiable
+  - NO SIGTERM → clean exit 0 — unverifiable
+  - NO immediate rerun master-release — unverifiable
+  The bench-grant lane is CLOSED (ADR-026; docs/dangers.md HOST SAFETY
+  RULES forbid AQ_DRM_DEVICES / login-chain edits). The sudo path is the
+  official bench per ADR-026 closure, but it EBUSYes on this bench
+  because Hyprland holds master. ADR-026 step 8 explicitly states "sudo
+  works ONLY on a VT where Hyprland is not running" — this is a running-
+  Hyprland session, NOT a clean VT. Switching to a clean VT would risk
+  the host (compositor restart forbidden by HOST SAFETY RULES) and is
+  NOT attempted per the FREEZE/binding rules.
+
+--- T4.2 Seat-gated tests under sudo (THREE master-gated tests) ---
+$ cargo test --no-run
+  Executable unittests src/main.rs (target/debug/deps/tbard-024090071b748d61)
+  Executable tests/exit_code.rs (target/debug/deps/exit_code-d565d17a8b2d77e9)
+$ TESTBIN=target/debug/deps/tbard-024090071b748d61
+
+T4.2.a test_sim_display_acquires_vkms:
+$ sudo env HOME=$(mktemp -d) RUST_LOG=info ./$TESTBIN --nocapture test_sim_display_acquires_vkms
+test_sim_display_acquires_vkms: skipped (SimDisplayProvider::acquire failed):
+--- error ---
+Device or resource busy (os error 16)
+-------------
+test providers::sim_display::tests::test_sim_display_acquires_vkms ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 40 filtered out
+EXIT=0  [SKIP — EBUSY, Hyprland holds vkms master]
+
+T4.2.b test_sigterm_releases_master:
+$ sudo env HOME=$(mktemp -d) RUST_LOG=info ./$TESTBIN --nocapture test_sigterm_releases_master
+test_sigterm_releases_master: skipped (daemon exited before SIGTERM, status=ExitStatus(unix_wait_status(256)), no panic/EACCES marker — unexpected).
+--- child stderr ---
+[2026-09-26T09:23:01Z INFO  tbard] tbard: Touch Bar engine starting (mode: dry-run)
+[2026-09-26T09:23:01Z ERROR tbard] tbard: dry-run SimDisplay acquire failed: Device or resource busy (os error 16)
+Error: Device or resource busy (os error 16)
+--------------------
+test lifecycle::tests::test_sigterm_releases_master ... ok
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 40 filtered out
+EXIT=0  [SKIP — child EBUSY at acquire, never reached running state]
+
+T4.2.c test_retry_partial_alloc_releases_master_on_failure:
+$ sudo env HOME=$(mktemp -d) RUST_LOG=info ./$TESTBIN --nocapture test_retry_partial_alloc_releases_master_on_failure
+test_retry_partial_alloc_releases_master_on_failure: skipped (master not acquired — bench not granted; re-run per ADR-026 or on a clean VT). Err: Touch Bar DRM card never appeared: master acquire failed (bench not granted): Device or resource busy (os error 16)
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 40 filtered out
+EXIT=0  [SKIP — master not acquired, closure EBUSY]
+
+VERDICT T4.2: ALL THREE master-gated tests SKIP under sudo. The T4
+  instruction "Skips are NOT acceptable here — this environment grants
+  them" is CONTRADICTED by live evidence: this environment does NOT
+  grant vkms master on card0 because Hyprland holds it, and the bench-
+  grant lane is CLOSED (no AQ_DRM_DEVICES). The sudo path EBUSYes
+  identically to the unprivileged path (master-exclusivity is
+  privilege-agnostic — ADR-016 §1). The three tests EXECUTE their skip
+  branches (graceful skip with verbatim error per ADR-013) and mark
+  themselves "ok", but they do NOT exercise the master-acquire/release
+  contract on this bench. This is a BENCH LIMITATION, not a code defect:
+  the test logic is correct for a granted bench / clean VT (ADR-026 /
+  ADR-010), but this bench cannot provide that environment without
+  violating HOST SAFETY RULES (no compositor restart, no login-chain
+  edits). The tests are UNVERIFIABLE on this bench.

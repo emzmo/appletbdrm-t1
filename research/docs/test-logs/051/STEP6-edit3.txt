@@ -1,0 +1,15 @@
+=== STEP 6 — third edit (different value, confirm watcher alive) ===
+Timestamp: 2026-09-27T11:52:21+01:00
+2026-09-27T11:52:21+01:00
+EDIT3_COMPLETED: 2026-09-27T11:52:21+01:00
+73:        fill: 0.9
+79:        fill: 0.8
+85:        fill: 0.2
+105:        fill: 0.5
+bff30586f3674d349f63968e91a2acde7280f3c4684d56de703df2d87f64a023  /etc/touchbar/config.yaml
+
+--- wait 3s and check for reload line ---
+no reload line for edit3
+
+--- full reload count since 11:51:46 ---
+1

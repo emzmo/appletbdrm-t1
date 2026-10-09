@@ -1,0 +1,66 @@
+=== QA v10 W13-class live hermetic dry-run smoke (session 035) ===
+Date: 2026-09-26
+Branch: fix/backlight-write-adr-043 (HEAD = d13196c, target/debug/tbard)
+
+$ HOMEDIR=$(mktemp -d) && timeout 20 env HOME=$HOMEDIR RUST_LOG=info \
+    ./target/debug/tbard --dry-run 2>&1 | head -40; echo "exit=$?"; rm -rf "$HOMEDIR"
+
+[2026-09-26T19:09:28Z INFO  tbard] tbard: Touch Bar engine starting (mode: dry-run)
+[2026-09-26T19:09:28Z ERROR tbard] tbard: dry-run SimDisplay acquire failed: Permission denied (os error 13)
+Error: Permission denied (os error 13)
+DRYRUN_EXIT=0 (timeout/pipe; the binary exited 1)
+
+=== NOT EXECUTABLE on this bench (environmental, NOT a regression) ===
+
+The dry-run smoke opens a vkms DRM card and calls acquire_master_lock().
+On this bench Hyprland + systemd-logind ALREADY HOLD DRM master on the
+vkms card (card0), so acquire_master_lock() returns EACCES (Permission
+denied, os error 13) BEFORE the render path is reached. This is the
+SAME documented environmental constraint recorded in QA v5-5, v6-5, v8,
+v9 (audit-A-dryrun.log in each): "the master-gated sim path CANNOT
+execute here (Hyprland holds vkms master)". It is NOT an ADR-043
+regression: the failure is at SimDisplay::acquire(), which runs BEFORE
+backlight.enable() — the enable-write is downstream of acquire and is
+not reached on this bench.
+
+=== Integration test (the sim analog, same code path) ===
+
+  $ cargo test --test backlight_enable_write -- --nocapture
+  test_dry_run_backlight_enable_write_recorded: skipped (SimDisplay acquire
+  did not succeed within 5s — likely no vkms card or no DRM master in this
+  environment). Verbatim stderr (last 3 lines):
+  --- stderr ---
+  [INFO  tbard] tbard: Touch Bar engine starting (mode: dry-run)
+  [ERROR tbard] tbard: dry-run SimDisplay acquire failed: Permission denied (os error 13)
+  Error: Permission denied (os error 13)
+  -------------
+  test test_dry_run_backlight_enable_write_recorded ... ok
+  test result: ok. 1 passed; 0 failed
+
+The integration test skips truthfully (ADR-013) with the verbatim EACCES —
+the SAME skip behavior recorded across v5-5/v6-5/v8/v9. The render-path
+enable-write ordering + non-zero write + clean-exit no-restore are
+asserted IN-PROCESS by the unit tests (test_render_path_enable_write_
+precedes_first_flush_and_update, test_clean_exit_no_backlight_restore_write),
+which DO run (MockDisplay, no master required) and PASS. See
+adversarial-demos-v10.log for the non-vacuity demo on the ordering test.
+
+=== W13 adjudication ===
+
+The W13 task asks: did the enable() addition break the sim path
+(MockBacklight receives the write)? On this bench the sim path is not
+reachable past acquire (environmental), so a LIVE sim smoke is not
+executable. The IN-PROCESS unit tests (MockDisplay + RecordingBacklight
+wrapping MockBacklight) exercise the SAME real_main render path that
+the dry-run smoke would, WITHOUT the master-gated acquire, and assert:
+  - calls[0] == "enable" (enable is the FIRST backlight call)
+  - enable_idx < update_idx (enable precedes the loop-bottom update)
+  - !write_log().is_empty() && *front() > 0 (MockBacklight received a
+    non-zero enable write)
+  - no set_brightness on clean SIGTERM exit (D3)
+All PASS; the adversarial demo (demo 3) confirms the ordering test FAILS
+if enable is moved after the first flush. The enable() addition did NOT
+break the sim path's contract — it is exercised through the in-process
+tests on every `cargo test`. A LIVE sim smoke on a bench with an
+unmastered vkms card (or a VT session) is the merge session's
+re-verification, same as every prior QA in this environment.

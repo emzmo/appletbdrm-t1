@@ -1,0 +1,8 @@
+==> cargo fmt --check
+==> cargo build --bin tbard
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.10s
+==> cargo clippy --all-targets -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.19s
+==> scripts/check-invariants.sh (ADR 009: zero name-string matching)
+check-invariants: PASS
+CI gate: PASS

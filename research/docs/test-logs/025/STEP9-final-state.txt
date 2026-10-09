@@ -1,0 +1,43 @@
+================================================================
+STEP 9 — FINAL STATE
+================================================================
+Timestamp: 2026-09-26T15:11:53,622598589+01:00
+
+--- oracle (tiny-dfr-mbp142.service) ---
+is-active  = active
+is-enabled = static
+(running as before the interlock; sole master on the touchbar card)
+
+--- tbard.service (validation run, NOT a migration) ---
+is-active  = inactive
+is-enabled = disabled
+(retiring the oracle is a separate future decision; tbard remains
+ disabled+inactive exactly as at P1 baseline)
+
+--- debugfs: oracle SOLE master on touchbar card ---
+$ sudo cat /sys/kernel/debug/dri/2/clients
+             command  tgid dev master a   uid      magic   name   id
+     tiny-dfr-mbp142 87113   2   y    y 65534          0  <unset>  1652
+
+--- /dev/input node count ---
+18   (baseline restored)
+
+--- backlight sysfs ---
+brightness = 54   (baseline; oracle render active)
+
+--- git state (FREEZE verification) ---
+$ git status --porcelain
+?? docs/test-logs/025/
+(only the new test-log evidence directory is untracked — permitted under
+ FREEZE: "docs/test-log commits only". No src/ or other tracked files
+ modified.)
+
+$ git diff v0.2.1 HEAD -- src/ | wc -l
+0
+(src/ frozen; ZERO lines of diff between the v0.2.1 tag and HEAD in src/.)
+
+================================================================
+INTERLOCK WINDOW: CLOSED. Oracle fully restored (HC3 confirmed: bar
+shows the oracle's normal F-row, Esc on the bar sends Esc again). tbard
+left disabled+inactive — this was a validation run, not a migration.
+================================================================

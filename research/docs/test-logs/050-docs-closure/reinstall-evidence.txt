@@ -1,0 +1,47 @@
+=== BINARY REINSTALL EVIDENCE — v0.2.7 (ADR-038 rule: binary only; unit unchanged) ===
+Date: 2026-09-27. Built from master @ 0f56562 (post F4 bump 0.2.7).
+Host safety: oracle untouched and lit; tbard.service NOT touched (inactive + DISABLED);
+no service lifecycle actions; /dev/input unchanged (25); no /etc changes.
+
+=== 1. cargo build --release from the bumped tip ===
+  cargo build --release → EXIT 0 (Finished release profile [optimized]).
+
+=== 2. PRE-INSTALL sha256 (target/release/tbard) ===
+18b368c44cab753d92353ba197b0248f41b8768d171cf8fac11d3ed4c426474e  target/release/tbard
+
+=== 3. v0.2.6 baseline (/usr/bin/tbard BEFORE install) — expected cd7aa6c3… ===
+  cd7aa6c33f49ec0d43e51aa69d81fe1cc7b11172c3ce0476befe2fe817f230ad  /usr/bin/tbard (v0.2.6)
+  (matches expected v0.2.6 hash cd7aa6c3… ✓)
+
+=== 4. sudo install -m 0755 target/release/tbard /usr/bin/tbard ===
+  EXIT 0
+
+=== 5. POST-INSTALL sha256 (/usr/bin/tbard) — MUST match pre-install, MUST differ from v0.2.6 ===
+18b368c44cab753d92353ba197b0248f41b8768d171cf8fac11d3ed4c426474e  /usr/bin/tbard
+  pre-install:  18b368c44cab753d92353ba197b0248f41b8768d171cf8fac11d3ed4c426474e
+  post-install: 18b368c44cab753d92353ba197b0248f41b8768d171cf8fac11d3ed4c426474e
+  v0.2.6:       cd7aa6c33f49ec0d43e51aa69d81fe1cc7b11172c3ce0476befe2fe817f230ad
+  post == pre:  ✓
+  post != v0.2.6: ✓ (18b368c4… ≠ cd7aa6c3…)
+
+=== 6. BEHAVIORAL VERIFY ===
+--- 6a. --probe-input → ACCEPT exit 0 ---
+probe: candidate /dev/input/event4 (sysname=event4) → ABS_MT X max=32767 Y max=127 res=(0,0) iBridge=true 
+   predicate verdict: ACCEPT
+probe-input: digitizer IDENTIFIED (exit 0)
+EXIT=0
+  (digitizer IDENTIFIED on this host is event4; predicate verdict ACCEPT; exit 0 ✓)
+
+--- 6b. strings --service ≥ 1 ---
+  count: 7
+  (≥1 ✓)
+
+--- 6c. unprivileged --service fast-fail exit 1 <1s ---
+  EXIT=1  ELAPSED=5ms  (<1000ms required ✓)
+  output:
+    [2026-09-27T10:32:14Z ERROR tbard] tbard: service mode requires root (euid=1000); start as root or via the systemd unit (tbard.service) — exit 1
+    Error: ServiceRequiresRoot { euid: 1000 }
+
+=== SUMMARY ===
+Reinstall PASS. /usr/bin/tbard now at 18b368c4… (v0.2.7), distinct from v0.2.6 cd7aa6c3…
+All three behavioral checks PASS. Unit unchanged (no /etc writes, no service lifecycle).

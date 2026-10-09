@@ -1,0 +1,8 @@
+=== T2 downward sweep: write 4 ===
+timestamp: 2026-09-26T21:36:39+01:00
+--- BEFORE ---
+  value=8 mtime=2026-09-26 21:36:29.200373606 +0100
+--- WRITE 4 ---
+4
+--- AFTER ---
+  value=4 mtime=2026-09-26 21:36:39.710574379 +0100

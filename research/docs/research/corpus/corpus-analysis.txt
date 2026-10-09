@@ -1,0 +1,139 @@
+=== clean corpus protocol analysis ===
+timestamp: 2026-09-26T21:57:05+01:00
+--- single-tap ---
+  total event lines: 10
+  SYN_REPORT count: 2
+  distinct slots used: 
+grep: invalid option -- '?'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+  tracking IDs (non -1): 
+  X range (ABS_MT_POSITION_X): 11279 11279 
+  Y range (ABS_MT_POSITION_Y): 
+  BTN_TOUCH 1->0 transitions: 2
+  BTN_TOOL_FINGER events: 2
+  other BTN_TOOL_*: 0
+  ABS_MT_DISTANCE events: 0
+  first/last ts: time 1790455892.642341 -> time 1790455892.910324
+--- double-tap ---
+  total event lines: 21
+  SYN_REPORT count: 4
+  distinct slots used: 2 
+grep: invalid option -- '?'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+  tracking IDs (non -1): 
+  X range (ABS_MT_POSITION_X): 8787 8954 
+  Y range (ABS_MT_POSITION_Y): 
+  BTN_TOUCH 1->0 transitions: 4
+  BTN_TOOL_FINGER events: 4
+  other BTN_TOOL_*: 0
+  ABS_MT_DISTANCE events: 0
+  first/last ts: time 1790455930.132967 -> time 1790455930.552945
+--- long-press ---
+  total event lines: 10
+  SYN_REPORT count: 2
+  distinct slots used: 
+grep: invalid option -- '?'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+  tracking IDs (non -1): 
+  X range (ABS_MT_POSITION_X): 9452 9452 
+  Y range (ABS_MT_POSITION_Y): 
+  BTN_TOUCH 1->0 transitions: 2
+  BTN_TOOL_FINGER events: 2
+  other BTN_TOOL_*: 0
+  ABS_MT_DISTANCE events: 0
+  first/last ts: time 1790455964.483528 -> time 1790455966.201560
+--- slow-drag ---
+  total event lines: 473
+  SYN_REPORT count: 156
+  distinct slots used: 3 
+grep: invalid option -- '?'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+  tracking IDs (non -1): 
+  X range (ABS_MT_POSITION_X): 11128 21471 
+  Y range (ABS_MT_POSITION_Y): 
+  BTN_TOUCH 1->0 transitions: 2
+  BTN_TOOL_FINGER events: 2
+  other BTN_TOOL_*: 0
+  ABS_MT_DISTANCE events: 0
+  first/last ts: time 1790455993.575997 -> time 1790455996.592027
+--- fast-swipe ---
+  total event lines: 77
+  SYN_REPORT count: 24
+  distinct slots used: 4 
+grep: invalid option -- '?'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+  tracking IDs (non -1): 
+  X range (ABS_MT_POSITION_X): 11204 24205 
+  Y range (ABS_MT_POSITION_Y): 
+  BTN_TOUCH 1->0 transitions: 2
+  BTN_TOOL_FINGER events: 2
+  other BTN_TOOL_*: 0
+  ABS_MT_DISTANCE events: 0
+  first/last ts: time 1790456025.388532 -> time 1790456025.994539
+--- two-finger-simultaneous ---
+  total event lines: 21
+  SYN_REPORT count: 3
+  distinct slots used: 6 7 
+grep: invalid option -- '?'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+  tracking IDs (non -1): 
+  X range (ABS_MT_POSITION_X): 15432 18663 
+  Y range (ABS_MT_POSITION_Y): 
+  BTN_TOUCH 1->0 transitions: 2
+  BTN_TOOL_FINGER events: 2
+  other BTN_TOOL_*: 2
+  ABS_MT_DISTANCE events: 0
+  first/last ts: time 1790456054.320982 -> time 1790456054.572977
+--- two-finger-sequential ---
+  total event lines: 22
+  SYN_REPORT count: 4
+  distinct slots used: 5 8 
+grep: invalid option -- '?'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+  tracking IDs (non -1): 
+  X range (ABS_MT_POSITION_X): 16398 21743 
+  Y range (ABS_MT_POSITION_Y): 
+  BTN_TOUCH 1->0 transitions: 4
+  BTN_TOOL_FINGER events: 4
+  other BTN_TOOL_*: 0
+  ABS_MT_DISTANCE events: 0
+  first/last ts: time 1790456084.313500 -> time 1790456086.015525
+--- edge-touch ---
+  total event lines: 18
+  SYN_REPORT count: 4
+  distinct slots used: 9 
+grep: invalid option -- '?'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+  tracking IDs (non -1): 
+  X range (ABS_MT_POSITION_X): 32570 32706 
+  Y range (ABS_MT_POSITION_Y): 
+  BTN_TOUCH 1->0 transitions: 2
+  BTN_TOOL_FINGER events: 2
+  other BTN_TOOL_*: 0
+  ABS_MT_DISTANCE events: 1
+  first/last ts: time 1790456113.331940 -> time 1790456113.752005
+--- palm-broad-touch ---
+  total event lines: 50
+  SYN_REPORT count: 9
+  distinct slots used: 0 5 10 
+grep: invalid option -- '?'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+  tracking IDs (non -1): 
+  X range (ABS_MT_POSITION_X): 21698 27210 
+  Y range (ABS_MT_POSITION_Y): 
+  BTN_TOUCH 1->0 transitions: 4
+  BTN_TOOL_FINGER events: 2
+  other BTN_TOOL_*: 4
+  ABS_MT_DISTANCE events: 0
+  first/last ts: time 1790456148.636551 -> time 1790456149.090534
+--- idle-10s ---
+  (no events — idle baseline)

@@ -1,0 +1,8 @@
+=== v0.2.8 MERGE + REINSTALL EVIDENCE (2026-09-27T16:02:01+01:00) ===
+merge: 086f8ac chore: F4 version bump to 0.2.8 (standing ride-along)
+7546a95 Merge fix/transposed-dims-adr-054-056: ADR-054/055/056 — three transposition bugs fixed (damage clip, config watcher, input scale); three-source derivation + live-confirmed (s052 HC2); adversarially proven (s053/v14)
+6e31de3 docs: QA v14 — CLEARED (all 3 ADRs VERIFIED; adversarials independently reproduced FAIL-then-PASS)
+binary: pre=18b368c4 (v0.2.7) post=5ba9b195 (v0.2.8) MATCH
+behavioral: probe ACCEPT exit 0; strings --service=7; fast-fail exit 1
+preflight: STEP 0 all-PASS; STEP 2/3 NO-GO (oracle active)
+gates: fmt/clippy/test 101/invariants/PKGBUILD all PASS

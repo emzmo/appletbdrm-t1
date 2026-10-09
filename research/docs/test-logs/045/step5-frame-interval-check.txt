@@ -1,0 +1,94 @@
+=== FRAME_LOG_INTERVAL + render loop structure ===
+59:const FRAME_LOG_INTERVAL: u64 = 100;
+629:    let mut frame_counter: u64 = 0;
+747:            frame_counter = frame_counter.saturating_add(1);
+748:            if frame_counter.is_multiple_of(FRAME_LOG_INTERVAL) {
+750:                    "tbard: frame stats: frames={} uptime={}s dirty_flushes={} last_flush={}",
+751:                    frame_counter,
+1271:        assert_eq!(FRAME_LOG_INTERVAL, 100, "structural constant (S1-F2)");
+--- the render loop iteration trigger (what makes frame_counter increment?) ---
+                }
+                Ok(()) => {
+                    dirty_flushes = dirty_flushes.saturating_add(1);
+                    last_flush_result = "Ok".to_string();
+                    let elapsed = flush_start.elapsed().as_millis() as u64;
+                    // Inline T1 flush-stall backoff (was DrmProvider::record_flush_duration).
+                    // See ADR 005: the engine loop is provider-agnostic, so the
+                    // stall tracking lives here instead of on a concrete type.
+                    const FLUSH_STALL_THRESHOLD_MS: u64 = 200;
+                    const FLUSH_COOLDOWN_BASE_SECS: u64 = 2;
+                    const FLUSH_STALL_MAX_DOUBLINGS: u32 = 4;
+                    if elapsed >= FLUSH_STALL_THRESHOLD_MS {
+                        let cooldown_secs = FLUSH_COOLDOWN_BASE_SECS
+                            * (1u64 << flush_stalls.min(FLUSH_STALL_MAX_DOUBLINGS));
+                        let cooldown_ms = cooldown_secs * 1000;
+                        flush_stalls = flush_stalls.saturating_add(1);
+                        warn!(
+                            "tbard: flush stalled ({} ms), cooldown {} ms (stall #{})",
+                            elapsed, cooldown_ms, flush_stalls
+                        );
+                        std::thread::sleep(Duration::from_millis(cooldown_ms));
+                    } else {
+                        flush_stalls = 0;
+                    }
+                }
+            }
+            // ADR 023: frame counter + periodic endurance stats (S1-F2).
+            frame_counter = frame_counter.saturating_add(1);
+            if frame_counter.is_multiple_of(FRAME_LOG_INTERVAL) {
+                info!(
+                    "tbard: frame stats: frames={} uptime={}s dirty_flushes={} last_flush={}",
+                    frame_counter,
+                    loop_start.elapsed().as_secs(),
+                    dirty_flushes,
+                    last_flush_result
+                );
+            }
+            needs_redraw = false;
+        }
+
+        // Poll input
+--- s043 step6 full journal (look for ANY frame stats across the 54min run) ---
+0
+--- s043 step6 head + tail ---
+# STEP 6 — SIGTERM from the running loop (stop tbard)
+# Session 043
+
+## stop command
+sudo systemctl stop tbard.service   @ 2026-09-27T00:38:58,906780089+01:00
+stop exit = 0
+
+## tbard exit journal (verbatim)
+Sep 27 00:38:58.936819 phobos systemd[1]: Stopping Touch Bar daemon (tbard) ... ...
+Sep 27 00:38:58.938962 phobos tbard[338190]: [INFO tbard] tbard: shutdown signal received, exiting
+Sep 27 00:38:59.013168 phobos systemd[1]: tbard.service: Deactivated successfully.
+Sep 27 00:38:59.013474 phobos systemd[1]: Stopped Touch Bar daemon (tbard) ...
+Sep 27 00:38:59.013898 phobos systemd[1]: tbard.service: Consumed 8.617s CPU time over 54min 44.055s wall clock time, 6M memory peak.
+
+exit status = 0  (Deactivated successfully) — clean SIGTERM, success-path release.
+tbard ran for 54min 44s (started 23:44:14, stopped 00:38:59), 8.6s CPU, 6M peak.
+
+## post-stop state
+systemctl is-active tbard.service  = inactive
+systemctl is-enabled tbard.service = disabled  (unchanged — validation, NOT migration)
+...
+
+## brightness after settle
+54 (oracle's adaptive display_to_touchbar(90,128)=54 — same curve as tbard;
+display backlight acpi_video0 is at 90/90).
+
+## verdict
+STEP 6 PASS — tbard SIGTERM exit 0, success-path release confirmed (tbard row
+absent from debugfs after stop), card passed to the waiting oracle. tbard ran
+54min44s stable as sole master. NEW interlock finding: the oracle self-restarts
+(static + Restart=) and spins in a panic-retry loop during tbard's run — benign
+for validation (tbard held master), but a migration-planning concern.
+
+## ADR proposal (interlock finding)
+- ADR-049 (proposed): oracle masking during tbard validation/migration runs.
+  `systemctl stop` is insufficient — the oracle's Restart= policy (static unit)
+  self-restarts it, producing panic-retry loops against the busy card. For
+  validation: use `systemctl mask` or `systemctl stop` + verify no auto-restart
+  within +60s before starting tbard. For migration: the oracle's unit must be
+  masked/disabled-by-policy before tbard takes over, or the Restart= policy
+  must be removed. Coordinate with the interlock design (ADR-019).

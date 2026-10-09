@@ -1,0 +1,15 @@
+=== ORACLE UNIT sha256 (for byte-identical restore) ===
+5310c917bd8d4cf5f429ae3419ac3339edf9efa7095df16ec1938ac2acc5b047  /etc/systemd/system/tiny-dfr-mbp142.service
+
+=== services status ===
+active
+static
+---
+inactive
+disabled
+
+=== /etc/touchbar state (EXPECT: no live config — only config.yaml.example) ===
+total 12
+drwxr-xr-x  2 root root 4096 Sep 27 02:34 .
+drwxr-xr-x 86 root root 4096 Sep 27 11:11 ..
+-rw-r--r--  1 root root 2279 Sep 26 13:16 config.yaml.example

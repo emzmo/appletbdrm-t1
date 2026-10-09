@@ -1,0 +1,25 @@
+SESSION 029 — Human checkpoint answers (verbatim)
+=================================================
+
+HC1 (P2, pre-lifecycle) — asked:
+  "Confirm: (a) Esc fallback connected and tested; (b) Esc on the Touch Bar
+   just sent Esc; (c) docs/recovery.md read."
+
+HC1 answer (human typed):
+  "a yes, b yes, c yes"
+  → all three confirmed; proceeded to STEP 1.
+
+HC2 (STEP 5, first-pixels) — NOT ASKED:
+  tbard never reached a running render loop (failed at digitizer identify,
+  STEP 3, before privdrop and before DRM master acquire). The bar remained
+  dark/oracle-off throughout the tbard attempt. HC2 is skipped per ABORT
+  discipline — there were no first pixels to describe. Recovery initiated.
+
+HC3 (STEP 8, post-restore) — asked:
+  "Does the bar show the oracle's normal F-row, and does Esc on the bar
+   send Esc again?"
+
+HC3 answer (human typed):
+  "I see F keys and it toggles to control keys if I press fn key.
+   also is reacting when I touch it"
+  → oracle F-row restored; fn-toggle works; touch reactive. Window CLOSED.

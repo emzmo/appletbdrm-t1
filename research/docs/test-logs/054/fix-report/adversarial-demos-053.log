@@ -1,0 +1,22 @@
+=== ADVERSARIAL DEMOS — ADR-054/055/056 non-vacuity (2026-09-27T14:21:49+01:00) ===
+--- ADV-1 (ADR-054): revert clip to transposed → expect test FAILURE ---
+test providers::drm_backend::tests::test_adr054_fullscreen_damage_clip_covers_the_framebuffer ... FAILED
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 94 filtered out; finished in 0.00s
+--- restored; re-run → ---
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 94 filtered out; finished in 0.00s
+test tests::test_adr056_input_scale_dims_are_logical ... FAILED
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 95 filtered out; finished in 0.00s
+--- restored; re-run ---
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 95 filtered out; finished in 0.00s
+test config::manager::tests::test_adr055_name_filter_ignores_other_files ... ok
+test config::manager::tests::test_adr055_watch_survives_atomic_replace ... ok
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 94 filtered out; finished in 0.12s
+--- restored; re-run ---
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 94 filtered out; finished in 0.12s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 92 filtered out; finished in 0.00s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 94 filtered out; finished in 0.13s
+test config::manager::tests::test_adr055_name_filter_ignores_other_files ... ok
+test config::manager::tests::test_adr055_watch_survives_atomic_replace ... FAILED
+thread 'config::manager::tests::test_adr055_watch_survives_atomic_replace' (74956) panicked at src/config/manager.rs:385:14:
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 94 filtered out; finished in 0.12s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 94 filtered out; finished in 0.13s

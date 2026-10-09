@@ -1,0 +1,132 @@
+# 9.1.7 — Touch ID protocol — interface 7 confirmation (macOS-side)
+# Date: 2026-08-25
+# Source: ioreg IOService plane (read directly from kernel IORegistry; no
+#         entitlement needed — ioreg reads the registry, not the USB user client)
+# Machine: MacBookPro14,2, macOS 13.7.8 (22H730), SIP disabled, amfi_get_out_of_my_way=1
+#
+# [CONFIRMED] Interface 7 in Config 2 is the SEP control channel.
+#   - USB Interface Name: "Apple USB SEP Interface"
+#   - bInterfaceNumber: 7
+#   - bConfigurationValue: 2
+#   - bInterfaceClass: 255 (0xff)        ← matches [SUSPECTED]
+#   - bInterfaceSubClass: 249 (0xf9)     ← matches [SUSPECTED]
+#   - bInterfaceProtocol: 17 (0x11)      ← matches [SUSPECTED]
+#   - bNumEndpoints: 2                   ← matches (EP5 OUT + EP8 IN expected)
+#   - UsbExclusiveOwner: "KernelRelayHost" (com.apple.driver.KernelRelayHost)
+#   - iInterface: 9 (string index)
+#
+# Promotion: docs/01-hardware.md §1.5 [SUSPECTED] → [CONFIRMED]
+#   Interface 7 IS the Touch ID / SEP control channel, class 0xff/0xf9/0x11,
+#   2 endpoints (bulk 512-byte EP5 OUT + EP8 IN, per Linux-side endpoint dump).
+#
+# Note on endpoint numbers: ioreg does not expose individual endpoint addresses
+# in the IOUSBHostInterface node (only bNumEndpoints=2). The EP5/EP8 detail
+# comes from the Linux-side usbhid-dump / lsusb output. This macOS ioreg
+# confirms the interface-level identity (class/subclass/protocol + name).
+#
+# Driver chain: IOUSBHostInterface@7 → KernelRelayHost (kernel relay) →
+#   (userspace) AppleSEPManager / SEP daemons. NOT a direct "Touch ID" daemon
+#   on the macOS side — the SEP relay is mediated by KernelRelayHost, which
+#   bridges to LocalAuthentication.framework daemons (com.apple.LocalAuthentication.*).
+#   See 9.4.1-launchd-details.txt for the LocalAuthentication.DFR service label.
+#
+# --- Full ioreg extract (Apple T1 Controller device + interface 7) ---
+#
+# +-o Apple T1 Controller@14100000  <class IOUSBHostDevice, id 0x100000477>
+#   "idVendor" = 1452 (0x05ac)
+#   "idProduct" = 34304 (0x8600)
+#   "bcdDevice" = 257 (0x0101)
+#   "bcdUSB" = 512 (0x0200)
+#   "bDeviceClass" = 239 (0xef)
+#   "bDeviceSubClass" = 2
+#   "bDeviceProtocol" = 1
+#   "bNumConfigurations" = 3
+#   "kUSBCurrentConfiguration" = 2          ← active config
+#   "kUSBPreferredConfiguration" = 2
+#   "kUSBPreferredRecoveryConfiguration" = 3
+#   "USB Product Name" = "Apple T1 Controller"
+#   "USB Vendor Name" = "Apple Inc."
+#   "UsbExclusiveOwner" = "AppleUSBiBridge"
+#   "UsbUserClientEntitlementRequired" = "com.apple.ibridge.control"
+#   "UsbDeviceSignature" = <ac0500860101ef02010e01000e0200030101030001100000020d000a0001fff911>
+#   (the trailing fff911 = interface-7 class/subclass/protocol — 0xff/0xf9/0x11)
+#   "locationID" = 336592896 (0x14100000)
+#   "USB Address" = 4
+#   "Device Speed" = 2 (High Speed, 480 Mb/s; USBSpeed=3)
+#   "bMaxPacketSize0" = 64
+#   "Built-In" = Yes
+#   "non-removable" = "yes"
+#
+#   +-o AppleUSBiBridge  <class AppleUSBiBridge>
+#     "IOClass" = "AppleUSBiBridge"
+#     "CFBundleIdentifier" = "com.apple.driver.usb.AppleUSBiBridge"
+#     "IOProviderClass" = "IOUSBHostDevice"
+#     "kUSBPreferredConfiguration" = 2
+#     "kUSBPreferredRecoveryConfiguration" = 3
+#     "IOProbeScore" = 100000
+#     "IOMatchedAtBoot" = Yes
+#
+#   +-o FaceTime HD Camera (Built-in, SN:DJH9353B4A8GJKD1U)@0  <IOUSBHostInterface>
+#     bInterfaceNumber=0, bInterfaceClass=14 (0x0e, Video), bInterfaceSubClass=1
+#     bInterfaceProtocol=0, bNumEndpoints=0, bConfigurationValue=2
+#     UsbExclusiveOwner: (none, claimed by VDCAssistant pid 234)
+#
+#   +-o IOUSBHostInterface@1
+#     bInterfaceNumber=1, bInterfaceClass=14 (0x0e, Video), bInterfaceSubClass=2
+#     bInterfaceProtocol=0, bNumEndpoints=1, bConfigurationValue=2
+#     UsbExclusiveOwner: (none, claimed by VDCAssistant pid 234)
+#
+#   +-o IOUSBHostInterface@2  (HID — Touch Bar digitizer/pointer)
+#     bInterfaceNumber=2, bInterfaceClass=3 (HID), bInterfaceSubClass=0
+#     bInterfaceProtocol=1, bNumEndpoints=1, bConfigurationValue=2
+#     UsbExclusiveOwner = "AppleUserUSBHostHIDDevice"
+#     PrimaryUsagePage=13 (0x0d, Digitizer), PrimaryUsage=5 (Touch Pad)
+#     MaxInputReportSize=52
+#     DeviceUsagePairs: {13,5}, {65280,35}, {65280,22}
+#
+#   +-o IOUSBHostInterface@3  (DFR display / appletbdrm endpoint)
+#     bInterfaceNumber=3, bInterfaceClass=16 (0x10, ApplicationSpec), bInterfaceSubClass=0
+#     bInterfaceProtocol=0, bNumEndpoints=2, bConfigurationValue=2
+#     UsbExclusiveOwner = "pid 313, TouchBarServer"
+#     UsbUserClientEntitlementRequired = "com.apple.appledfr.client"
+#
+#   +-o NCM Control@4
+#     bInterfaceNumber=4, bInterfaceClass=2 (CDC), bInterfaceSubClass=13 (NCM)
+#     bInterfaceProtocol=0, bNumEndpoints=0, bConfigurationValue=2
+#     USB Interface Name = "NCM Control"
+#     UsbExclusiveOwner = "AppleUSBNCMControl"
+#
+#   +-o NCM Data@5
+#     bInterfaceNumber=5, bInterfaceClass=10 (0x0a, CDC-Data), bInterfaceSubClass=0
+#     bInterfaceProtocol=1, bAlternateSetting=1, bNumEndpoints=2, bConfigurationValue=2
+#     USB Interface Name = "NCM Data"
+#     UsbExclusiveOwner = "AppleUSBNCMData"
+#     IOModel = "iBridge", Product Name = "iBridge"
+#     BSD interface: en5 (the iBridge internal ethernet)
+#
+#   +-o IOUSBHostInterface@6  (HID — ALS / ambient light sensor + others)
+#     bInterfaceNumber=6, bInterfaceClass=3 (HID), bInterfaceSubClass=0
+#     bInterfaceProtocol=1, bNumEndpoints=1, bConfigurationValue=2
+#     UsbExclusiveOwner = "AppleUserUSBHostHIDDevice"
+#     PrimaryUsagePage=32 (0x20, Sensor), PrimaryUsage=65 (0x41, Ambient Light)
+#     MaxInputReportSize=10, MaxFeatureReportSize=116
+#     DeviceUsagePairs: {32,65}, {65298,1}
+#     Child service: AppleUSBALSService (com.apple.driver.AppleHIDALSService)
+#
+#   +-o Apple USB SEP Interface@7  ← *** TARGET INTERFACE ***
+#     bInterfaceNumber=7, bInterfaceClass=255 (0xff, Vendor), bInterfaceSubClass=249 (0xf9)
+#     bInterfaceProtocol=17 (0x11), bNumEndpoints=2, bConfigurationValue=2
+#     USB Interface Name = "Apple USB SEP Interface"
+#     iInterface = 9
+#     UsbExclusiveOwner = "KernelRelayHost"
+#     Driver: KernelRelayHost (com.apple.driver.KernelRelayHost, IOProbeScore=81000)
+#
+#   +-o VDCAssistant  <class AppleUSBHostDeviceUserClient>
+#     (device-level user client, pid 234, VDCAssistant — for FaceTime camera)
+#
+# --- Conclusion ---
+# 9.1.7 [SUSPECTED] → [CONFIRMED] from macOS primary source (ioreg).
+# Interface 7 is named "Apple USB SEP Interface" by macOS itself, with the
+# exact class/subclass/protocol triple (0xff/0xf9/0x11) the Linux side
+# predicted. Two endpoints, owned by KernelRelayHost (the SEP relay driver).
+# The Touch ID / SEP traffic flows through this interface.
