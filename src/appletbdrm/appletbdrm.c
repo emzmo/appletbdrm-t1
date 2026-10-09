@@ -72,6 +72,7 @@
 
 #define ASYNC_MSG_MAX_SIZE		1024
 #define USB_CMD_TIMEOUT			1000	/* ms - matches upstream */
+#define RESPONSE_ATTEMPTS		8	/* T1 preamble drain retries */
 
 #define drm_to_adev(_drm)	container_of(_drm, struct appletbdrm_device, drm)
 
@@ -849,31 +850,48 @@ static int appletbdrm_read_response(struct appletbdrm_device *adev, void *respon
 {
 	struct appletbdrm_msg_response_header *header = response;
 	bool readiness_signal_received = false;
-	int ret, actual_size;
+	int ret, actual_size, attempt;
 
-retry:
-	ret = usb_bulk_msg(adev->udev, usb_rcvbulkpipe(adev->udev, adev->in_ep),
-			   response, size, &actual_size, USB_CMD_TIMEOUT);
-	if (ret)
-		return ret;
+	for (attempt = 0; attempt < RESPONSE_ATTEMPTS; attempt++) {
+		ret = usb_bulk_msg(adev->udev, usb_rcvbulkpipe(adev->udev, adev->in_ep),
+				   response, size, &actual_size, USB_CMD_TIMEOUT);
+		if (ret)
+			return ret;
 
-	/*
-	 * The device may respond with a readiness signal during operation.
-	 * In that case, retry to get the actual response.
-	 */
-	if (header->msg == APPLETBDRM_MSG_SIGNAL_READINESS) {
-		if (!readiness_signal_received) {
-			readiness_signal_received = true;
-			goto retry;
+		/*
+		 * The T1 prefixes each bulk reply with a 16-byte short
+		 * transfer that the T2 never sends.  If we treat it as the
+		 * actual response, actual_size != size and the read fails
+		 * with -EIO on the very first GINF.  Drain the short transfer
+		 * and retry — the real payload follows on the next bulk read.
+		 */
+		if (adev->mac_type == MAC_TYPE_T1 && (size_t)actual_size != size) {
+			dev_dbg(adev->dmadev, "Draining %d byte transfer (expected %zu)\n",
+				actual_size, size);
+			continue;
 		}
-		dev_warn(adev->dmadev, "Unexpected readiness signal\n");
-		return -EINTR;
+
+		/*
+		 * The device may respond with a readiness signal during
+		 * operation.  Discard it and retry once.
+		 */
+		if (header->msg == APPLETBDRM_MSG_SIGNAL_READINESS) {
+			if (readiness_signal_received) {
+				dev_warn(adev->dmadev, "Unexpected readiness signal\n");
+				return -EINTR;
+			}
+			readiness_signal_received = true;
+			continue;
+		}
+
+		if ((size_t)actual_size != size)
+			return -EIO;
+
+		return 0;
 	}
 
-	if (actual_size != size)
-		return -EIO;
-
-	return 0;
+	dev_warn(adev->dmadev, "No valid response after %d attempts\n", attempt);
+	return -EIO;
 }
 
 /*
