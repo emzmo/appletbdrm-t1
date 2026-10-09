@@ -282,9 +282,9 @@ static int appletbdrm_setup_mode_config(struct appletbdrm_device *adev);
 static void appletbdrm_async_urb_complete(struct urb *urb);
 static void appletbdrm_init_work_fn(struct work_struct *work);
 static void appletbdrm_crtc_helper_atomic_enable(struct drm_crtc *crtc,
-						 struct drm_atomic_state *state);
+						 struct drm_atomic_commit *state);
 static void appletbdrm_crtc_helper_atomic_disable(struct drm_crtc *crtc,
-						  struct drm_atomic_state *state);
+						  struct drm_atomic_commit *state);
 static struct usb_driver appletbdrm_usb_driver;
 
 /*
@@ -1057,7 +1057,7 @@ end_fb_cpu_access:
 }
 
 static int appletbdrm_primary_plane_helper_atomic_check(struct drm_plane *plane,
-							struct drm_atomic_state *state)
+							struct drm_atomic_commit *state)
 {
 	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state, plane);
 	struct drm_plane_state *old_plane_state = drm_atomic_get_old_plane_state(state, plane);
@@ -1113,7 +1113,7 @@ static int appletbdrm_primary_plane_helper_atomic_check(struct drm_plane *plane,
 }
 
 static void appletbdrm_primary_plane_helper_atomic_update(struct drm_plane *plane,
-							  struct drm_atomic_state *old_state)
+							  struct drm_atomic_commit *old_state)
 {
 	struct appletbdrm_device *adev = drm_to_adev(plane->dev);
 	struct drm_device *drm = plane->dev;
@@ -1130,7 +1130,7 @@ static void appletbdrm_primary_plane_helper_atomic_update(struct drm_plane *plan
 }
 
 static void appletbdrm_primary_plane_helper_atomic_disable(struct drm_plane *plane,
-							   struct drm_atomic_state *state)
+							   struct drm_atomic_commit *state)
 {
 	struct drm_device *dev = plane->dev;
 	struct appletbdrm_device *adev = drm_to_adev(dev);
@@ -1227,7 +1227,7 @@ appletbdrm_crtc_helper_mode_valid(struct drm_crtc *crtc,
 }
 
 static void appletbdrm_crtc_helper_atomic_enable(struct drm_crtc *crtc,
-						 struct drm_atomic_state *state)
+						 struct drm_atomic_commit *state)
 {
 	struct appletbdrm_device *adev = drm_to_adev(crtc->dev);
 
@@ -1238,7 +1238,7 @@ static void appletbdrm_crtc_helper_atomic_enable(struct drm_crtc *crtc,
 }
 
 static void appletbdrm_crtc_helper_atomic_disable(struct drm_crtc *crtc,
-						  struct drm_atomic_state *state)
+						  struct drm_atomic_commit *state)
 {
 	struct appletbdrm_device *adev = drm_to_adev(crtc->dev);
 
