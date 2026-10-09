@@ -10,7 +10,7 @@ Wants=systemd-udevd.service
 Type=oneshot
 ExecStart=/usr/local/sbin/ibridge-config-switch.sh
 RemainAfterExit=yes
-TimeoutStartSec=30
+TimeoutStartSec=60
 
 [Install]
 WantedBy=sysinit.target

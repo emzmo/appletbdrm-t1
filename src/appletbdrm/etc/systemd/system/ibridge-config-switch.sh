@@ -31,8 +31,10 @@ fi
 echo "ibridge-config: switching $BRIDGE from config $current to 2"
 echo 2 > "$BRIDGE/bConfigurationValue"
 
-# Wait for the DRM card to appear (appletbdrm probes after re-enumeration)
-for i in 1 2 3 4 5 6 7 8 9 10; do
+# USB re-enumeration after a config switch can take 5-10s; the DRM
+# card appears only after appletbdrm finishes probing the new display
+# interface.  Wait up to 25s (under the systemd TimeoutStartSec=30).
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25; do
     if ls /sys/class/drm/card*/device/driver 2>/dev/null | grep -q appletbdrm; then
         echo "ibridge-config: appletbdrm DRM card appeared"
         exit 0
@@ -40,5 +42,5 @@ for i in 1 2 3 4 5 6 7 8 9 10; do
     sleep 1
 done
 
-echo "ibridge-config: DRM card did not appear within 10s"
+echo "ibridge-config: DRM card did not appear within 25s"
 exit 1
