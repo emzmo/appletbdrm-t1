@@ -1063,9 +1063,19 @@ static int appletbdrm_flush_damage(struct appletbdrm_device *adev,
 	if (ret)
 		goto end_fb_cpu_access;
 
-	if (response->header.msg != APPLETBDRM_MSG_UPDATE_COMPLETE ||
-	    response->timestamp != footer->timestamp) {
+	if (response->header.msg != APPLETBDRM_MSG_UPDATE_COMPLETE) {
 		drm_err(drm, "Invalid framebuffer response!\n");
+		ret = -EIO;
+	} else if (adev->mac_type != MAC_TYPE_T1 &&
+		   response->timestamp != footer->timestamp) {
+		/*
+		 * The T1 acknowledges frame N by echoing frame N-1's
+		 * timestamp, so a mismatch is expected and must not be
+		 * treated as an error.  The T2 echoes the current frame's
+		 * timestamp; a mismatch there is a real protocol error.
+		 */
+		drm_err(drm, "Response timestamp (%llu) doesn't match request timestamp (%llu)\n",
+			le64_to_cpu(response->timestamp), timestamp);
 		ret = -EIO;
 	}
 
