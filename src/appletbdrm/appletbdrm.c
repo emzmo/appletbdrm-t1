@@ -1400,35 +1400,29 @@ static int appletbdrm_probe(struct usb_interface *intf,
 		/*
 		 * T1 can enumerate with its bulk pipes halted or holding a
 		 * stale transfer from USB configuration 1.  Without clearing
-		 * both pipes here the first async URB (or any subsequent sync
-		 * bulk transfer) fails with -EAGAIN/-EIO and the DRM card
-		 * never appears.  usb_clear_halt sends a CLEAR_FEATURE(ENDPOINT)
-		 * control transfer to reset the halt condition; this is safe
-		 * to do before submitting any URB on the endpoint.
+		 * both pipes here the first bulk transfer fails with
+		 * -EAGAIN/-EIO and the DRM card never appears.
+		 * usb_clear_halt sends a CLEAR_FEATURE(ENDPOINT) control
+		 * transfer to reset the halt condition.
 		 */
 		usb_clear_halt(adev->udev, usb_rcvbulkpipe(adev->udev, adev->in_ep));
 		usb_clear_halt(adev->udev, usb_sndbulkpipe(adev->udev, adev->out_ep));
-
-		/*
-		 * T1: Use async URB to wait for device STATS packet
-		 * which triggers deferred initialization.
-		 */
-		init_completion(&adev->ginf_completion);
-		INIT_WORK(&adev->init_work, appletbdrm_init_work_fn);
-
-		ret = appletbdrm_submit_async_urb(adev);
-		if (ret)
-			goto err_release_hid;
-	} else {
-		/*
-		 * T2: Synchronous initialization like upstream.
-		 * No async URB needed - avoids USB bandwidth contention
-		 * with HID multitouch driver.
-		 */
-		ret = appletbdrm_probe_t2_sync(adev);
-		if (ret)
-			goto err_release_hid;
 	}
+
+	/*
+	 * Both T1 and T2 use the same synchronous probe path.  The former
+	 * async-URB approach for T1 failed with -EAGAIN on every boot
+	 * because the USB host controller had not yet allocated bandwidth
+	 * for the bulk endpoint at submit time.  Sync usb_bulk_msg blocks
+	 * until the transfer completes and handles the retry internally,
+	 * which is why Seborider/mbp-t1-touchbar uses it for both chips.
+	 */
+	ret = appletbdrm_probe_t2_sync(adev);
+	if (ret)
+		goto err_release_hid;
+
+	if (adev->mac_type == MAC_TYPE_T1)
+		appletbdrm_register_backlight(adev);
 
 	return 0;
 
