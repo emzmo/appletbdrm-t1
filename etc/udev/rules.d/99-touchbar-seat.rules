@@ -1,13 +1,17 @@
-# Assign the Touch Bar DRM card and digitizer to their own seat so
-# the compositor (Hyprland/aquamarine) does not grab /dev/dri/card0.
-# The daemon (tiny-dfr / not-quite-tiny-dfr) opens devices on
-# seat-touchbar exclusively.
+# Isolate the Touch Bar so the compositor (Hyprland/aquamarine) does
+# not grab /dev/dri/card0, leaving it free for the reactive-dfr daemon.
 #
-# Match by USB VID:PID 05ac:8600 (T1 iBridge) so this survives
-# USB bus renumbering across boots.
+# The DRM card gets NO seat tags at all (GOTO seat_end) so logind
+# does not create a hyphenated seat that breaks SDDM's D-Bus paths.
+# The daemon finds the card by aspect ratio (height/width >= 30).
+#
+# The digitizer gets seat "touchbar" (no hyphen — D-Bus safe) so the
+# daemon's libinput context on seat "touchbar" sees it exclusively.
+#
+# Match by USB VID:PID 05ac:8600 (T1 iBridge).
 
-# Touch Bar DRM display (appletbdrm binds interface 2.3, class 0x10)
-SUBSYSTEM=="drm", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8600", ENV{ID_SEAT}="touchbar"
+# Touch Bar DRM display: skip all seat tags so no seat is created
+SUBSYSTEM=="drm", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8600", GOTO="seat_end"
 
-# Touch Bar multitouch digitizer (hid-multitouch binds interface 2.2)
-SUBSYSTEM=="input", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8600", ENV{ID_SEAT}="touchbar"
+# Touch Bar multitouch digitizer: assign to seat1 (D-Bus safe, no hyphen)
+SUBSYSTEM=="input", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8600", ENV{ID_SEAT}="seat1"
