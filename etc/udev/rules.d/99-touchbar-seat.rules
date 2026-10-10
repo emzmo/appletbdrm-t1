@@ -1,17 +1,7 @@
-# Isolate the Touch Bar so the compositor (Hyprland/aquamarine) does
-# not grab /dev/dri/card0, leaving it free for the reactive-dfr daemon.
-#
-# The DRM card gets NO seat tags at all (GOTO seat_end) so logind
-# does not create a hyphenated seat that breaks SDDM's D-Bus paths.
-# The daemon finds the card by aspect ratio (height/width >= 30).
-#
-# The digitizer gets seat "touchbar" (no hyphen — D-Bus safe) so the
-# daemon's libinput context on seat "touchbar" sees it exclusively.
-#
-# Match by USB VID:PID 05ac:8600 (T1 iBridge).
-
-# Touch Bar DRM display: skip all seat tags so no seat is created
-SUBSYSTEM=="drm", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8600", GOTO="seat_end"
-
 # Touch Bar multitouch digitizer: assign to seat1 (D-Bus safe, no hyphen)
+# The daemon's libinput context uses udev_assign_seat("seat1") to find
+# this device exclusively.
+#
+# The DRM card seat isolation is in 71-seat.rules (shadowed) because
+# GOTO only works within the same rules file.
 SUBSYSTEM=="input", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="8600", ENV{ID_SEAT}="seat1"
