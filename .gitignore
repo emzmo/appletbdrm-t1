@@ -7,7 +7,6 @@
 .tmp_versions/
 Module.symvers
 modules.order
-ibridge-switcher
 
 # Cargo / Rust
 target/
@@ -17,12 +16,5 @@ target/
 *.swo
 *~
 
-# External repos (not part of this project)
+# Tooling
 .opencode/
-src/mbp-t1-touchbar/
-src/not-quite-tiny-dfr/
-src/tiny-dfr/
-src/tiny-dfr-mbp142/
-src/omarchy-touchbar/
-src/kernel-hid-t1-0.2/
-src/REPORT.md
