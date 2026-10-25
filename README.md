@@ -107,8 +107,6 @@ echo 128 | sudo tee /sys/class/backlight/appletb_backlight/brightness
 - **Kerem Karabay** (`kekrby@gmail.com`) — original `appletbdrm` DRM driver, mainlined in Linux 6.15
 - **sunplex07** — T1 support and unified driver rework
 - **Seborider** ([mbp-t1-touchbar](https://github.com/Seborider/mbp-t1-touchbar)) — first achieved DRM rendering on T1 hardware; the protocol dialect fixes in this fork are based on their work
-- **AsahiLinux** ([tiny-dfr](https://github.com/AsahiLinux/tiny-dfr)) — the userspace Touch Bar renderer this ecosystem builds on
-- **seojoonlee-dev** ([not-quite-tiny-dfr](https://github.com/seojoonlee-dev/not-quite-tiny-dfr)) — extended tiny-dfr with T2 workarounds
 - **t2linux project** — kernel patches and community resources for T2 Macs
 - **cevatkerim** ([omarchy-touchbar](https://github.com/cevatkerim/omarchy-touchbar)) — Omarchy integration work
 
