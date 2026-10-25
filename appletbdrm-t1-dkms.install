@@ -1,0 +1,60 @@
+# appletbdrm-t1-dkms install hooks
+
+post_install() {
+    # DKMS registers and builds the modules automatically via its
+    # alpm hook when source appears in /usr/src/.  We just inform
+    # the user about the remaining manual step.
+    cat << 'EOF'
+
+==> appletbdrm-t1-dkms installed.
+==>
+==> Two DKMS modules were registered:
+==>   appletbdrm/1.2     — Touch Bar DRM display driver
+==>   kernel-hid-t1/0.2  — Patched hid-multitouch for touch input
+==>
+==> To complete setup:
+==>   1. Enable the USB config switch service:
+==>        sudo systemctl enable ibridge-config-switch.service
+==>   2. Reboot
+==>
+==> The udev seat rule is installed automatically.
+==> The config switch service must be enabled manually.
+
+EOF
+}
+
+post_upgrade() {
+    # DKMS rebuilds automatically on kernel updates via its alpm hook.
+    # This message helps if something goes wrong.
+    cat << 'EOF'
+
+==> appletbdrm-t1-dkms updated.
+==>
+==> DKMS will rebuild both modules (appletbdrm/1.2, kernel-hid-t1/0.2)
+==> automatically on the next kernel update.
+==>
+==> If the Touch Bar stops working after a kernel update, force rebuild:
+==>   sudo dkms install --force appletbdrm/1.2
+==>   sudo dkms install --force kernel-hid-t1/0.2
+
+EOF
+}
+
+post_remove() {
+    # Clean up DKMS modules. The dkms alpm hook may already handle
+    # this, but we do it explicitly to be safe.
+    for mod in appletbdrm/1.2 kernel-hid-t1/0.2; do
+        if dkms status "$mod" >/dev/null 2>&1; then
+            dkms remove "$mod" --all 2>/dev/null || true
+        fi
+    done
+
+    cat << 'EOF'
+
+==> appletbdrm-t1-dkms removed.
+==>
+==> DKMS modules unregistered. You may also want to disable:
+==>   sudo systemctl disable ibridge-config-switch.service
+
+EOF
+}
