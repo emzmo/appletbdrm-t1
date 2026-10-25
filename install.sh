@@ -75,7 +75,7 @@ check_deps() {
         missing+=("kernel-headers (for $(uname -r))")
     fi
 
-    if [ -n "${missing[*]}" ]; then
+    if [ ${#missing[@]} -gt 0 ]; then
         error "Missing: ${missing[*]}\n\nInstall them first, e.g.:\n  Arch:   sudo pacman -S dkms gcc make linux-headers\n  Debian: sudo apt install dkms build-essential linux-headers-$(uname -r)\n  Fedora: sudo dnf install dkms gcc make kernel-devel"
     fi
     info "All dependencies satisfied"
@@ -98,10 +98,18 @@ install_dkms_module() {
 
     # Fresh copy to /usr/src
     local dest="${USR_SRC}/${name}-${version}"
+    if [ ! -d "$src_dir" ]; then
+        error "Source directory not found: ${src_dir}\nAre you running from the repo root?"
+    fi
     rm -rf "$dest"
     mkdir -p "$dest"
     info "Copying source to ${dest}..."
+    # Copy contents (including dotfiles) but exclude build artifacts
     cp -r "${src_dir}/." "$dest/"
+    # Clean any stale build artifacts that may have been copied
+    find "$dest" \( -name '*.ko' -o -name '*.o' -o -name '*.mod' -o -name '*.mod.c' \
+        -o -name '.*.cmd' -o -name 'Module.symvers' -o -name 'modules.order' \
+        -o -name '.tmp_versions' \) -exec rm -rf {} + 2>/dev/null || true
     chmod +x "${dest}/pre_build.sh" 2>/dev/null || true
     chmod +x "${dest}/sync-from-kernel.sh" 2>/dev/null || true
 
