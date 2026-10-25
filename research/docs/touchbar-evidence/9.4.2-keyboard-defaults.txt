@@ -1,2 +1,0 @@
-2026-08-25 17:14:03.280 defaults[809:9366] 
-Domain com.apple.keyboard does not exist

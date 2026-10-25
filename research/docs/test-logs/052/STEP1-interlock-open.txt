@@ -1,9 +1,0 @@
-=== STEP1 INTERLOCK OPEN 2026-09-27T12:58:27+01:00 ===
-unit moved aside: exit=0
-daemon-reload: OK
-stop: exit=0
-inactive
-2026-09-27T12:59:28+01:00
-inactive
---- touchbar card master state (expect EMPTY) ---
-             command  tgid dev master a   uid      magic                                                             name                   id

@@ -1,8 +1,0 @@
-
---- S1c: restore 54 ---
-BEFORE: brightness=2 mtime=2026-09-26 22:06:33.896817639 +0100
-AFTER:  brightness=54 mtime=2026-09-26 22:06:44.716991848 +0100 bl_power=0 actual=54
-
-S1 VERDICT: 2 written from a lit-54 baseline is 'Visible (dimmer than 54)'.
-This confirms 038's downward sweep was testing actual luminance, not residual.
-A low value write to an already-lit bar IS visible at the corresponding level.

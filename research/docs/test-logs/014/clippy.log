@@ -1,6 +1,0 @@
-===== cargo clippy --all-targets -- -D warnings =====
-    Blocking waiting for file lock on package cache
-    Blocking waiting for file lock on build directory
-    Checking touchbar-engine v0.1.0 (/home/emzmo/Projects/mbp142-deploy/touchbar)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.21s
-exit=0

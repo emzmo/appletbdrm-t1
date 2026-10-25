@@ -1,9 +1,0 @@
-      Model Name: MacBook Pro
-      Model Identifier: MacBookPro14,2
-      Processor Name: Dual-Core Intel Core i7
-      Processor Speed: 3.5 GHz
-      Number of Processors: 1
-      Memory: 16 GB
-      System Firmware Version: 529.140.2.0.0
-      SMC Version (system): 2.44f6
-      Serial Number (system): C02TP0KZHV2W

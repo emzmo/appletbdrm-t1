@@ -1,7 +1,0 @@
-## Find digitizer by VID:PID 05ac:8600
-```
-digitizer: /dev/input/event4
-input device: input
-name: 
-DIGIDEV=event4
-```

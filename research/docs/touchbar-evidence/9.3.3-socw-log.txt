@@ -1,2 +1,0 @@
-Timestamp                       Thread     Type        Activity             PID    TTL  
-2026-08-25 17:14:17.463836+0100 0x2698     Default     0x0                  846    0    log: [com.apple.log:] log run noninteractively, parent: 845 (zsh), args: '/usr/bin/log' 'show' '--predicate' 'eventMessage CONTAINS "SOCW"' '--last' '1h'

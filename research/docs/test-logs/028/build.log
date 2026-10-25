@@ -1,4 +1,0 @@
-=== cargo build --bin tbard ===
-   Compiling touchbar-engine v0.1.0 (/home/emzmo/Projects/mbp142-deploy/touchbar)
-    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.85s
-exit=0

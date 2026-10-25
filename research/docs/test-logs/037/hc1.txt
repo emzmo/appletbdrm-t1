@@ -1,7 +1,0 @@
-HC1 (mandatory pre-flight human checkpoint)
-Question asked verbatim:
-  "Confirm: (a) Esc fallback connected and tested; (b) Esc on the Touch Bar
-   just sent Esc; (c) docs/recovery.md read."
-Human answer (verbatim): "All three confirmed"
-Interpretation: (a) yes, (b) yes, (c) yes.
-Recorded BEFORE any lifecycle action (STEP 1 oracle stop happened after this).

@@ -1,5 +1,0 @@
-=== STEP6 HC2 RECORD + CAPTURE 2026-09-27T13:10:37+01:00 ===
-HC2 answer (verbatim, typed at ~13:08): 'Bright fragment at far left, sharply cut off, rest black'
-prediction (pre-stated in-chat before the run): 'a bright fragment at the far left of the bar, sharply cut off at its right edge, everything else black' — MATCH: CONFIRMED
---- journal frame stats during the run (frame counter evidence) ---
-(no frame stats lines = static page, few flushes — expected; see runbook note)

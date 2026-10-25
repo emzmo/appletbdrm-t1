@@ -1,3 +1,0 @@
-===== scripts/check-invariants.sh =====
-check-invariants: PASS
-exit=0

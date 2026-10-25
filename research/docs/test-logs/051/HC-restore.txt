@@ -1,5 +1,0 @@
-=== HC-restore — timed + verbatim ===
-Timestamp of answer: 2026-09-27T11:53:19+01:00
-Question (verbatim): F-row visible? Esc on bar sends Esc?
-Answer (verbatim, typed by operator): yes f-row visible
-Verdict: F-045-1 DIFFERENTIAL CONFIRMED. The same sysfs path (appletb_backlight brightness=54) that was DARK under tbard's sole DRM mastership is now VISIBLE under the oracle's sole DRM mastership. The bar produces photons under the oracle but not under tbard, despite identical sysfs values, bl_power=0, connector enabled, USB Config 2, scanout active. This is a DRM-side panel-activation differential (the oracle performs a DRM-side panel-enable tbard does not), NOT a content or sysfs-write issue. ADR-051 (font rasterization) is REFUTED — the shapes-only page has zero font dependency yet the bar was dark under tbard. Window CLOSED.

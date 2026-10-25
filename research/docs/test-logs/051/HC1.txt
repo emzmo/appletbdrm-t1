@@ -1,5 +1,0 @@
-=== HC1 (HUMAN CHECKPOINT 1) — timed + verbatim ===
-Timestamp: 2026-09-27T11:43:02+01:00
-Question (P2/HC1): external-keyboard Esc tested just now; Esc on bar sends Esc; recovery.md read. Confirm all three.
-Answer (verbatim, typed by operator): all good
-Interpretation: operator confirms (a) external keyboard Esc fallback connected+tested, (b) Esc on Touch Bar sends Esc under the oracle, (c) docs/recovery.md read. HC1 PASS.

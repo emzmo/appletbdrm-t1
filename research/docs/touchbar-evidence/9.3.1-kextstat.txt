@@ -1,5 +1,0 @@
-    2   12 0                  0          0          com.apple.kpi.dsep (22.6.0) 525F3E82-890C-3426-88D3-E80CF8E681EC <>
-   21    4 0xffffff8001acd000 0xdffc     0xdffc     com.apple.driver.AppleSEPManager (1.0.1) 1F0A4E11-F72E-3157-BF71-7DE956FB1971 <20 17 10 9 8 7 6 3 1>
-   88    2 0xffffff8001a4d000 0x14ff9    0x14ff9    com.apple.driver.AppleMultitouchDriver (6440.7) CC2AEE9A-C4C2-302D-B543-EACA0E343525 <87 59 47 9 8 7 6 3 1>
-  118    0 0xffffff8001cbc000 0x1fff     0x1fff     com.apple.driver.usb.AppleUSBiBridge (1.0) 67114808-DB1E-3322-92CE-370598A02C61 <25 23 9 8 7 6 3 1>
-  126    0 0xffffff7f95061000 0x4fff     0x4fff     com.apple.driver.AppleEmbeddedOSSupportHost (1) 561D8596-55A2-379B-9ED6-738564A4F9D5 <18 16 8 7 6 3 1>
