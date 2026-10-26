@@ -17,6 +17,7 @@
 #include <linux/math.h>
 #include <linux/fb.h>
 #include <linux/backlight.h>
+#include <linux/sysfs.h>
 
 #include <drm/drm_atomic.h>
 #include <drm/drm_atomic_helper.h>
@@ -1381,6 +1382,31 @@ static int appletbdrm_setup_mode_config(struct appletbdrm_device *adev)
 	return 0;
 }
 
+/*
+ * sysfs attribute: expose the chip type (T1 or T2) to userspace.
+ * The reactive-dfr daemon reads this to decide whether to apply
+ * T2-specific workarounds (heartbeat flush, full-bar redraw
+ * promotion, dirty-rect suppression).  Without this attribute
+ * the daemon falls back to the conservative behavior of applying
+ * all workarounds, which is safe but wastes USB bandwidth on T1.
+ *
+ * Path: /sys/class/drm/cardN/device/mac_type
+ * Values: "t1" or "t2"
+ */
+static ssize_t mac_type_show(struct device *dev,
+			     struct device_attribute *attr, char *buf)
+{
+	struct usb_interface *intf = to_usb_interface(dev);
+	struct appletbdrm_device *adev = usb_get_intfdata(intf);
+
+	if (!adev)
+		return -ENODEV;
+
+	return sprintf(buf, "%s\n",
+		       adev->mac_type == MAC_TYPE_T1 ? "t1" : "t2");
+}
+static DEVICE_ATTR_RO(mac_type);
+
 static int appletbdrm_probe(struct usb_interface *intf,
 			    const struct usb_device_id *id)
 {
@@ -1452,6 +1478,13 @@ static int appletbdrm_probe(struct usb_interface *intf,
 	if (adev->mac_type == MAC_TYPE_T1)
 		appletbdrm_register_backlight(adev);
 
+	/* Expose mac_type to userspace via sysfs.
+	 * Appears at /sys/class/drm/cardN/device/mac_type
+	 */
+	ret = device_create_file(&intf->dev, &dev_attr_mac_type);
+	if (ret)
+		dev_warn(adev->dmadev, "Failed to create mac_type sysfs: %d\n", ret);
+
 	return 0;
 
 err_release_hid:
@@ -1472,6 +1505,7 @@ static void appletbdrm_disconnect(struct usb_interface *intf)
 		return;
 
 	appletbdrm_release_hid_interface(adev);
+	device_remove_file(&intf->dev, &dev_attr_mac_type);
 	drm_dev_unplug(&adev->drm);
 	drm_atomic_helper_shutdown(&adev->drm);
 	cancel_work_sync(&adev->init_work);
